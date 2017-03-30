@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# v0.0.1
+
+CACHE:
+jquery.min.js
+jquery.touchSwipe.min.js
+time.js
+time.css
+time.html
+
+#NETWORK:
+#*
+
+#FALLBACK:
+#404.html
