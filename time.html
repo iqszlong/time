@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>时间戳</title>
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
-    <link rel="stylesheet" type="text/css" href="time.css">
+    <link rel="stylesheet" type="text/css" href="style/time.css">
 
     <link rel="icon" href="favicon.png">
 
@@ -14,8 +14,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="blank" />
     <meta name="HandheldFriendly" content="true">
-    <!-- <meta name="screen-orientation" content="portrait">
-    <meta name="x5-orientation" content="portrait"> -->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
     <meta name="full-screen" content="no">
     <meta name="x5-fullscreen" content="true">
     <meta name="browsermode" content="application">
@@ -24,16 +24,22 @@
 </head>
 
 <body unresolved>
-    <form action="" class="form">
+    <form class="form">
         <div class="form-box">
         <input type="text" placeholder="Search..." list="key">
         <datalist id="key"></datalist>
-        <button type="reset">&times;</button>
+        <button type="reset"><i class="fa fa-times"></i></button>
         <div class="search-by"></div>
         </div>
     </form>
     <div class="output">
-        <div class="inner">
+        <div class="section">
+            <div class="inner">
+                <span id="output"></span>
+            </div> 
+        </div>
+        <div class="section">
+            <div class="inner">
             <div class="item">
                 <div class="clock y-time">
                     <label>时间</label><span class="num">00:00</span>
@@ -46,13 +52,20 @@
                     <span class="unix">0000000000</span>
                 </div>
             </div>
+            </div>
+        </div>
+    </div>
+    <div class="ctrl">
+        <div class="item">
+            <span class="file-upload" tabindex="0"><label for="InputFile"><i class="fa fa-upload"></i>上传图片</label><input type="file" id="InputFile" tab-index="-1"></span>
         </div>
     </div>
     <div class="mask"></div>
-    <div class="bg-layer" style="background-image: url()"></div>
-    <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="jquery.touchSwipe.min.js"></script>
-    <script type="text/javascript" src="time.js"></script>
+    <div class="bg-layer changing"></div>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>
+    <script type="text/javascript" src="js/changebg.js"></script>
+    <script type="text/javascript" src="js/time.js"></script>
 </body>
 
 </html>

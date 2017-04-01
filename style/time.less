@@ -4,7 +4,11 @@
 
 @import (reference) 'http://localhost/bootbox/less/variable';
 @import (reference)  "http://localhost/bootbox/less/mixin";
-@import "http://localhost/bootbox/less/brand-color";
+@import (reference) "http://localhost/bootbox/less/brand-color";
+@import (reference) "http://localhost/bootbox/less/base";
+
+@import "http://localhost/bootbox/font-awesome-less/font-awesome";
+
 
 //@img-path  : '../Pictures/';
 
@@ -19,17 +23,21 @@ html,body {
     color: #fff;
     font-family: 'Robot',"Consolas","Microsoft Yahei",Arial,monospace;
     .transition(opacity ease-in 0.5s);
+    font-size:12px;
 }
+
+
+
 
 body[unresolved]{
     opacity: 0;
     background: #333 url(favicon.png) no-repeat center;
     .background-size(50%);
 
-    .bg-layer{
-        opacity: 0;
-        .scale3d(0.9,0.9,0);
-    }
+    // .bg-layer{
+    //     opacity: 0;
+    //     .scale3d(0.9,0.9,0);
+    // }
 }
 
     .bg-layer{
@@ -42,7 +50,18 @@ body[unresolved]{
         background-repeat: no-repeat;
         background-position: top center;
         .background-size(cover);
-        .transition(transform 0.8s ease-in 0.5s,opacity 0.5s ease-in 0.8s);
+        .transition(transform 0.8s ease-in,opacity 0.5s ease-in ,box-shadow 0.8s ease-in);
+        
+
+        .edit &{
+            .scale3d(0.8,0.8,1);
+            .box-shadow(0 0 30px rgba(0,0,0,.3));
+        }
+
+        &.changing{
+            opacity: 0;
+            .scale3d(0.9,0.9,0);
+        }
     }
     
     .output {
@@ -51,12 +70,23 @@ body[unresolved]{
         height: 100%;
         position: relative;
         z-index:10;
-    
+        padding: 2em 0;
+        .transition(all 0.5s ease-out);
+
+        .edit &{
+            opacity:0;
+            visibility:hidden;
+        }
+        
+        .section{
+            display: table-row;
+            height:100%;
+        }
         .inner {
             display: table-cell;
             text-align: center;
-            vertical-align: bottom;
-            padding-bottom: 2em;
+            vertical-align: middle;
+            // padding-bottom: 2em;
             
         }
         .line{
@@ -85,7 +115,7 @@ body[unresolved]{
 
             &.y-time{
                 .num{
-                    font-size:4em;
+                    font-size:4.5em;
                 }
 
             }
@@ -103,7 +133,7 @@ body[unresolved]{
                 // bottom: 100%;
                 display: inline-block;
                 white-space: nowrap;
-                font-size: 0.8em;
+                font-size: 1em;
                 user-select: none;
                 margin-bottom: 10px;
                 opacity: 0.8;
@@ -187,7 +217,7 @@ body[unresolved]{
                 background-color:rgba(255,255,255,0.8);
             }
             &:active{
-                .scale3d(0.8,0.8,0);
+                .scale3d(0.8,0.8,1);
             }
         }
     
@@ -247,3 +277,52 @@ body[unresolved]{
             height:50%;
         }
     }
+
+    .ctrl{
+        position: absolute;
+        bottom:0;
+        left:0;
+        right:0;
+        // display:table;
+        z-index:3;
+        width:100%;
+        height:0;
+        visibility:hidden;
+        overflow: hidden;
+        opacity:0;
+        // padding-bottom: 2em;
+        // .translate3d(0,100%,0);
+        .transition(all 0.4s);
+
+        .item{
+            // display:table-cell;
+            // vertical-align:middle;
+            text-align: center;
+            font-size:1em;
+            height:4em;
+
+
+
+            i{
+                pointer-events: none;
+                .size(2em);
+                display: block;
+                background: #fff;
+                color:rgba(0,0,0,.87);
+                text-align: center;
+                .border-radius(50%);
+                line-height:2em;
+                margin:0 auto .5em;
+            }
+        }
+
+        .edit &{
+            // .translate3d(0,0,0);
+            height:10%;
+            visibility:visible;
+            opacity:1;
+        }
+
+    }
+
+@import 'upload';

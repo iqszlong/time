@@ -1,26 +1,24 @@
 var time = {
-    t:'',
-    keys:[],
-    tapClass : 'get-form',
+    t: '',
+    keys: [],
+    output: $('#output'),
+    editClass:'edit',
+    tapClass: 'get-form',
     tipClass: 'show-tip',
-    postBox : $('.form').find('input'),
-    searchTip : $('.form').find('.search-by'),
-    sIndex : 0,
-    reg : /((https|http|ftp|rtsp|mms):\/\/)?(([0-9a-z_!~*'().&=+$%-]+:)?[0-9a-z_!~*'().&=+$%-]+@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+\.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+\/?)/g,
-    searchBy : [
-        {
-            "name":"baidu",
-            "surl":"https://www.baidu.com/s?word="
-        },
-        {
-            "name":"google",
-            "surl":"https://www.google.com/search?q="
-        },
-        {
-            "name":"bing",
-            "surl":"https://www.bing.com/search?q="
-        }
-    ],
+    postBox: $('.form').find('input'),
+    searchTip: $('.form').find('.search-by'),
+    sIndex: 0,
+    reg: /((https|http|ftp|rtsp|mms):\/\/)?(([0-9a-z_!~*'().&=+$%-]+:)?[0-9a-z_!~*'().&=+$%-]+@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+\.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+\/?)/g,
+    searchBy: [{
+        "name": "baidu",
+        "surl": "https://www.baidu.com/s?word="
+    }, {
+        "name": "google",
+        "surl": "https://www.google.com/search?q="
+    }, {
+        "name": "bing",
+        "surl": "https://www.bing.com/search?q="
+    }],
 
     _timeUix: function(d) {
         var unixTimestamp = new Date(d * 1000);
@@ -29,7 +27,7 @@ var time = {
     },
 
     settime: function() {
-    	var _self = this;
+        var _self = this;
         var time = Math.round(new Date().getTime() / 1000),
             h = Math.round(new Date().getHours()).toString(),
             m = Math.round(new Date().getMinutes()).toString(),
@@ -85,15 +83,16 @@ var time = {
         }, leaveSeconds);
 
     },
-    reUrlcode:function(url,type,i){
+    reUrlcode: function(url, type, i) {
         var _self = this;
         var _by = _self.searchBy[i].surl;
-        switch(type){
+        switch (type) {
             case 'key':
                 url = _by + url;
                 return url;
                 break;
-            default:  return url;
+            default:
+                return url;
         }
     },
     // IsURL:function(str_url){
@@ -115,32 +114,32 @@ var time = {
     //         return (false);
     //     }
     // },
-    saveKey:function(key){
-        localStorage.setItem('keys',key);
+    saveKey: function(key) {
+        localStorage.setItem('keys', key);
 
         // console.log(localStorage.keys);
     },
-    uniqueArray:function(arr){
+    uniqueArray: function(arr) {
         var result = [];
         var hash = {};
         for (var i = 0; i < arr.length; i++) {
             var item = arr[i];
             var key = typeof(item) + item;
-            if(hash[key]!==1){
+            if (hash[key] !== 1) {
                 result.push(item);
-                hash[key] =1;
+                hash[key] = 1;
             }
         }
         return result;
         //return Array.form(new Set(arr));
     },
-    formSet:function(){
+    formSet: function() {
         var _self = this;
-        $('.form').on('click',function(e){
+        $('.form').on('click', function(e) {
             _self.postBox.focus();
-            //e.stopPropagation();
+            e.stopPropagation();
             //e.preventDefault();
-        }).submit(function(){
+        }).submit(function() {
             var target = $(this).find('input');
             var toUrl = $.trim(target.val()).toLowerCase();
             var httpStr = 'http://';
@@ -150,23 +149,23 @@ var time = {
             var type = '';
 
 
-            if(toUrl =='') return false;
+            if (toUrl == '') return false;
 
             _self.keys.push(toUrl);
             _self.keys = _self.uniqueArray(_self.keys);
 
-            if(_self.reg.test(toUrl)){
+            if (_self.reg.test(toUrl)) {
                 type = 'web';
-                if(toUrl.indexOf(fileStr) == -1){
-                    toUrl = toUrl.replace(_self.reg,function(a,b){
+                if (toUrl.indexOf(fileStr) == -1) {
+                    toUrl = toUrl.replace(_self.reg, function(a, b) {
                         return (b ? "" : httpStr) + a;
                     });
                 }
-            }else{
+            } else {
                 type = 'key';
             }
 
-            
+
 
             //console.log(_self.keys);
 
@@ -179,59 +178,59 @@ var time = {
             // if(type == 'web'){
             //     toUrl = toUrl.indexOf(httpStr) == -1 && toUrl.indexOf(fileStr) == -1 ? httpStr+toUrl : toUrl;
             // }
-            
-            
 
-            toUrl = _self.reUrlcode(toUrl,type,_self.sIndex);
+
+
+            toUrl = _self.reUrlcode(toUrl, type, _self.sIndex);
 
             //console.log(type+'-----'+toUrl);
             //console.log(_self.keys);
-            window.location.href=toUrl;
+            window.location.href = toUrl;
             target.val('');
             _self.saveKey(JSON.stringify(_self.keys));
             return false;
         }).swipe({
-            swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
-                if(direction =='left'){
-                    if(_self.sIndex < _self.searchBy.length -1){
+            swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
+                if (direction == 'left') {
+                    if (_self.sIndex < _self.searchBy.length - 1) {
                         _self.sIndex++;
-                    }else{
+                    } else {
                         _self.sIndex = 0;
                     }
                 }
-                if(direction =='right'){
-                    if(_self.sIndex <= 0 ){
-                        _self.sIndex = _self.searchBy.length -1;
-                    }else{
+                if (direction == 'right') {
+                    if (_self.sIndex <= 0) {
+                        _self.sIndex = _self.searchBy.length - 1;
+                    } else {
                         _self.sIndex--;
                     }
                 }
 
-                if(direction =='left' || direction =='right'){
+                if (direction == 'left' || direction == 'right') {
 
                     // console.log(_self.searchBy[_self.sIndex].name);
                     var _name = _self.searchBy[_self.sIndex].name;
-                    _self.searchTip.text(_name).removeClass().addClass('search-by '+_name);
+                    _self.searchTip.text(_name).removeClass().addClass('search-by ' + _name);
 
-                    if(_self.t != ''){
+                    if (_self.t != '') {
                         clearTimeout(_self.t);
                     }
 
-                    if(!$("html").hasClass(_self.tipClass)){
+                    if (!$("html").hasClass(_self.tipClass)) {
                         $("html").addClass(_self.tipClass);
                     }
 
-                    _self.t = setTimeout(function(){
+                    _self.t = setTimeout(function() {
                         clearTimeout(_self.t);
                         $("html").removeClass(_self.tipClass);
-                    },2000);
+                    }, 2000);
                 }
             }
         });
     },
-    bodySet:function(){
+    bodySet: function() {
         var _self = this;
-        window.onload = function(){
+        window.onload = function() {
             $("body").removeAttr('unresolved');
         }
         $("body").swipe({
@@ -244,33 +243,88 @@ var time = {
                     $(this).addClass(_self.tapClass);
                     _self.postBox.focus();
                 } 
-            }
+            },
+            // swipeStatus: function(event, phase, direction, distance,duration) {
+            //     // var str = "";
+            //     // if (phase == "move") {
+            //     //     str = "You have moved " + distance + " pixels, past 200 and the handler will fire";
+            //     // }
+            //     if (phase == "end") {
+            //         // str = "Handler fired, you swiped " + direction;
+            //         if (direction == 'up' && !$(this).hasClass(_self.tipClass)) {
+            //             // $(this).removeClass(_self.tapClass);
+            //             // _self.postBox.blur();
+                        
+            //             if($(this).hasClass(_self.editClass)){
+            //                 $(this).removeClass(_self.editClass);
+            //             }else{
+            //                 $(this).addClass(_self.editClass);
+            //             }
+            //         }
+            //         // if (direction == 'down') {
+            //         //     $(this).addClass(_self.tapClass);
+            //         //     _self.postBox.focus();
+            //         // }
+            //     }
+                
+                   
+                
+
+
+            //     // _self.output.text(str);
+            // },
+            // hold:function(event, target) {
+            //     if($(this).hasClass(_self.editClass)){
+            //         $(this).removeClass(_self.editClass);
+            //     }else{
+            //         $(this).addClass(_self.editClass);
+            //     }      
+            // },
+            // triggerOnTouchEnd: false,
+            // threshold: 200
+            // ,
+            // maxTimeThreshold:5000
+        })
+        .on('click',function(){
+             // if( new Date().getTime() - touchtime < 500 ){
+                if($(this).hasClass(_self.editClass)){
+                    $(this).removeClass(_self.editClass);
+                }else{
+                    $(this).addClass(_self.editClass);
+                }
+            // console.log("dblclick");
+            // }else{
+                // touchtime = new Date().getTime();
+                // console.log("click")
+            // }
+            
         });
     },
-    addKeylist:function(){
+    addKeylist: function() {
         var _self = this;
         var _searchKey = JSON.parse(localStorage.getItem('keys'));
         var _keyItemhtml = '<option></option>';
         var _keyItem = '';
-                    
-        for(var i=0;i<_searchKey.length;i++){
+
+        for (var i = 0; i < _searchKey.length; i++) {
             // console.log(_searchKey[i]);
             _keyItem += $(_keyItemhtml).val(_searchKey[i]).prop('outerHTML');
         }
         //console.log(_keyItem);
-        if($('#key').children().size()<=0) $('#key').html(_keyItem);
+        if ($('#key').children().size() <= 0) $('#key').html(_keyItem);
     },
-    postBoxinput:function(){
+    postBoxinput: function() {
         var _self = this;
-        _self.postBox.on('keyup',function(){
+        _self.postBox.on('keyup', function() {
             _self.addKeylist();
         });
     },
-    init:function(){
-    	this.settime();
+    init: function() {
+        this.settime();
         this.formSet();
         this.bodySet();
         this.postBoxinput();
+        
     }
 
 
