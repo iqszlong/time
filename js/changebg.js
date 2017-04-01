@@ -1,6 +1,9 @@
 var changeBg = {
     showLog : false,
 	bgLayer:$('.bg-layer'),
+    bgCode:localStorage.getItem('bg'),
+    changeClass:'changing',
+    loadClass:'onload',
     output :$('#output'),
     readFile: function(e) {
     	var _self =this;
@@ -36,7 +39,7 @@ var changeBg = {
         }
 
         // console.info(_name);
-        _self.output.text(_name);
+        // _self.output.text(_name);
     },
     setEvent: function() {
         var _self = this;
@@ -53,7 +56,7 @@ var changeBg = {
             	fileInput.blur();
             });
             fileInput.on('change', function(e) {
-            	// _self.bgLayer.addClass('changing');
+            	_self.bgLayer.addClass(_self.changeClass);
                 _self.chageName(e);
                 if (typeof FileReader != 'undefined') {
                     _self.readFile(e);
@@ -68,26 +71,25 @@ var changeBg = {
     },
     setBg:function(code){
         var _self = this;
-        var _anTime = 1300;
+        var _anTime = 500;
         var _cssCode = 'url({BGIMG})';
             _cssCode = _cssCode.replace(/{BGIMG}/,code);
         var _t = setTimeout(function(){
+            if(_self.bgLayer.hasClass(_self.loadClass) && code != '') _self.bgLayer.removeClass(_self.loadClass);
+            if(_self.bgLayer.hasClass(_self.changeClass)) _self.bgLayer.removeClass(_self.changeClass);
+            _self.bgLayer.css('background-image',_cssCode);
             clearTimeout(_t);
-            _self.bgLayer.removeClass('changing').css('background-image',_cssCode);
         },_anTime);
     },
     getBg:function(){
         var _self = this;
-        var _bgCode = localStorage.getItem('bg');
-        if(_bgCode){
-            _self.setBg(_bgCode);
+        if(_self.bgCode){
+            _self.setBg(_self.bgCode);
         }
     },
     init: function() {
         this.setEvent();
         this.getBg();
-        // var style = this.bgLayer.attr('style');
-        // this.bgLayer.attr('style',style.replace(/{BGIMG}/,''));
     }
 }
 changeBg.init();

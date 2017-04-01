@@ -1,8 +1,9 @@
 var time = {
     t: '',
+    wait: '',
     keys: [],
     output: $('#output'),
-    editClass:'edit',
+    editClass: 'edit',
     tapClass: 'get-form',
     tipClass: 'show-tip',
     postBox: $('.form').find('input'),
@@ -230,75 +231,42 @@ var time = {
     },
     bodySet: function() {
         var _self = this;
+
         window.onload = function() {
             $("body").removeAttr('unresolved');
         }
         $("body").swipe({
-            swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
-                if(direction =='up'){
-                    $(this).removeClass(_self.tapClass);
-                    _self.postBox.blur();
+                swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
+                    if (direction == 'up') {
+                        $(this).removeClass(_self.tapClass);
+                        _self.postBox.blur();
+                    }
+                    if (direction == 'down') {
+                        $(this).addClass(_self.tapClass);
+                        _self.postBox.focus();
+                    }
                 }
-                if(direction =='down'){
-                    $(this).addClass(_self.tapClass);
-                    _self.postBox.focus();
-                } 
-            },
-            // swipeStatus: function(event, phase, direction, distance,duration) {
-            //     // var str = "";
-            //     // if (phase == "move") {
-            //     //     str = "You have moved " + distance + " pixels, past 200 and the handler will fire";
-            //     // }
-            //     if (phase == "end") {
-            //         // str = "Handler fired, you swiped " + direction;
-            //         if (direction == 'up' && !$(this).hasClass(_self.tipClass)) {
-            //             // $(this).removeClass(_self.tapClass);
-            //             // _self.postBox.blur();
-                        
-            //             if($(this).hasClass(_self.editClass)){
-            //                 $(this).removeClass(_self.editClass);
-            //             }else{
-            //                 $(this).addClass(_self.editClass);
-            //             }
-            //         }
-            //         // if (direction == 'down') {
-            //         //     $(this).addClass(_self.tapClass);
-            //         //     _self.postBox.focus();
-            //         // }
-            //     }
-                
-                   
-                
 
+            })
+            .on({
 
-            //     // _self.output.text(str);
-            // },
-            // hold:function(event, target) {
-            //     if($(this).hasClass(_self.editClass)){
-            //         $(this).removeClass(_self.editClass);
-            //     }else{
-            //         $(this).addClass(_self.editClass);
-            //     }      
-            // },
-            // triggerOnTouchEnd: false,
-            // threshold: 200
-            // ,
-            // maxTimeThreshold:5000
-        })
-        .on('click',function(){
-             // if( new Date().getTime() - touchtime < 500 ){
-                if($(this).hasClass(_self.editClass)){
-                    $(this).removeClass(_self.editClass);
-                }else{
-                    $(this).addClass(_self.editClass);
+                mousedown: function() {
+                    var _target = $(this);
+                    _self.wait = setTimeout(function() {
+                        if (_target.hasClass(_self.editClass)) {
+                            _target.removeClass(_self.editClass);
+                        } else {
+                            if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
+                            _target.addClass(_self.editClass);
+                        }
+                    }, 500);
+                },
+                mouseup: function() {
+                    if (_self.wait != '') clearTimeout(_self.wait);
                 }
-            // console.log("dblclick");
-            // }else{
-                // touchtime = new Date().getTime();
-                // console.log("click")
-            // }
-            
-        });
+
+            });
+
     },
     addKeylist: function() {
         var _self = this;
@@ -324,7 +292,7 @@ var time = {
         this.formSet();
         this.bodySet();
         this.postBoxinput();
-        
+
     }
 
 

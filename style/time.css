@@ -2355,11 +2355,7 @@ body {
 }
 body[unresolved] {
   opacity: 0;
-  background: #333333 url(favicon.png) no-repeat center;
-  -moz-background-size: 50%;
-  -webkit-background-size: 50%;
-  -o-background-size: 50%;
-  background-size: 50%;
+  background: #333;
 }
 .bg-layer {
   position: absolute;
@@ -2368,6 +2364,7 @@ body[unresolved] {
   height: 100%;
   top: 0;
   left: 0;
+  background-image: url(../favicon.png);
   background-color: #000;
   background-repeat: no-repeat;
   background-position: top center;
@@ -2375,22 +2372,37 @@ body[unresolved] {
   -webkit-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  -webkit-transition: transform 0.8s ease-in, opacity 0.5s ease-in, box-shadow 0.8s ease-in;
-  -moz-transition: transform 0.8s ease-in, opacity 0.5s ease-in, box-shadow 0.8s ease-in;
-  -o-transition: transform 0.8s ease-in, opacity 0.5s ease-in, box-shadow 0.8s ease-in;
-  transition: transform 0.8s ease-in, opacity 0.5s ease-in, box-shadow 0.8s ease-in;
+  -webkit-transition: transform 0.5s ease-in,opacity 0.5s,box-shadow 0.4s,border-radius 1s;
+  -o-transition: transform 0.5s ease-in,opacity 0.5s,box-shadow 0.4s,border-radius 1s;
+  transition: transform 0.5s ease-in,opacity 0.5s,box-shadow 0.4s,border-radius 1s;
 }
-.edit .bg-layer {
-  -webkit-transform: scale3d(0.8, 0.8, 1);
-  transform: scale3d(0.8, 0.8, 1);
-  -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+.edit .bg-layer,
+.edit .bg-layer.onload {
+  opacity: 1;
+  -webkit-transform: scale3d(0.85, 0.85, 1);
+  transform: scale3d(0.85, 0.85, 1);
+  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+.bg-layer.onload {
+  opacity: 0;
+  -webkit-transform: scale3d(0.85, 0.85, 0);
+  transform: scale3d(0.85, 0.85, 0);
+  -moz-background-size: 50%;
+  -webkit-background-size: 50%;
+  -o-background-size: 50%;
+  background-size: 50%;
+  background-position: center;
 }
 .bg-layer.changing {
   opacity: 0;
-  -webkit-transform: scale3d(0.9, 0.9, 0);
-  transform: scale3d(0.9, 0.9, 0);
 }
 .output {
   display: table;

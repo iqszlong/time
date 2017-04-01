@@ -8,6 +8,9 @@ js/time.js
 js/changebg.js
 style/time.css
 time.html
+fonts/fontawesome-webfont.woff2
+fonts/fontawesome-webfont.woff
+fonts/fontawesome-webfont.ttf
 
 #NETWORK:
 #*

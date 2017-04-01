@@ -1,13 +1,13 @@
-@import (reference) 'http://localhost/bootbox/bootstrap-less/variables';
-@import (reference) 'http://localhost/bootbox/bootstrap-less/mixins';
-@import (reference)  "http://localhost/bootbox/bootstrap-less/buttons";
+@import (reference) 'http://localhost:8077/bootbox/bootstrap-less/variables';
+@import (reference) 'http://localhost:8077/bootbox/bootstrap-less/mixins';
+@import (reference)  "http://localhost:8077/bootbox/bootstrap-less/buttons";
 
-@import (reference) 'http://localhost/bootbox/less/variable';
-@import (reference)  "http://localhost/bootbox/less/mixin";
-@import (reference) "http://localhost/bootbox/less/brand-color";
-@import (reference) "http://localhost/bootbox/less/base";
+@import (reference) 'http://localhost:8077/bootbox/less/variable';
+@import (reference)  "http://localhost:8077/bootbox/less/mixin";
+@import (reference) "http://localhost:8077/bootbox/less/brand-color";
+@import (reference) "http://localhost:8077/bootbox/less/base";
 
-@import "http://localhost/bootbox/font-awesome-less/font-awesome";
+@import "http://localhost:8077/bootbox/font-awesome-less/font-awesome";
 
 
 //@img-path  : '../Pictures/';
@@ -31,8 +31,7 @@ html,body {
 
 body[unresolved]{
     opacity: 0;
-    background: #333 url(favicon.png) no-repeat center;
-    .background-size(50%);
+    background: #333;
 
     // .bg-layer{
     //     opacity: 0;
@@ -46,21 +45,32 @@ body[unresolved]{
         .size(100%);
         top:0;
         left:0;
+        background-image:url(../favicon.png);
         background-color:#000;
         background-repeat: no-repeat;
         background-position: top center;
         .background-size(cover);
-        .transition(transform 0.8s ease-in,opacity 0.5s ease-in ,box-shadow 0.8s ease-in);
+        .transition(~'transform 0.5s ease-in,opacity 0.5s,box-shadow 0.4s,border-radius 1s');
         
 
         .edit &{
-            .scale3d(0.8,0.8,1);
-            .box-shadow(0 0 30px rgba(0,0,0,.3));
+            &,&.onload{
+                opacity:1;
+                .scale3d(0.85,0.85,1);
+                .box-shadow(0 10px 30px rgba(0,0,0,.3));
+                .border-radius(5px);
+            }
+        }
+        
+        &.onload{
+            opacity: 0;
+            .scale3d(0.85,0.85,0);
+            .background-size(50%);
+            background-position: center;
         }
 
         &.changing{
             opacity: 0;
-            .scale3d(0.9,0.9,0);
         }
     }
     
