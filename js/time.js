@@ -236,7 +236,7 @@ var time = {
             $("body").removeAttr('unresolved');
         }
         $("body").swipe({
-                swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
+                swipeStatus: function(event, phase, direction, distance, duration, fingers, fingerData, currentDirectio) {
                     if (direction == 'up') {
                         $(this).removeClass(_self.tapClass);
                         _self.postBox.blur();
@@ -245,27 +245,45 @@ var time = {
                         $(this).addClass(_self.tapClass);
                         _self.postBox.focus();
                     }
+
+                    if(phase == 'start'){
+                        var _target = $(this);
+                        _self.wait = setTimeout(function() {
+                            if (_target.hasClass(_self.editClass)) {
+                                _target.removeClass(_self.editClass);
+                            } else {
+                                if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
+                                _target.addClass(_self.editClass);
+                            }
+                            clearTimeout(_self.wait);
+                        }, 300);
+
+                    }
+
+                    if(phase == 'move' || phase == 'cancel'){
+                        clearTimeout(_self.wait);
+                    } 
                 }
 
             })
-            .on({
+            // .on({
 
-                mousedown: function() {
-                    var _target = $(this);
-                    _self.wait = setTimeout(function() {
-                        if (_target.hasClass(_self.editClass)) {
-                            _target.removeClass(_self.editClass);
-                        } else {
-                            if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
-                            _target.addClass(_self.editClass);
-                        }
-                    }, 500);
-                },
-                mouseup: function() {
-                    if (_self.wait != '') clearTimeout(_self.wait);
-                }
+            //     mousedown: function() {
+            //         var _target = $(this);
+            //         _self.wait = setTimeout(function() {
+            //             if (_target.hasClass(_self.editClass)) {
+            //                 _target.removeClass(_self.editClass);
+            //             } else {
+            //                 if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
+            //                 _target.addClass(_self.editClass);
+            //             }
+            //         }, 500);
+            //     },
+            //     mouseup: function() {
+            //         if (_self.wait != '') clearTimeout(_self.wait);
+            //     }
 
-            });
+            // });
 
     },
     addKeylist: function() {
