@@ -1,6 +1,7 @@
 var changeBg = {
     showLog : false,
 	bgLayer:$('.bg-layer'),
+    maskLayer:$('.mask .inner'),
     bgCode:localStorage.getItem('bg'),
     changeClass:'changing',
     loadClass:'onload',
@@ -78,13 +79,14 @@ var changeBg = {
             if(_self.bgLayer.hasClass(_self.loadClass) && code != '') _self.bgLayer.removeClass(_self.loadClass);
             if(_self.bgLayer.hasClass(_self.changeClass)) _self.bgLayer.removeClass(_self.changeClass);
             _self.bgLayer.css('background-image',_cssCode);
+            _self.maskLayer.css('background-image',_cssCode);
             clearTimeout(_t);
         },_anTime);
     },
     getBg:function(){
         var _self = this;
         if(_self.bgCode){
-            _self.setBg(_self.bgCode);
+            _self.setBg( _self.bgCode);
         }
     },
     init: function() {

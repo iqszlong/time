@@ -2,15 +2,16 @@ CACHE MANIFEST
 # v0.0.1
 
 CACHE:
+favicon.png
 js/jquery.min.js
 js/jquery.touchSwipe.min.js
 js/time.js
 js/changebg.js
 style/time.css
 time.html
-fonts/fontawesome-webfont.woff2
-fonts/fontawesome-webfont.woff
-fonts/fontawesome-webfont.ttf
+fonts/fontawesome-webfont.woff2?v=4.7.0
+fonts/fontawesome-webfont.woff?v=4.7.0
+fonts/fontawesome-webfont.ttf?v=4.7.0
 
 #NETWORK:
 #*

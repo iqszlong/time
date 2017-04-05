@@ -4,8 +4,10 @@ var time = {
     keys: [],
     output: $('#output'),
     editClass: 'edit',
-    tapClass: 'get-form',
-    tipClass: 'show-tip',
+    editWaitTime: 300,
+    showFormClass: 'get-form',
+    showTipClass: 'show-tip',
+    tipWaitTime:2000,
     postBox: $('.form').find('input'),
     searchTip: $('.form').find('.search-by'),
     sIndex: 0,
@@ -217,14 +219,14 @@ var time = {
                         clearTimeout(_self.t);
                     }
 
-                    if (!$("html").hasClass(_self.tipClass)) {
-                        $("html").addClass(_self.tipClass);
+                    if (!$("html").hasClass(_self.showTipClass)) {
+                        $("html").addClass(_self.showTipClass);
                     }
 
                     _self.t = setTimeout(function() {
                         clearTimeout(_self.t);
-                        $("html").removeClass(_self.tipClass);
-                    }, 2000);
+                        $("html").removeClass(_self.showTipClass);
+                    }, _self.tipWaitTime);
                 }
             }
         });
@@ -238,11 +240,11 @@ var time = {
         $("body").swipe({
                 swipeStatus: function(event, phase, direction, distance, duration, fingers, fingerData, currentDirectio) {
                     if (direction == 'up') {
-                        $(this).removeClass(_self.tapClass);
+                        $(this).removeClass(_self.showFormClass);
                         _self.postBox.blur();
                     }
                     if (direction == 'down') {
-                        $(this).addClass(_self.tapClass);
+                        $(this).addClass(_self.showFormClass);
                         _self.postBox.focus();
                     }
 
@@ -256,34 +258,21 @@ var time = {
                                 _target.addClass(_self.editClass);
                             }
                             clearTimeout(_self.wait);
-                        }, 300);
+                        }, _self.editWaitTime);
 
                     }
 
                     if(phase == 'move' || phase == 'cancel'){
                         clearTimeout(_self.wait);
-                    } 
+                    }
+
+                    //console.log(event.target.className);
+                    if(event.target.className == 'unix' || event.target.className == 'num'){
+                        clearTimeout(_self.wait);
+                    }
                 }
 
             })
-            // .on({
-
-            //     mousedown: function() {
-            //         var _target = $(this);
-            //         _self.wait = setTimeout(function() {
-            //             if (_target.hasClass(_self.editClass)) {
-            //                 _target.removeClass(_self.editClass);
-            //             } else {
-            //                 if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
-            //                 _target.addClass(_self.editClass);
-            //             }
-            //         }, 500);
-            //     },
-            //     mouseup: function() {
-            //         if (_self.wait != '') clearTimeout(_self.wait);
-            //     }
-
-            // });
 
     },
     addKeylist: function() {
@@ -291,19 +280,22 @@ var time = {
         var _searchKey = JSON.parse(localStorage.getItem('keys'));
         var _keyItemhtml = '<option></option>';
         var _keyItem = '';
-
-        for (var i = 0; i < _searchKey.length; i++) {
-            // console.log(_searchKey[i]);
-            _keyItem += $(_keyItemhtml).val(_searchKey[i]).prop('outerHTML');
+        //console.log(_searchKey);
+        if(_searchKey !== null){
+            for (var i = 0; i < _searchKey.length; i++) {
+                // console.log(_searchKey[i]);
+                _keyItem += $(_keyItemhtml).val(_searchKey[i]).prop('outerHTML');
+            }
+            $('#key').html(_keyItem);
         }
-        //console.log(_keyItem);
-        if ($('#key').children().size() <= 0) $('#key').html(_keyItem);
+        
+        // if ($('#key').children().size() <= 0) $('#key').html(_keyItem);
     },
     postBoxinput: function() {
         var _self = this;
-        _self.postBox.on('keyup', function() {
+        // _self.postBox.on('keyup', function() {
             _self.addKeylist();
-        });
+        // });
     },
     init: function() {
         this.settime();
