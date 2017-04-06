@@ -1,6 +1,6 @@
 var time = {
-    t: '',
-    wait: '',
+    tipWait: '',
+    editWait: '',
     keys: [],
     output: $('#output'),
     editClass: 'edit',
@@ -172,16 +172,6 @@ var time = {
 
             //console.log(_self.keys);
 
-            // if(frist > -1 || last > -1){
-            //     type = 'web';
-            // }else{
-            //     type = 'key';
-            // }
-
-            // if(type == 'web'){
-            //     toUrl = toUrl.indexOf(httpStr) == -1 && toUrl.indexOf(fileStr) == -1 ? httpStr+toUrl : toUrl;
-            // }
-
 
 
             toUrl = _self.reUrlcode(toUrl, type, _self.sIndex);
@@ -215,17 +205,17 @@ var time = {
                     var _name = _self.searchBy[_self.sIndex].name;
                     _self.searchTip.text(_name).removeClass().addClass('search-by ' + _name);
 
-                    if (_self.t != '') {
-                        clearTimeout(_self.t);
+                    if (_self.tipWait != '') {
+                        clearTimeout(_self.tipWait);
                     }
 
                     if (!$("html").hasClass(_self.showTipClass)) {
                         $("html").addClass(_self.showTipClass);
                     }
 
-                    _self.t = setTimeout(function() {
-                        clearTimeout(_self.t);
+                    _self.tipWait = setTimeout(function() {
                         $("html").removeClass(_self.showTipClass);
+                        clearTimeout(_self.tipWait);
                     }, _self.tipWaitTime);
                 }
             }
@@ -249,30 +239,28 @@ var time = {
                     }
 
                     if(phase == 'start'){
-                        var _target = $(this);
-                        _self.wait = setTimeout(function() {
-                            if (_target.hasClass(_self.editClass)) {
-                                _target.removeClass(_self.editClass);
-                            } else {
-                                if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
-                                _target.addClass(_self.editClass);
-                            }
-                            clearTimeout(_self.wait);
-                        }, _self.editWaitTime);
-
+                        _self.editMode($(this))
                     }
 
                     if(phase == 'move' || phase == 'cancel'){
-                        clearTimeout(_self.wait);
+                        clearTimeout(_self.editWait);
                     }
 
                     //console.log(event.target.className);
                     if(event.target.className == 'unix' || event.target.className == 'num'){
-                        clearTimeout(_self.wait);
+                        clearTimeout(_self.editWait);
                     }
                 }
 
             })
+            // .on({
+            //     mousedown:function(){
+            //         _self.editMode($(this));
+            //     },
+            //     mouseup:function(){
+            //         clearTimeout(_self.editWait);
+            //     }
+            // })
 
     },
     addKeylist: function() {
@@ -296,6 +284,18 @@ var time = {
         // _self.postBox.on('keyup', function() {
             _self.addKeylist();
         // });
+    },
+    editMode:function(obj){
+        var _self = this;
+        _self.editWait = setTimeout(function() {
+            if (obj.hasClass(_self.editClass)) {
+                obj.removeClass(_self.editClass);
+            } else {
+                if(changeBg.bgCode != null) changeBg.bgLayer.removeClass(changeBg.loadClass);
+                obj.addClass(_self.editClass);
+            }
+            clearTimeout(_self.editWait);
+        }, _self.editWaitTime);
     },
     init: function() {
         this.settime();

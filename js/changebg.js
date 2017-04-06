@@ -1,22 +1,22 @@
 var changeBg = {
-    showLog : false,
 	bgLayer:$('.bg-layer'),
     maskLayer:$('.mask .inner'),
     bgCode:localStorage.getItem('bg'),
     changeClass:'changing',
     loadClass:'onload',
-    output :$('#output'),
+    //output :$('#output'),
     readFile: function(e) {
     	var _self =this;
         var obj = e.target;
-        var output = $(obj).prev('label');
+        // var output = $(obj).prev('label');
         //console.info(e.target);
         var _file = obj.files[0];
 
         var _imgRex = /image\/\w+/;
 
         if (!_imgRex.test(_file.type)) {
-            _self.output.text('请上传图片文件');
+            // _self.output.text('请上传图片文件');
+            notice.sendNotification('请上传图片文件', {icon: notice.icon});
             return false;
         }
 
@@ -24,6 +24,8 @@ var changeBg = {
         reader.readAsDataURL(_file);
         reader.onload = function(e) {
             // $('#output').text(this.result);
+            _self.bgLayer.addClass(_self.changeClass);
+            
             _self.setBg(this.result);
             localStorage.setItem('bg',this.result);
         }
@@ -48,7 +50,8 @@ var changeBg = {
             var label = $(this).children('label');
             var fileInput = $(this).children('input[type=file]');
             if (!window.FileReader) {
-                _self.output.text('浏览器不支持 FileReader').addClass('disabled');
+                notice.sendNotification('浏览器不支持 FileReader', {icon: notice.icon});
+                label.addClass('disabled');
                 fileInput.attr('disabled', 'disabled');
             }
             $(this).on('focus', function() {
@@ -57,10 +60,9 @@ var changeBg = {
             	fileInput.blur();
             });
             fileInput.on('change', function(e) {
-            	_self.bgLayer.addClass(_self.changeClass);
-                _self.chageName(e);
                 if (typeof FileReader != 'undefined') {
                     _self.readFile(e);
+                    _self.chageName(e);
                 }
                 e.stopPropagation();
             }).on('focus', function() {
