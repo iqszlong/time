@@ -297,12 +297,17 @@ var time = {
             clearTimeout(_self.editWait);
         }, _self.editWaitTime);
     },
+    speech:function(){
+        if (document.createElement('input').webkitSpeech === undefined) {
+          notice.sendNotification("你的浏览器不支持 x-webkit-speech", {icon: notice.icon});
+        }
+    },
     init: function() {
         this.settime();
         this.formSet();
         this.bodySet();
         this.postBoxinput();
-
+        //this.speech();
     }
 
 
