@@ -281,9 +281,9 @@ var time = {
     },
     postBoxinput: function() {
         var _self = this;
-        // _self.postBox.on('keyup', function() {
+        _self.postBox.on('keyup', function() {
             _self.addKeylist();
-        // });
+        });
     },
     editMode:function(obj){
         var _self = this;
