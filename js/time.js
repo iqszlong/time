@@ -147,6 +147,7 @@ var time = {
             var toUrl = $.trim(target.val()).toLowerCase();
             var httpStr = 'http://';
             var fileStr = 'file://';
+            var _searchKey = localStorage.getItem('keys');
             // var frist = toUrl.indexOf('/');
             // var last = toUrl.lastIndexOf('.');
             var type = '';
@@ -154,8 +155,12 @@ var time = {
 
             if (toUrl == '') return false;
 
+            
+            if(_searchKey != '') _self.keys = JSON.parse(_searchKey);
+
             _self.keys.push(toUrl);
             _self.keys = _self.uniqueArray(_self.keys);
+            //alert(_self.keys);
 
             if (_self.reg.test(toUrl)) {
                 type = 'web';
@@ -236,6 +241,7 @@ var time = {
                     if (direction == 'down') {
                         $(this).addClass(_self.showFormClass);
                         _self.postBox.focus();
+                        _self.addKeylist();
                     }
 
                     if(phase == 'start'){
