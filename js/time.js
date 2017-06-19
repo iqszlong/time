@@ -156,7 +156,7 @@ var time = {
             if (toUrl == '') return false;
 
             //alert(_searchKey === null);
-            if(!_searchKey === null || _searchKey != '') _self.keys = JSON.parse(_searchKey);
+            if(!_searchKey === null) _self.keys = JSON.parse(_searchKey);
             
             _self.keys.push(toUrl);
             _self.keys = _self.uniqueArray(_self.keys);
