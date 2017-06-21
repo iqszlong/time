@@ -1,13 +1,13 @@
-@import (reference) 'http://localhost:8077/bootbox/bootstrap-less/variables';
-@import (reference) 'http://localhost:8077/bootbox/bootstrap-less/mixins';
-@import (reference)  "http://localhost:8077/bootbox/bootstrap-less/buttons";
+@import (reference) 'http://localhost:8887/bootbox/bootstrap-less/variables';
+@import (reference) 'http://localhost:8887/bootbox/bootstrap-less/mixins';
+@import (reference)  "http://localhost:8887/bootbox/bootstrap-less/buttons";
 
-@import (reference) 'http://localhost:8077/bootbox/less/variable';
-@import (reference)  "http://localhost:8077/bootbox/less/mixin";
-@import (reference) "http://localhost:8077/bootbox/less/brand-color";
-@import (reference) "http://localhost:8077/bootbox/less/base";
+@import (reference) 'http://localhost:8887/bootbox/less/variable';
+@import (reference)  "http://localhost:8887/bootbox/less/mixin";
+@import (reference) "http://localhost:8887/bootbox/less/brand-color";
+@import (reference) "http://localhost:8887/bootbox/less/base";
 
-@import "http://localhost:8077/bootbox/font-awesome-less/font-awesome";
+@import "http://localhost:8887/bootbox/font-awesome-less/font-awesome";
 
 
 //@img-path  : '../Pictures/';
@@ -56,7 +56,7 @@ body[unresolved]{
         background-position: top center;
         .background-size(cover);
         .transition(~'transform 0.5s ease-in,opacity 0.5s,box-shadow 0.4s,border-radius 1s');
-        
+        .user-cant-select();
 
         .edit &{
             &,&.onload{
@@ -117,6 +117,10 @@ body[unresolved]{
         .clock-box{
             #gradient > .vertical(rgba(0,0,0,0),rgba(0,0,0,0.5));
         }
+
+        #output{
+            .user-cant-select();
+        }
     }
     
     .item {
@@ -159,7 +163,7 @@ body[unresolved]{
                 display: inline-block;
                 white-space: nowrap;
                 font-size: 1em;
-                user-select: none;
+                .user-cant-select();
                 margin-bottom: 10px;
                 opacity: 0.8;
                 
@@ -346,6 +350,7 @@ body[unresolved]{
         // padding-bottom: 2em;
         // .translate3d(0,100%,0);
         .transition(all 0.4s ease-in 0s);
+        .user-cant-select();
 
         .item{
             // display:table-cell;
