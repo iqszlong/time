@@ -1,0 +1,110 @@
+/* Transition 过渡动画 */
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 600ms linear;
+}
+
+.v-enter-active {
+    transition-delay: 100ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 300ms ease-in-out;
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+}
+
+.page-enter-from,
+.page-leave-to {
+    opacity: 0;
+}
+
+
+/* 图标 */
+.mask-icon{
+  background-color: var(--foreground,inherit);
+}
+
+/* 提示信息 */
+.pop-msg {
+    --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(107, 114, 128, 0.6) 50%, rgba(0, 0, 0, 0) 94%);
+    --pop-border: 1px solid transparent;
+    --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(107, 114, 128, 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
+    --pop-padding: 0.4rem 2rem;
+    --pop-min-width: 230px;
+    text-align: center;
+    font-weight: bolder;
+    --pop-backdrop-filter: blur(10px);
+    /* --pop-shadow:0 2px 20px rgba(0, 0, 0, 1); */
+    --pop-mask: radial-gradient(circle, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+    /* linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 6%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%); */
+}
+
+.pop-msg.success{
+    --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--success-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
+    --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--success-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
+}
+
+.pop-msg.info{
+    --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--info-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
+    --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--info-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
+}
+
+.pop-msg.warning{
+    --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--warning-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
+    --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--warning-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
+}
+.pop-msg.error{
+    --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--danger-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
+    --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--danger-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
+}
+
+/* pop下拉菜单 */
+.pop-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pop-list .pop-item {
+    cursor: pointer;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: light-dark(var(--text-color), white);
+
+    &:hover {
+        background: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2));
+    }
+}
+
+/* loading动画 */
+.flip {
+    animation: flippers 1.25s ease .5s infinite;
+}
+
+@keyframes flippers {
+    0% {
+        -webkit-transform: perspective(100px) rotateY(0deg);
+        transform: perspective(100px) rotateY(0deg);
+    }
+
+    50% {
+        -webkit-transform: perspective(100px) rotateY(180deg);
+        transform: perspective(100px) rotateY(180deg);
+    }
+
+    100% {
+        -webkit-transform: perspective(100px) rotateY(360deg);
+        transform: perspective(100px) rotateY(360deg);
+    }
+
+}
+

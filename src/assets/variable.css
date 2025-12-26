@@ -1,0 +1,24 @@
+:root {
+    color-scheme: light dark;
+    --primary-rgb: 14, 165, 233;
+    --primary-rgb-light: 58, 191, 248;
+    --primary-rgb-dark: 2, 132, 199;
+
+    --primary-color: rgb(var(--primary-rgb));
+    --primary-color-light: rgb(var(--primary-rgb-light));
+    --primary-color-dark: rgb(var(--primary-rgb-dark));
+
+    --link-color: var(--primary-color);
+
+    --text-color: #7d7d7d;
+
+    --success-rgb: 74, 222, 128;
+    --info-rgb: 59, 130, 246;
+    --warning-rgb: 245, 158, 11;
+    --danger-rgb: 239, 68, 68;
+
+    --success-color:rgb(var(--success-rgb));
+    --info-color:rgb(var(--info-rgb));
+    --warning-color:rgb(var(--warning-rgb));
+    --danger-color:rgb(var(--danger-rgb));
+}

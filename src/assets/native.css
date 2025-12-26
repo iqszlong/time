@@ -1,0 +1,85 @@
+/* 处理按钮内部图标 跟踪样式 */
+.n-button .mask-icon{ 
+    @apply bg-[var(--n-text-color)]
+}
+.n-button:hover .mask-icon{ 
+    @apply bg-[var(--n-text-color-hover)]
+}
+.n-button:focus .mask-icon{ 
+    @apply bg-[var(--n-text-color-focus)]
+}
+.n-button:active .mask-icon{ 
+    @apply bg-[var(--n-text-color-pressed)]
+}
+
+.n-button.n-button--disabled .mask-icon{ 
+    @apply bg-[var(--n-text-color-disabled)] opacity-[var(--n-opacity-disabled)]
+}
+
+/* // 上传组件只有一列 */
+.gird_1 .n-upload-file-list.n-upload-file-list--grid {
+    grid-template-columns: 1fr;
+}
+
+/* // 图片显示比例 */
+._16x9 .n-upload-trigger.n-upload-trigger--image-card,
+._16x9 .n-upload-file.n-upload-file--image-card-type {
+    aspect-ratio: 16/9;
+    width: 100%;
+    height: auto;
+
+}
+
+._1x1 .n-upload-trigger.n-upload-trigger--image-card,
+._1x1 .n-upload-file.n-upload-file--image-card-type {
+    aspect-ratio: 1;
+    width: 100%;
+    height: auto;
+
+}
+
+/* // 图片填充方式 */
+.n-upload-file-list .n-upload-file.n-upload-file--image-card-type .n-upload-file-info .n-upload-file-info__thumbnail img {
+    object-fit: contain !important;
+}
+
+
+/* 侧边菜单 */
+.side-menu {
+
+    /* --n-item-height: 64px !important; */
+    /* 选中文字 */
+    --n-item-text-color-active: white !important;
+    --n-item-text-color-active-hover: white !important;
+    --n-item-text-color-child-active: var(--primary-color) !important;
+    --n-item-text-color-child-active-hover: var(--primary-color-light) !important;
+
+
+    /* 选中图标 */
+    --n-item-icon-color-active: var(--primary-color) !important;
+    --n-item-icon-color-active-hover: var(--primary-color-light) !important;
+    --n-item-icon-color-child-active: var(--primary-color-light) !important;
+    --n-item-icon-color-child-active-hover: var(--primary-color-light) !important;
+
+
+    /* 选中背景 */
+    --n-item-color-active: rgba(var(--primary-rgb), 0.8) !important;
+    --n-item-color-active-hover: rgba(var(--primary-rgb-light), 0.8) !important;
+
+
+    /* 选中箭头 */
+    --n-arrow-color-active: var(--primary-color) !important;
+    --n-arrow-color-active-hover: var(--primary-color) !important;
+    --n-arrow-color-child-active: var(--primary-color) !important;
+    --n-arrow-color-child-active-hover: var(--primary-color-light) !important;
+
+}
+.side-menu .nav-icon {
+    width: 16px;
+    height: 16px;
+    margin: auto;
+}
+
+.side-menu  .n-menu-item-content--selected .nav-icon{
+    background: #fff;
+}

@@ -1,0 +1,31 @@
+{
+  "Button": {
+    "textColorPrimary": "#FFFFFFFF",
+    "textColorHoverPrimary": "#FFFFFFFF",
+    "textColorPressedPrimary": "#FFFFFFFF",
+    "textColorFocusPrimary": "#FFFFFFFF",
+    "textColorDisabledPrimary": "#FFFFFFFF"
+  },
+  "common": {
+    "primaryColor": "rgba(14, 165, 233, 1)",
+    "primaryColorHover": "rgba(58, 191, 248, 1)",
+    "primaryColorPressed": "rgba(2, 132, 199, 1)",
+    "primaryColorSuppl": "rgba(2, 132, 199, 1)",
+    "infoColor": "rgba(59, 130, 246, 1)",
+    "infoColorHover": "#5592FFFF",
+    "infoColorPressed": "#2172FFFF",
+    "infoColorSuppl": "#2D75F3FF",
+    "successColor": "rgba(74, 222, 128, 1)",
+    "successColorHover": "#60E28FFF",
+    "successColorPressed": "#34DA71FF",
+    "successColorSuppl": "#40CE75",
+    "warningColor": "rgba(245, 158, 11, 1)",
+    "warningColorHover": "#F6A823FF",
+    "warningColorPressed": "#DD8E09FF",
+    "warningColorSuppl": "#D18C15",
+    "errorColor": "rgba(239, 68, 68, 1)",
+    "errorColorHover": "#F15B5BFF",
+    "errorColorPressed": "#ED2D2DFF",
+    "errorColorSuppl": "#E13939"
+  }
+}

@@ -1,0 +1,28 @@
+/* wangeditor 编辑器 */
+@import '@wangeditor/editor/dist/css/style.css';
+@media (prefers-color-scheme: dark) {
+    :root {
+        --w-e-textarea-bg-color: #333;
+        --w-e-textarea-color: #eee;
+        --w-e-textarea-border-color: #ccc;
+        --w-e-textarea-slight-border-color: #e8e8e8;
+        --w-e-textarea-slight-color: #d4d4d4;
+        --w-e-textarea-slight-bg-color: #f5f2f0;
+        /*  选中的元素，如选中了分割线 */
+        --w-e-textarea-selected-border-color: #B4D5FF;
+        /*  工具，如图片拖拽按钮 */
+        --w-e-textarea-handler-bg-color: #4290f7;
+
+        /* toolbar - css vars */
+        --w-e-toolbar-color: #ccc;
+        --w-e-toolbar-bg-color: #222;
+        --w-e-toolbar-active-color: #f1f1f1;
+        --w-e-toolbar-active-bg-color: #333;
+        --w-e-toolbar-disabled-color: #333;
+        --w-e-toolbar-border-color: #111;
+
+        /* modal - css vars */
+        --w-e-modal-button-bg-color: var(--primary-color,#000);
+        --w-e-modal-button-border-color: #111;
+    }
+}
