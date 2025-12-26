@@ -1,21 +1,22 @@
 <template>
     <div class="timer-wrapper">
+        <div class="text-sm">{{ date }}</div>
+        <div class="text-6xl">{{ time }}</div>
+        <Separator class="my-2 line" />
         <div class="text-muted-foreground text-xs">{{ unix }}</div>
-        <div class="text-base">{{ date }}</div>
-        <div class="text-9xl">{{ time }}</div>
     </div>
 </template>
 
 <script setup>
 const { dayjs } = utils
 const unix = ref(dayjs().unix())
-const date = ref(dayjs().format('ll A'))
+const date = ref(dayjs().format('ll dddd A'))
 const time = ref(dayjs().format('hh:mm'))
 const timer = ref(null)
 
 onMounted(() => {
     timer.value = setInterval(() => {
-        date.value = dayjs().format('ll A')
+        date.value = dayjs().format('ll dddd A')
         time.value = dayjs().format('hh:mm')
     }, 15000)
 })
@@ -33,5 +34,10 @@ onUnmounted(() => {
     place-items: center;
     place-content: center;
     text-shadow: 0 0 8px #000;
+
+    .line{
+        width: 80px;
+        --border:rgba(255,255,255,0.2);
+    }
 }
 </style>
