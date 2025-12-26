@@ -1,24 +1,28 @@
-/* 登录注册 */
-.login-layout,
-.register-layout {
-    /* --layout-bg: url('//api.paugram.com/bing') no-repeat center/cover; */
-    --content-bg: rgba(255, 255, 255, 0.5);
-    --content-box-shadow: 0 0 10px 8px rgba(0, 0, 0, 0.4);
-    --content-border-radius: 8px;
-    --content-backdrop-filter: blur(20px);
-    --content-padding: 20px;
-}
 
-.login-layout .wrapper,
-.register-layout .wrapper {
-    width: 320px;
-}
+.home-layout {
+    position: relative;
+    z-index: 1;
+    width: 100dvw;
+    height: 100dvh;
+    min-height: 50dvh;
 
-@media (prefers-color-scheme: dark) {
 
-    .login-layout,
-    .register-layout {
-        --content-bg: rgba(0, 0, 0, 0.6);
-        --content-box-shadow: 0 0 10px 8px rgba(0, 0, 0, 0.2), inset 0 0 1px 1px rgba(255, 255, 255, 0.14);
+    .wrapper {
+        position: absolute;
+        z-index: 0;
+        bottom: 16px;
+        left: 50%;
+        translate: -50%;
+        display: grid;
+        grid-auto-flow: row;
+        gap:24px;
+    }
+
+    .media {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
     }
 }
+
+@media (prefers-color-scheme: dark) {}

@@ -73,6 +73,7 @@ declare module 'vue' {
     SheetTrigger: typeof import('./src/components/ui/sheet/SheetTrigger.vue')['default']
     SideMenu: typeof import('./src/components/SideMenu/SideMenu.vue')['default']
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
+    Timer: typeof import('./src/components/Timer/index.vue')['default']
     Tooltip: typeof import('./src/components/ui/tooltip/Tooltip.vue')['default']
     TooltipContent: typeof import('./src/components/ui/tooltip/TooltipContent.vue')['default']
     TooltipProvider: typeof import('./src/components/ui/tooltip/TooltipProvider.vue')['default']

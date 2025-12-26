@@ -6,8 +6,8 @@
                     <z-img :src="pathReplace(sourcePath)" class="img"></z-img>
                 </template>
                 <template v-if="isAssetTypeAnVideo(fileExt(sourcePath))">
-                    <video ref="videoDom" :src="pathReplace(sourcePath)" loop muted class="video"
-                        @loadeddata="autoplay" @playing="changeState" @play="changeState" @pause="changeState"></video>
+                    <video ref="videoDom" :src="pathReplace(sourcePath)" loop muted class="video" @loadeddata="autoplay"
+                        @playing="changeState" @play="changeState" @pause="changeState"></video>
                 </template>
             </z-bg>
         </Transition>
@@ -43,7 +43,7 @@ const props = defineProps({
     }
 })
 
-const { fileExt, isAssetTypeAnImage, isAssetTypeAnVideo,pathReplace } = utils
+const { fileExt, isAssetTypeAnImage, isAssetTypeAnVideo, pathReplace } = utils
 
 const route = useRoute()
 
@@ -87,7 +87,7 @@ function autoplay(e) {
     videoDom.play();
 }
 
-const isImg = (path)=>{
+const isImg = (path) => {
     if (path.startsWith('data') && path.includes('image')) return true;
     if (fileExt(path).includes('bing')) return true;
     return isAssetTypeAnImage(fileExt(path))
@@ -117,15 +117,17 @@ watchEffect(() => {
     --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) 0, rgba(var(--mask-rgb), 1) 100%);
     --content-fit: v-bind('config.fit');
 }
-.img{
+
+.img {
     --object-fit: v-bind('config.fit');
     --img-w: 100%;
     --img-h: 100%;
     z-index: -1;
 }
 
-.video{
+.video {
     width: 100%;
     height: 100%;
+    object-fit: v-bind('config.fit');
 }
 </style>
