@@ -1,6 +1,6 @@
 <template>
     <div class="timer-wrapper">
-        <div class="text-muted-foreground text-sm">{{ unix }}</div>
+        <div class="text-muted-foreground text-xs">{{ unix }}</div>
         <div class="text-base">{{ date }}</div>
         <div class="text-9xl">{{ time }}</div>
     </div>
