@@ -28,8 +28,8 @@
 
 
 /* 图标 */
-.mask-icon{
-  background-color: var(--foreground,inherit);
+.mask-icon {
+    background-color: var(--foreground, inherit);
 }
 
 /* 提示信息 */
@@ -43,25 +43,26 @@
     font-weight: bolder;
     --pop-backdrop-filter: blur(10px);
     /* --pop-shadow:0 2px 20px rgba(0, 0, 0, 1); */
-    --pop-mask: radial-gradient(circle, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+    --pop-mask: radial-gradient(circle, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
     /* linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 6%, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%); */
 }
 
-.pop-msg.success{
+.pop-msg.success {
     --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--success-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
     --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--success-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
 }
 
-.pop-msg.info{
+.pop-msg.info {
     --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--info-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
     --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--info-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
 }
 
-.pop-msg.warning{
+.pop-msg.warning {
     --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--warning-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
     --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--warning-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
 }
-.pop-msg.error{
+
+.pop-msg.error {
     --pop-bg: linear-gradient(90deg, rgba(0, 0, 0, 0) 6%, rgba(var(--danger-rgb), 0.6) 50%, rgba(0, 0, 0, 0) 94%);
     --pop-border-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(var(--danger-rgb), 0.8) 50%, rgba(0, 0, 0, 0) 100%) 1 1 1 1;
 }
@@ -108,3 +109,18 @@
 
 }
 
+/* 将src图片作为背景的效果 */
+.img-blur-bg {
+    position: relative;
+    z-index: 0;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: image-set(attr(src)) no-repeat center center / cover;
+        filter: blur(20px);
+    }
+
+}

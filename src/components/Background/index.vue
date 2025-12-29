@@ -120,6 +120,7 @@ watchEffect(() => {
 
 .img {
     --object-fit: v-bind('config.fit');
+    --object-position: v-bind('config.hposition') v-bind('config.vposition');
     --img-w: 100%;
     --img-h: 100%;
     z-index: -1;
@@ -129,5 +130,7 @@ watchEffect(() => {
     width: 100%;
     height: 100%;
     object-fit: v-bind('config.fit');
+    object-position: v-bind('config.hposition') v-bind('config.vposition');
+    z-index: -1;
 }
 </style>

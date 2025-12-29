@@ -2,10 +2,11 @@
     <main class="home-layout">
         <div class="wrapper">
 
+            <SettingModal></SettingModal>
             <Timer class="timer"></Timer>
             <Footer></Footer>
         </div>
-        
+
         <Background class="media" :sourcePath="config.sourcePath"></Background>
     </main>
 </template>

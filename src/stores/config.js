@@ -6,6 +6,8 @@ export const useConfigStore = defineStore("config", () => {
   const defaultData = {
     sourcePath: "//api.paugram.com/bing",
     fit: "cover", // 背景填充方式
+    hposition: "center", // 背景填充水平位置
+    vposition: "center", // 背景填充垂直位置
     visible: true,
     state: "idel", // pause || play
     autoPause: true, // 播放页离开自动暂停
