@@ -23,6 +23,24 @@
         inset: 0;
         z-index: -1;
     }
+
+    .ctrl-bar{
+        /* position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 50%;
+        translate: -50%; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        transition: all 0.3s ease-in-out;
+
+        &.hidden{
+            opacity: 0;
+            scale: 0.8
+        }
+    }
 }
 
 @media (prefers-color-scheme: dark) {}

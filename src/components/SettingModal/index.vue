@@ -8,17 +8,21 @@
         <DialogContent class="sm:max-w-3xl">
             <DialogHeader>
                 <DialogTitle>设置</DialogTitle>
+                <DialogDescription>
+                    设置时间背景图片
+                </DialogDescription>
             </DialogHeader>
+
 
             <div class="grid grid-cols-2 gap-6">
                 <div class="grid grid-flow-row gap-4">
-                    <Tabs default-value="upload">
+                    <Tabs v-model:modelValue="tabValue">
                         <TabsList>
                             <TabsTrigger value="upload">
-                                本地上传（仅图片）
+                                本地
                             </TabsTrigger>
                             <TabsTrigger value="url">
-                                远程地址
+                                远程
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="upload">
@@ -31,7 +35,7 @@
                         </TabsContent>
                         <TabsContent value="url">
                             <Field>
-                                <Input id="url" type="text" placeholder="https://" />
+                                <Input id="url" type="text" placeholder="https://" @change="handleUrl" :modelValue="tempConfig.sourcePath"/>
                                 <FieldDescription>
                                     文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
                                 </FieldDescription>
@@ -90,10 +94,17 @@
                     </div>
                 </div>
                 <div>
-                    <h3>壁纸预览</h3>
+                    <h3>预览</h3>
                     <div class="preview-wrapper border-border border rounded-md overflow-hidden">
-                        <img :src="tempConfig.sourcePath" class="img-blur-bg w-full h-full "
-                            :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }" />
+                        <template v-if="isImg(tempConfig.sourcePath)">
+                            <img :src="tempConfig.sourcePath" class="w-full h-full "
+                                :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }" />
+                        </template>
+                        <template v-if="isAssetTypeAnVideo(fileExt(tempConfig.sourcePath))">
+                            <video :src="tempConfig.sourcePath" loop muted class="w-full h-full pointer-events-none"
+                                :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }"
+                                @loadeddata="autoplay"></video>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -120,7 +131,7 @@ const configStore = useConfigStore();
 const { setConfig, resetConfig } = configStore
 const { config } = storeToRefs(configStore)
 const tempConfig = ref(null)
-const { clone } = utils
+const { clone, fileExt, isAssetTypeAnImage, isAssetTypeAnVideo, pathReplace } = utils
 const fitOptions = computed(() => {
     return Object.keys(fit).map(key => {
         return {
@@ -139,12 +150,21 @@ const postionOptions = computed(() => {
     })
 })
 
+const tabValue = ref('upload')
+
 onMounted(() => {
     tempConfig.value = clone(config.value)
+    tabValue.value = tempConfig.value.sourcePath.startsWith('http') ? 'url' : 'upload'
+    // console.log(tempConfig.value.sourcePath);
+    
 })
 
 const onSubmit = () => {
     // console.log(tempConfig.value);
+    // 如果url是编码过的，则解码
+    if(tempConfig.value.sourcePath.startsWith('http') && tempConfig.value.sourcePath.includes('%')){
+        tempConfig.value.sourcePath = decodeURI(tempConfig.value.sourcePath)
+    }
     setConfig(tempConfig.value)
 }
 
@@ -162,6 +182,22 @@ const handleFile = (e) => {
     }
 }
 
+const handleUrl = (e) => {
+    tempConfig.value.sourcePath = e.target.value
+}
+
+
+const isImg = (path) => {
+    if (path.startsWith('data') && path.includes('image')) return true;
+    if (fileExt(path).includes('bing')) return true;
+    return isAssetTypeAnImage(fileExt(path))
+}
+
+
+function autoplay(e) {
+    const videoDom = e.target;
+    videoDom.play();
+}
 
 </script>
 

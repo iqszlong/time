@@ -54,7 +54,6 @@ declare module 'vue' {
     FieldSeparator: typeof import('./src/components/ui/field/FieldSeparator.vue')['default']
     FieldSet: typeof import('./src/components/ui/field/FieldSet.vue')['default']
     FieldTitle: typeof import('./src/components/ui/field/FieldTitle.vue')['default']
-    FloatCtrl: typeof import('./src/components/FloatCtrl/index.vue')['default']
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
