@@ -1,5 +1,5 @@
 <template>
-    <Dialog>
+    <Dialog @update:open="handleShow">
         <DialogTrigger as-child>
             <Button variant="outline" size="icon">
                 <Settings2 />
@@ -9,7 +9,7 @@
             <DialogHeader>
                 <DialogTitle>设置</DialogTitle>
                 <DialogDescription>
-                    设置时间背景图片
+                    设置时间背景图片，可使用本地图片或远程图片链接。设置内容均保存在本地，不会上传到服务器。
                 </DialogDescription>
             </DialogHeader>
 
@@ -28,15 +28,16 @@
                         <TabsContent value="upload">
                             <Field>
                                 <Input id="picture" type="file" accept="image/*" @change="handleFile" />
-                                <FieldDescription>
+                                <FieldDescription class="text-xs">
                                     文件格式：jpg、png、gif、jpeg、bmp、webp
                                 </FieldDescription>
                             </Field>
                         </TabsContent>
                         <TabsContent value="url">
                             <Field>
-                                <Input id="url" type="text" placeholder="https://" @change="handleUrl" :modelValue="tempConfig.sourcePath"/>
-                                <FieldDescription>
+                                <Input id="url" type="text" placeholder="https://" @change="handleUrl"
+                                    :modelValue="urlValue" />
+                                <FieldDescription class="text-xs">
                                     文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
                                 </FieldDescription>
                             </Field>
@@ -92,19 +93,39 @@
                             </Select>
                         </Field>
                     </div>
+
+                    <Separator />
+
+                    <Field>
+                        <FieldLabel for="mask">背景遮挡</FieldLabel>
+                        <div class="flex items-center space-x-2">
+                            <Switch id="mask" v-model="tempConfig.mask.enabled" />
+                            <Slider :default-value="[0]" v-model="maskValue" :min="0" :max="100" :step="1"
+                                :disabled="!tempConfig.mask.enabled" @update:modelValue="handleMaskValue" />
+                            <span>{{ maskValue[0] }}</span>
+                        </div>
+
+                    </Field>
+
                 </div>
                 <div>
                     <h3>预览</h3>
                     <div class="preview-wrapper border-border border rounded-md overflow-hidden">
-                        <template v-if="isImg(tempConfig.sourcePath)">
-                            <img :src="tempConfig.sourcePath" class="w-full h-full "
-                                :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }" />
-                        </template>
-                        <template v-if="isAssetTypeAnVideo(fileExt(tempConfig.sourcePath))">
-                            <video :src="tempConfig.sourcePath" loop muted class="w-full h-full pointer-events-none"
-                                :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }"
-                                @loadeddata="autoplay"></video>
-                        </template>
+                        <z-bg class="mask [--mask-rgb:255,255,255] dark:[--mask-rgb:0,0,0]"
+                            :class="[{ 'mask-disabled': !tempConfig.mask.enabled }]" :style="{
+                                '--mask-from': tempConfig.mask.from + '%',
+                                '--content-fit': tempConfig.fit
+                            }">
+                            <template v-if="isImg(tempConfig.sourcePath)">
+                                <img :src="tempConfig.sourcePath" class="w-full h-full"
+                                    :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }" />
+                            </template>
+                            <template v-if="isAssetTypeAnVideo(fileExt(tempConfig.sourcePath))">
+                                <video :src="tempConfig.sourcePath" loop muted class="w-full h-full pointer-events-none"
+                                    :style="{ 'object-fit': tempConfig.fit, 'object-position': `${tempConfig.hposition} ${tempConfig.vposition}` }"
+                                    @loadeddata="autoplay"></video>
+                            </template>
+                        </z-bg>
                     </div>
                 </div>
             </div>
@@ -130,8 +151,9 @@ import { fit, position } from '@/services/mapping/config'
 const configStore = useConfigStore();
 const { setConfig, resetConfig } = configStore
 const { config } = storeToRefs(configStore)
-const tempConfig = ref(null)
 const { clone, fileExt, isAssetTypeAnImage, isAssetTypeAnVideo, pathReplace } = utils
+
+const tempConfig = reactive(JSON.parse(JSON.stringify(config.value)))
 const fitOptions = computed(() => {
     return Object.keys(fit).map(key => {
         return {
@@ -151,26 +173,38 @@ const postionOptions = computed(() => {
 })
 
 const tabValue = ref('upload')
+const urlValue = computed(() => {
+    return tempConfig.sourcePath.startsWith('http') ? tempConfig.sourcePath : ''
+})
+const maskValue = ref([0])
+
+
+onBeforeMount(() => {
+})
 
 onMounted(() => {
-    tempConfig.value = clone(config.value)
-    tabValue.value = tempConfig.value.sourcePath.startsWith('http') ? 'url' : 'upload'
-    // console.log(tempConfig.value.sourcePath);
-    
+    // tempConfig = JSON.parse(JSON.stringify(config.value))
+    // console.log('tempConfig', tempConfig);
+
+    tabValue.value = tempConfig.sourcePath.startsWith('http') ? 'url' : 'upload'
+    maskValue.value = [tempConfig.mask.from]
+
+    // console.log(tempConfig.sourcePath);
+
 })
 
 const onSubmit = () => {
-    // console.log(tempConfig.value);
+    // console.log(tempConfig);
     // 如果url是编码过的，则解码
-    if(tempConfig.value.sourcePath.startsWith('http') && tempConfig.value.sourcePath.includes('%')){
-        tempConfig.value.sourcePath = decodeURI(tempConfig.value.sourcePath)
+    if (tempConfig.sourcePath.startsWith('http') && tempConfig.sourcePath.includes('%')) {
+        tempConfig.sourcePath = decodeURI(tempConfig.sourcePath)
     }
-    setConfig(tempConfig.value)
+    setConfig(JSON.parse(JSON.stringify(tempConfig)))
 }
 
 const onReset = () => {
     resetConfig()
-    tempConfig.value = clone(config.value)
+    tempConfig = JSON.parse(JSON.stringify(config.value))
 }
 
 const handleFile = (e) => {
@@ -178,12 +212,12 @@ const handleFile = (e) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => {
-        tempConfig.value.sourcePath = reader.result
+        tempConfig.sourcePath = reader.result
     }
 }
 
 const handleUrl = (e) => {
-    tempConfig.value.sourcePath = e.target.value
+    tempConfig.sourcePath = e.target.value
 }
 
 
@@ -194,9 +228,22 @@ const isImg = (path) => {
 }
 
 
-function autoplay(e) {
+const autoplay = (e) => {
     const videoDom = e.target;
     videoDom.play();
+}
+
+
+const handleShow = (show) => {
+    // console.log(show);
+    // if (show) {
+    //     tempConfig = JSON.parse(JSON.stringify(config.value))
+    // }
+}
+
+const handleMaskValue = (values) => {
+    // console.log(values);
+    tempConfig.mask.from = values[0]
 }
 
 </script>
@@ -204,5 +251,16 @@ function autoplay(e) {
 <style scoped>
 .preview-wrapper {
     aspect-ratio: 16 / 9;
+}
+
+.mask {
+    --width: 100%;
+    --height: 100%;
+    --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) var(--mask-from, 0%), rgba(var(--mask-rgb), 1) 100%);
+    --content-fit: var(--content-fit, 'cover');
+}
+
+.mask-disabled {
+    --bg: none;
 }
 </style>

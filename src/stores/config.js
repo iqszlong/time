@@ -9,6 +9,7 @@ export const useConfigStore = defineStore("config", () => {
     hposition: "center", // 背景填充水平位置
     vposition: "center", // 背景填充垂直位置
     visible: true,
+    mask: { enabled: true, from:0, },
     state: "idel", // pause || play
     autoPause: true, // 播放页离开自动暂停
     random: false, //播放页随机播放

@@ -1,7 +1,11 @@
 <template>
     <div class="media-bg">
         <Transition name="site-bg">
-            <z-bg class="mask [--mask-rgb:255,255,255] dark:[--mask-rgb:0,0,0]" v-if="visible">
+            <z-bg class="mask [--mask-rgb:255,255,255] dark:[--mask-rgb:0,0,0]"
+                :class="[{ 'mask-disabled': !config.mask.enabled }]" v-if="visible" :style="{
+                    '--mask-from': config.mask.from + '%',
+                    '--content-fit': config.fit
+                }">
                 <template v-if="isImg(sourcePath)">
                     <z-img :src="pathReplace(sourcePath)" class="img"></z-img>
                 </template>
@@ -114,8 +118,12 @@ watchEffect(() => {
 
 <style scoped>
 .mask {
-    --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) 0, rgba(var(--mask-rgb), 1) 100%);
-    --content-fit: v-bind('config.fit');
+    --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) var(--mask-from,0%), rgba(var(--mask-rgb), 1) 100%);
+    --content-fit: var(--content-fit, 'cover');
+}
+
+.mask-disabled {
+    --bg: none;
 }
 
 .img {

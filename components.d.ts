@@ -91,6 +91,8 @@ declare module 'vue' {
     SheetTitle: typeof import('./src/components/ui/sheet/SheetTitle.vue')['default']
     SheetTrigger: typeof import('./src/components/ui/sheet/SheetTrigger.vue')['default']
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
+    Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
+    Switch: typeof import('./src/components/ui/switch/Switch.vue')['default']
     Tabs: typeof import('./src/components/ui/tabs/Tabs.vue')['default']
     TabsContent: typeof import('./src/components/ui/tabs/TabsContent.vue')['default']
     TabsList: typeof import('./src/components/ui/tabs/TabsList.vue')['default']
