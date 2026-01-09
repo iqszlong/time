@@ -4,6 +4,7 @@
             <z-bg class="mask [--mask-rgb:255,255,255] dark:[--mask-rgb:0,0,0]"
                 :class="[{ 'mask-disabled': !config.mask.enabled }]" v-if="visible" :style="{
                     '--mask-from': config.mask.from + '%',
+                    '--mask-to': config.mask.to + '%',
                     '--content-fit': config.fit
                 }">
                 <template v-if="isImg(sourcePath)">
@@ -118,7 +119,7 @@ watchEffect(() => {
 
 <style scoped>
 .mask {
-    --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) var(--mask-from,0%), rgba(var(--mask-rgb), 1) 100%);
+    --bg: radial-gradient(ellipse at center, rgba(var(--mask-rgb), 0) var(--mask-from,0%), rgba(var(--mask-rgb), 1) var(--mask-to, 100%));
     --content-fit: var(--content-fit, 'cover');
 }
 

@@ -5,7 +5,7 @@
             <div class="ctrl-bar" :class="[{'hidden':isHidden}]">
                 <SettingModal></SettingModal>
             </div>
-            <Timer class="timer"></Timer>
+            <Timer class="timer" :display="config.time.display"></Timer>
             <Footer></Footer>
         </div>
 
