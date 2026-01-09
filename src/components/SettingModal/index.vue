@@ -17,7 +17,7 @@
 
                 <div class="grid grid-cols-2 gap-6">
                     <div class="grid grid-flow-row gap-4">
-                        <FieldLegend>时间设置</FieldLegend>
+                        <!-- <FieldLegend class="font-bold">时间设置</FieldLegend> -->
                         <FieldGroup>
                             <Field>
                                 <FieldLabel for="display">时间格式</FieldLabel>
@@ -34,7 +34,7 @@
 
                         <Separator />
 
-                        <FieldLegend>背景设置</FieldLegend>
+                        <FieldLegend class="font-bold">背景设置</FieldLegend>
                         <!-- <FieldDescription>
                             
                         </FieldDescription> -->
