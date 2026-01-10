@@ -11,7 +11,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "dev:opixer": "vite --mode opixer",
-    "build:opixer": "vite build --mode opixer"
+    "build:opixer": "vite build --mode opixer",
+    "preview:opixer": "vite preview --mode opixer"
   },
   "dependencies": {
     "@iqszlong/components": "workspace:^",
