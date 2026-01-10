@@ -10,10 +10,8 @@
     "dev:force": "vite --force",
     "build": "vite build",
     "preview": "vite preview",
-    "dev:china": "vite --mode china",
-    "dev:global": "vite --mode global",
-    "build:china": "vite build --mode china",
-    "build:global": "vite build --mode global"
+    "dev:opixer": "vite --mode opixer",
+    "build:opixer": "vite build --mode opixer"
   },
   "dependencies": {
     "@iqszlong/components": "workspace:^",

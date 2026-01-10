@@ -31,6 +31,7 @@ onMounted(() => {
     timer.value = setInterval(() => {
         date.value = dayjs().format(dateFormat.value)
         time.value = dayjs().format(timeFormat.value)
+        unix.value = dayjs().unix()
     }, 15000)
 })
 

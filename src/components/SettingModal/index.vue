@@ -184,7 +184,7 @@ const { setConfig, resetConfig } = configStore
 const { config } = storeToRefs(configStore)
 const { clone, fileExt, isAssetTypeAnImage, isAssetTypeAnVideo, pathReplace } = utils
 
-const tempConfig = reactive(JSON.parse(JSON.stringify(config.value)))
+let tempConfig = reactive(JSON.parse(JSON.stringify(config.value)))
 const fitOptions = computed(() => {
     return Object.keys(fit).map(key => {
         return {
@@ -235,6 +235,8 @@ const onSubmit = () => {
 
 const onReset = () => {
     resetConfig()
+    console.log(config.value);
+    
     tempConfig = JSON.parse(JSON.stringify(config.value))
 }
 
