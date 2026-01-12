@@ -1,11 +1,11 @@
 <template>
     <main class="home-layout">
-        <div class="logo">
-            <img v-if="!isEmpty(VITE_SITE_LOGO)" :src="VITE_SITE_LOGO" :alt="VITE_TITLE" />
+        <div class="logo" :class="[{ 'is-hidden': isHidden }]">
+            <z-logo v-if="!isEmpty(VITE_SITE_LOGO)" :src="VITE_SITE_LOGO" :alt="VITE_TITLE" class="min" ></z-logo>
         </div>
         <div class="wrapper">
 
-            <div class="ctrl-bar" :class="[{ 'hidden': isHidden }]">
+            <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
             </div>
             <Timer class="timer" :display="config.time.display"></Timer>

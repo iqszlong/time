@@ -7,6 +7,7 @@ body{
     width: 100dvw;
     height: 100dvh;
     min-height: 600px;
+    
 
     .logo{
         position: absolute;
@@ -14,8 +15,15 @@ body{
         top: 16px;
         left: 50%;
         translate: -50%;
+        transition: all 0.3s ease-in-out;
+        display: block;
 
-        img{
+        &.is-hidden{
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        z-logo{
             display: block;
             height: 32px;
             filter: drop-shadow(0 4px 3px rgba(0,0,0,0.8));
@@ -40,20 +48,16 @@ body{
     }
 
     .ctrl-bar{
-        /* position: absolute;
-        z-index: 1;
-        bottom: 0;
-        left: 50%;
-        translate: -50%; */
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 16px;
         transition: all 0.3s ease-in-out;
 
-        &.hidden{
+        &.is-hidden{
             opacity: 0;
-            scale: 0.8
+            scale: 0.8;
+            pointer-events: none;
         }
     }
 }
