@@ -15,7 +15,7 @@ body{
         top: 16px;
         left: 50%;
         translate: -50%;
-        transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out 0.2s;
         display: block;
 
         &.is-hidden{
