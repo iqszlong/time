@@ -25,23 +25,69 @@ const timeFormat = computed(() => {
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
 const time = ref(dayjs().format(timeFormat.value))
-const timer = ref(null)
+// let animationFrameId = null
+let timer = null
+
+
+const updateTime = () => {
+  const now = dayjs()
+  date.value = now.format(dateFormat.value)
+  time.value = now.format(timeFormat.value)
+  unix.value = now.unix()
+}
+
+
+const getMsToNextMinute = () => {
+  const now = dayjs()
+  const seconds = now.second()
+  const ms = now.millisecond()
+  return (60 - seconds) * 1000 - ms
+}
+
+const startTimer = () => {
+  updateTime()  // 先立即更新一次
+
+  const scheduleNext = () => {
+    const delay = getMsToNextMinute()
+    
+    timer = setTimeout(() => {
+      updateTime()
+      scheduleNext()  // 遞迴安排下一次
+    }, delay)
+  }
+
+  scheduleNext()
+}
+
+// 精準版：使用 requestAnimationFrame 做每秒更新，並校正到整秒
+// const preciseTick = () => {
+//   const now = dayjs()
+//   const ms = now.millisecond()
+
+//   updateTime()
+
+//   // 計算距離下一個整秒還有多少毫秒
+//   const delayToNextSecond = 1000 - ms
+
+//   // 下次更新時間點盡量靠近整秒
+//   animationFrameId = setTimeout(() => {
+//     requestAnimationFrame(preciseTick)
+//   }, delayToNextSecond)
+// }
 
 onMounted(() => {
-    timer.value = setInterval(() => {
-        date.value = dayjs().format(dateFormat.value)
-        time.value = dayjs().format(timeFormat.value)
-        unix.value = dayjs().unix()
-    }, 15000)
+    // preciseTick()
+    // updateTime()
+    startTimer()
 })
 
 onUnmounted(() => {
-    clearInterval(timer.value)
+    // if (animationFrameId) clearTimeout(animationFrameId)
+    if (timer) clearTimeout(timer)
 })
 
-watch(()=>props.display, (curr, prev) => {
-     date.value = dayjs().format(dateFormat.value)
-    time.value = dayjs().format(timeFormat.value)
+watch(()=>props.display, () => {
+    updateTime()
 })
 </script>
 
