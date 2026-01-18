@@ -1,6 +1,6 @@
 <template>
     <div class="footer flex items-center justify-center text-xs text-white/50 gap-3">
-        <span v-if="!isEmpty(VITE_SITE_COPYRIGHT)">&copy; {{VITE_SITE_STARTYEAR}}-{{ year }} {{ VITE_SITE_COPYRIGHT }}</span>
+        <span v-if="!isEmpty(VITE_SITE_COPYRIGHT)">&copy; {{!isEmpty(VITE_SITE_STARTYEAR) ? `${VITE_SITE_STARTYEAR}-${year}` : year}} {{ VITE_SITE_COPYRIGHT }}</span>
         <a v-if="!isEmpty(VITE_SITE_ICP)" href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
             {{ VITE_SITE_ICP }}
         </a>
