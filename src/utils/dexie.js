@@ -5,7 +5,7 @@ const databaseVersion = import.meta.env.VITE_DB_VERSION;
 
 // 数据库表结构
 const tabelStores = {
-    background: "++id,source,fit,hposition,vposition,visible,state,autoPause,maskEnabled,maskFrom,maskTo,createTime",
+    background: "++id,filename,source,fit,hposition,vposition,visible,state,autoPause,maskEnabled,maskFrom,maskTo,createTime",
 };
 
 export const db = new Dexie(databaseName);
@@ -17,10 +17,10 @@ export async function get(table, key) {
 }
 
 // 查询所有数据
-export async function getALL(table, i = 0, n = 10) {
+export async function getALL(table,orderBy="createTime", i = 0, n = 10) {
     // 创建时间倒序 (由于没有倒序 自己加个reverse就是倒序)
     // 这里我为了配合分页，加了offset limit 结合起来就是MySql的limit(i,n) 不需要的话也可以直接去掉
-    return await db[table].orderBy("createTime").reverse().offset(i).limit(n).toArray();
+    return await db[table].orderBy(orderBy).reverse().offset(i).limit(n).toArray();
 }
 
 // 添加或更新 一条数据

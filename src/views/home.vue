@@ -18,8 +18,12 @@
 
 <script setup>
 import { useConfigStore } from '@/stores/config'
+import { useBackgroundStore } from '@/stores/background'
 const configStore = useConfigStore();
 const { config } = storeToRefs(configStore)
+const backgroundStore = useBackgroundStore();
+const {init,loadBackgrounds} = backgroundStore
+const { backgrounds,currentBackground } = storeToRefs(backgroundStore)
 const { throttle, debounce, isEmpty } = utils
 const isHidden = ref(false)
 
@@ -50,6 +54,8 @@ onMounted(() => {
     }, 800)
     document.addEventListener('mousemove', handleMouseMove, { passive: true })
     document.addEventListener('mouseleave', handleMouseleave)
+    init()
+    
 })
 
 onBeforeUnmount(() => {
