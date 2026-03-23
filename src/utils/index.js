@@ -10,6 +10,8 @@ import * as system from "./system"; // 系统相关
 import * as file from "./file"; // 文件转换
 import * as icons from "./icons"; // 图标库
 import * as naiveui from "./naiveui"; // naiveui
+import db from "./dexie"; // indexDB数据库
+
 export default {
   ...lazyUtils,
   ...request,
@@ -22,5 +24,6 @@ export default {
   ...system,
   ...file,
   ...naiveui,
+  db,
   icons,
 };

@@ -26,6 +26,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
+    "dexie": "^4.3.0",
     "easyqrcodejs": "^4.6.2",
     "html2canvas": "^1.4.1",
     "lucide-vue-next": "^0.561.0",
