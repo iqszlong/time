@@ -167,7 +167,7 @@
                         <div class="sticky top-0">
                             <h3>预览</h3>
                             <div class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                <Preview :source="tempConfig" style="position: relative; z-index: 1;width: 100%; height: 100%;"></Preview>
+                                <Preview :source="tempConfig"></Preview>
                             </div>
                         </div>
                     </div>
@@ -200,7 +200,7 @@ import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore();
-const { updateBackground, getFileURL, defaultData, verifyPermission } = backgroundStore
+const { updateBackground,  defaultData, verifyPermission } = backgroundStore
 const { currentBackground, isFilePicker } = storeToRefs(backgroundStore)
 const configStore = useConfigStore();
 const { setConfig, resetConfig } = configStore
@@ -265,7 +265,6 @@ onMounted(async () => {
 
 
     Object.assign(tempConfig, currentBackground.value)
-    // tempConfig.sourcePath = await getFileURL(tempConfig.source)
     // console.log(tempConfig);
 
 
@@ -301,13 +300,12 @@ const onReset = () => {
 
 const handleFile = (e) => {
     const [file] = e.target.files
-    if (!isAssetTypeAnImage(file.type) && !isAssetTypeAnVideo(file.type)) return
+    if (!isAssetTypeAnImage(file.type)) return
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => {
         tempConfig.filename = file.name
-        tempConfig.source = file
-        tempConfig.sourceType = tabValue.value
+        tempConfig.source = reader.result
         tempConfig.sourcePath = reader.result
     }
 }
