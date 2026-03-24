@@ -6,9 +6,12 @@
                  <component :is="Component"/>
             </Transition>
         </RouterView>
+        <Toaster />
     </NaiveDom>
 </template>
 <script setup>
+import 'vue-sonner/style.css'
+import { Toaster } from '@/components/ui/sonner'
 // router切换时刷新页面
 const isRouter = ref(true);
 const reload = () => {

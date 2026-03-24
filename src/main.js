@@ -14,10 +14,10 @@ import { i18n } from "@/lang/i18n";
 
 async function setupApp() {
   const app = createApp(App);
-  await setupRouter(app);
   const pinia = createPinia();
   pinia.use(piniaPluginPersistedstate);
   app.use(pinia).use(utils).use(i18n);
+  await setupRouter(app);
   app.mount("#app");
 }
 setupApp();

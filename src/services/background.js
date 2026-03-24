@@ -38,6 +38,17 @@ export const backgroundService = {
     return await db.background.where('state').equals(state).toArray();
   },
 
+  async updateBackground(id,backgroundData){
+    const background = await this.getById(id);
+    if (background) {
+      background.source = backgroundData.source;
+      background.filename = backgroundData.filename;
+      background.updateTime = dayjs().toDate();
+      return await this.save(background);
+    }
+    return null;
+  },
+
   async updateMask(id, maskConfig) {
     const background = await this.getById(id);
     if (background) {

@@ -4,13 +4,17 @@ import { defineStore } from "pinia";
 
 export const useConfigStore = defineStore("config", () => {
   const defaultData = {
+    filename: "bing wallpaper",
+    source: "//api.paugram.com/bing",
     sourcePath: "//api.paugram.com/bing",
     fit: "cover", // 背景填充方式
     hposition: "center", // 背景填充水平位置
     vposition: "center", // 背景填充垂直位置
     visible: true,
-    mask: { enabled: true, from: 0, to: 100 },
-    state: "idel", // pause || play
+    maskEnabled: true,
+    maskFrom: 0,
+    maskTo: 100,
+    state: "idle", // pause || play
     autoPause: true, // 播放页离开自动暂停
     random: false, //播放页随机播放
     time: { display: '12' },

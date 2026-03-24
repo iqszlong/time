@@ -2,8 +2,10 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import backgroundService from '@/services/background';
 import { dayjs } from '@/utils/day';
+import { toast } from 'vue-sonner'
 
 export const useBackgroundStore = defineStore('background', () => {
+
   const backgrounds = ref([]);
   const currentBackground = ref(null);
   const total = ref(0);
@@ -11,30 +13,64 @@ export const useBackgroundStore = defineStore('background', () => {
   const currentPage = ref(0);
   const pageSize = ref(10);
 
+  const defaultData = {
+    filename: "bing wallpaper",
+    source: "//api.paugram.com/bing",
+    sourceType: "url",
+    fit: "cover", // 背景填充方式
+    hposition: "center", // 背景填充水平位置
+    vposition: "center", // 背景填充垂直位置
+    visible: true,
+    maskEnabled: true,
+    maskFrom: 0,
+    maskTo: 100,
+    state: "idle", // pause || play
+    autoPause: true, // 播放页离开自动暂停
+  }
+
   const hasMore = computed(() => {
     return backgrounds.value.length < total.value;
   });
 
+  const isFilePicker = computed(() => {
+    return "showDirectoryPicker" in window &&
+      "showOpenFilePicker" in window &&
+      "showSaveFilePicker" in window
+  })
 
-  async function init() {
+  async function initBackground() {
     await loadBackgrounds()
     if (total.value === 0) {
-      await addBackground({
-        filename: "bing wallpaper",
-        source: "//api.paugram.com/bing",
-        fit: "cover", // 背景填充方式
-        hposition: "center", // 背景填充水平位置
-        vposition: "center", // 背景填充垂直位置
-        visible: true,
-        maskEnabled: true,
-        maskFrom: 0,
-        maskTo: 100,
-        state: "idle", // pause || play
-        autoPause: true, // 播放页离开自动暂停
-        random: false, //播放页随机播放
+      await addBackground(defaultData)
+    }
+    await setCurrentBackground(backgrounds.value[0])
+  }
+
+  const setCurrentBackground = async (background) => {
+    currentBackground.value = background;
+    try {
+      currentBackground.value.sourcePath = await getFileURL(currentBackground.value.source)
+    } catch (error) {
+      // console.error('获取背景文件URL失败:', error);
+      toast.warning('获取背景文件URL失败',{
+        description: '请检查背景文件是否存在或是否被授权访问',
+        position: 'top-center',
+        duration:999999,
+        action: {
+          label: '授权',
+          onClick: async () => {
+            const userPermission = await verifyPermission(currentBackground.value.source, false);
+            if (userPermission){
+                toast.success('已授权成功',{position:'top-center',onAutoClose:()=>{
+                    location.reload();
+                }})
+            }
+          }
+        }
       })
     }
-    currentBackground.value = backgrounds.value[0];
+    
+    
   }
 
   async function loadBackgrounds(page = 0, size = 10) {
@@ -45,6 +81,7 @@ export const useBackgroundStore = defineStore('background', () => {
       const data = await backgroundService.getAll({ page, size });
       backgrounds.value = page === 0 ? data : [...backgrounds.value, ...data];
       total.value = await backgroundService.getTotal();
+
     } catch (error) {
       console.error('加载背景列表失败:', error);
     } finally {
@@ -61,13 +98,59 @@ export const useBackgroundStore = defineStore('background', () => {
   async function loadBackgroundById(id) {
     loading.value = true;
     try {
-      currentBackground.value = await backgroundService.getById(id);
+      await setCurrentBackground(await backgroundService.getById(id));
     } catch (error) {
       console.error('加载背景详情失败:', error);
     } finally {
       loading.value = false;
     }
   }
+
+  const getFileURL = async (source) => {
+    if (source instanceof Object) {
+      const file = await source.getFile();
+      return URL.createObjectURL(file);
+    } else if (typeof source === 'string') {
+      if (source.includes('%')) {
+        return decodeURI(source);
+      }
+      return source;
+    }
+    return '';
+  }
+
+  async function verifyPermission(fileHandle, withWrite=false) {
+    const opts = {};
+    if (withWrite) {
+      opts.mode = "readwrite";
+    }else{
+      opts.mode = "read";
+    }
+
+    // 检查是否已经拥有相应权限，如果是，返回 true。
+    if ((await fileHandle.queryPermission(opts)) === "granted") {
+      return true;
+    }
+
+    // 为文件请求权限，如果用户授予了权限，返回 true。
+    if ((await fileHandle.requestPermission(opts)) === "granted") {
+      return true;
+    }
+
+    // 用户没有授权，返回 false。
+    return false;
+  }
+
+  const queryPermission = async (fileHandle, withWrite) => {
+    const opts = {};
+    if (withWrite) {
+      opts.mode = "readwrite";
+    }else{
+      opts.mode = "read";
+    }
+    return await fileHandle.queryPermission(opts)
+  }
+
 
   async function addBackground(background) {
     try {
@@ -88,7 +171,7 @@ export const useBackgroundStore = defineStore('background', () => {
         backgrounds.value[index] = background;
       }
       if (currentBackground.value?.id === background.id) {
-        currentBackground.value = background;
+        await setCurrentBackground(background);
       }
       return true;
     } catch (error) {
@@ -127,6 +210,27 @@ export const useBackgroundStore = defineStore('background', () => {
     }
   }
 
+  async function updateSource(id, sourceData) {
+    try {
+      const updated = await backgroundService.updateSource(id, sourceData);
+      if (updated) {
+        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        if (index !== -1) {
+          backgrounds.value[index] = updated;
+        }
+        if (currentBackground.value?.id === id) {
+          await setCurrentBackground(updated);
+
+        }
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('更新背景源失败:', error);
+      return false;
+    }
+  }
+
   async function updateMask(id, maskConfig) {
     try {
       const updated = await backgroundService.updateMask(id, maskConfig);
@@ -136,7 +240,7 @@ export const useBackgroundStore = defineStore('background', () => {
           backgrounds.value[index] = updated;
         }
         if (currentBackground.value?.id === id) {
-          currentBackground.value = updated;
+          await setCurrentBackground(updated);
         }
         return true;
       }
@@ -156,7 +260,8 @@ export const useBackgroundStore = defineStore('background', () => {
           backgrounds.value[index] = updated;
         }
         if (currentBackground.value?.id === id) {
-          currentBackground.value = updated;
+          await setCurrentBackground(updated);
+
         }
         return true;
       }
@@ -176,7 +281,8 @@ export const useBackgroundStore = defineStore('background', () => {
           backgrounds.value[index] = updated;
         }
         if (currentBackground.value?.id === id) {
-          currentBackground.value = updated;
+          await setCurrentBackground(updated);
+
         }
         return true;
       }
@@ -196,7 +302,8 @@ export const useBackgroundStore = defineStore('background', () => {
           backgrounds.value[index] = updated;
         }
         if (currentBackground.value?.id === id) {
-          currentBackground.value = updated;
+          await setCurrentBackground(updated);
+
         }
         return true;
       }
@@ -216,7 +323,7 @@ export const useBackgroundStore = defineStore('background', () => {
           backgrounds.value[index] = updated;
         }
         if (currentBackground.value?.id === id) {
-          currentBackground.value = updated;
+          await setCurrentBackground(updated);
         }
         return true;
       }
@@ -243,20 +350,25 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   return {
+    defaultData,
     backgrounds,
     currentBackground,
     total,
     loading,
     hasMore,
-    init,
+    isFilePicker,
+    verifyPermission,
+    initBackground,
     loadBackgrounds,
     loadMore,
+    getFileURL,
     loadBackgroundById,
     addBackground,
     updateBackground,
     removeBackground,
     refresh,
     clearAll,
+    updateSource,
     updateMask,
     updateFit,
     toggleVisible,

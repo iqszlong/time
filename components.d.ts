@@ -7,6 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Alert: typeof import('./src/components/ui/alert/Alert.vue')['default']
+    AlertDescription: typeof import('./src/components/ui/alert/AlertDescription.vue')['default']
+    AlertTitle: typeof import('./src/components/ui/alert/AlertTitle.vue')['default']
     AspectRatio: typeof import('./src/components/ui/aspect-ratio/AspectRatio.vue')['default']
     Background: typeof import('./src/components/Background/index.vue')['default']
     Button: typeof import('./src/components/ui/button/Button.vue')['default']
@@ -66,6 +69,7 @@ declare module 'vue' {
     NMessageProvider: typeof import('naive-ui')['NMessageProvider']
     NModalProvider: typeof import('naive-ui')['NModalProvider']
     NNotificationProvider: typeof import('naive-ui')['NNotificationProvider']
+    Preview: typeof import('./src/components/Background/preview.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/ui/select/Select.vue')['default']
@@ -116,6 +120,7 @@ declare module 'vue' {
     SidebarTrigger: typeof import('./src/components/ui/sidebar/SidebarTrigger.vue')['default']
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
+    Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
     Switch: typeof import('./src/components/ui/switch/Switch.vue')['default']
     Tabs: typeof import('./src/components/ui/tabs/Tabs.vue')['default']
     TabsContent: typeof import('./src/components/ui/tabs/TabsContent.vue')['default']
