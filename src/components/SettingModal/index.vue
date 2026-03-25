@@ -16,7 +16,7 @@
             <FieldSet class="max-h-[60vh] overflow-y-auto">
 
                 <div class="grid grid-cols-2 gap-6">
-                    <div class="grid grid-flow-row">
+                    <div class="grid grid-flow-row gap-4">
                         
                         <FieldGroup>
                             <FieldSet>
@@ -35,7 +35,7 @@
                             </FieldSet>
                         </FieldGroup>
 
-                        <Separator />
+                        <FieldSeparator />
 
 
 
