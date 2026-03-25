@@ -1,5 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { useBackgroundStore } from '@/stores/background'
+import { useConfigStore } from '@/stores/config'
 
 import utils from '@/utils'
 export function createBaseGuard(router) {
@@ -7,6 +8,9 @@ export function createBaseGuard(router) {
   const { message, debounce } = utils
   const backgroundStore = useBackgroundStore()
   const { initBackground } = backgroundStore
+  const configStore = useConfigStore()
+  const { initConfig } = configStore
+
 
 
   // 防抖函数
@@ -15,6 +19,8 @@ export function createBaseGuard(router) {
   }, 500)
 
   router.beforeEach(async (to, from) => {
+    // 初始化配置
+    await initConfig()
     // 初始化站点信息
     await initBackground()
     if (needLoginList.includes(to.name) && !isLogin.value && to.name !== 'login') {

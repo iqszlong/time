@@ -27,6 +27,10 @@ const props = defineProps({
     visible: {
         type: Boolean,
         default: true
+    },
+    state: {
+        type: String,
+        default: 'play'
     }
 })
 

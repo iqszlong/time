@@ -2,7 +2,7 @@ import db, { get, getALL, put, puts, del, getCount } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const backgroundService = {
-  async getAll({orderBy = 'createTime', page = 0, pageSize = 10}) {
+  async getAll({ orderBy = 'createTime', page = 0, pageSize = 10 }) {
     return await getALL('background', orderBy, page * pageSize, pageSize);
   },
 
@@ -38,7 +38,7 @@ export const backgroundService = {
     return await db.background.where('state').equals(state).toArray();
   },
 
-  async updateBackground(id,backgroundData){
+  async updateBackground(id, backgroundData) {
     const background = await this.getById(id);
     if (background) {
       background.source = backgroundData.source;
@@ -67,6 +67,16 @@ export const backgroundService = {
       background.fit = fit;
       background.hposition = fit.hposition;
       background.vposition = fit.vposition;
+      background.updateTime = dayjs().toDate();
+      return await this.save(background);
+    }
+    return null;
+  },
+
+  async updateState(id, state) {
+    const background = await this.getById(id);
+    if (background) {
+      background.state = state;
       background.updateTime = dayjs().toDate();
       return await this.save(background);
     }
@@ -110,7 +120,7 @@ export const backgroundService = {
   async search(query) {
     return await db.background
       .filter(bg => {
-        return bg.source && bg.source.toLowerCase().includes(query.toLowerCase());
+        return bg.filename && bg.filename.toLowerCase().includes(query.toLowerCase());
       })
       .toArray();
   },

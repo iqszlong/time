@@ -8,7 +8,7 @@
             <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
             </div>
-            <Timer class="timer" :display="config.time.display"></Timer>
+            <Timer class="timer" :display="config.timeDisplay"></Timer>
             <Footer></Footer>
         </div>
 

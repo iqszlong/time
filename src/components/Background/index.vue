@@ -1,7 +1,7 @@
 <template>
     <div class="media-bg">
         <Transition name="site-bg">
-            <Preview :source="source"></Preview>
+            <Preview :source="source" :state="source.state" :visible="source.visible"></Preview>
         </Transition>
         <z-pagevisible @get-state="pageState"></z-pagevisible>
     </div>
@@ -13,7 +13,7 @@
 import utils from '@/utils'
 import { getCurrentInstance, ref, onMounted, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia';
-import { useConfigStore } from '@/stores/config';
+import { useBackgroundStore } from '@/stores/background';
 import { useRoute } from 'vue-router'
 
 const props = defineProps({
@@ -21,46 +21,27 @@ const props = defineProps({
         type: Object,
         default: () => ({})
     },
-    sourcePath: {
-        type: String,
-        default: ''
-    },
-    state: {
-        type: String,
-        default: 'play'
-    },
-    visible: {
-        type: Boolean,
-        default: true
-    }
 })
-
-
 
 const route = useRoute()
 
-
-
-const configStore = useConfigStore();
-const { config } = storeToRefs(configStore);
-
-
-
+const backgroundStore = useBackgroundStore();
+const { updateState } = backgroundStore;
+const { currentBackground } = storeToRefs(backgroundStore);
 
 function pageState(e) {
-    const pageName = route.name || '';
-    if (pageName == 'play' || !props.visible) return;
+    
     const state = e.detail[0];
 
     if (state == 'hidden') {
-        config.state = 'pause';
+        updateState(currentBackground.value.id, 'pause');
         // config.visible = false;
     }
     if (state == 'visible') {
         // config.visible = true;
-        config.state = 'play';
+        updateState(currentBackground.value.id, 'play');
     }
-    // console.log(props.state);
+    // console.log(state);
 }
 
 

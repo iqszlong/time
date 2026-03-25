@@ -17,11 +17,13 @@
 
                 <div class="grid grid-cols-2 gap-6">
                     <div class="grid grid-flow-row">
-                        <!-- <FieldLegend class="font-bold">时间设置</FieldLegend>
+                        
                         <FieldGroup>
+                            <FieldSet>
+                            <FieldLegend class="font-bold">时间设置</FieldLegend>
                             <Field>
                                 <FieldLabel for="display">时间格式</FieldLabel>
-                                <ToggleGroup id="display" v-model="tempConfig.time.display" type="single">
+                                <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
                                     <ToggleGroupItem value="12">
                                         12小时
                                     </ToggleGroupItem>
@@ -30,9 +32,10 @@
                                     </ToggleGroupItem>
                                 </ToggleGroup>
                             </Field>
+                            </FieldSet>
                         </FieldGroup>
 
-                        <Separator /> -->
+                        <Separator />
 
 
 
@@ -207,6 +210,9 @@ import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
+const configStore = useConfigStore();
+const { updateTimeDisplay } = configStore
+const { config } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore();
 const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground } = backgroundStore
 const { currentBackground, isFilePicker, isDefault } = storeToRefs(backgroundStore)
@@ -279,6 +285,7 @@ const onOpenChange = async (open) => {
 const initTempConfig = async () => {
     // tempConfig = JSON.parse(JSON.stringify(config.value))
     // console.log(currentBackground.value);
+    Object.assign(tempConfig, config.value)
     Object.assign(tempConfig, currentBackground.value)
     // console.log(tempConfig);
     // console.log(tempConfig.sourcePath);
@@ -299,9 +306,11 @@ const onSubmit = () => {
     tempConfig.sourceType = tabValue.value
     const data = { ...tempConfig }
     delete data.sourcePath
+    delete data.timeDisplay
     // console.log(data);
     // return
     updateBackground(data)
+    updateTimeDisplay(config.value.id, tempConfig.timeDisplay)
 }
 
 const onReset = () => {

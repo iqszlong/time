@@ -5,7 +5,7 @@ const databaseVersion = import.meta.env.VITE_DB_VERSION;
 
 // 数据库表结构
 const tabelStores = {
-    config: "++id,autoPause,timeDisplay,naiveTheme,country,language,location,createTime,updateTime",
+    config: "++id,timeDisplay,naiveTheme,country,language,location,createTime,updateTime",
     background: "++id,filename,source,sourceType,fit,hposition,vposition,visible,state,autoPause,maskEnabled,maskFrom,maskTo,createTime,updateTime",
 };
 

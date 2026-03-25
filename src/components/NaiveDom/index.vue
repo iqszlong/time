@@ -18,7 +18,7 @@ import { useConfigStore } from "@/stores/config";
 import { darkTheme, lightTheme, zhCN, zhTW, enUS } from "naive-ui";
 const configStore = useConfigStore()
 const { config } = storeToRefs(configStore)
-const theme = computed(() => config.value.naiveTheme == 'dark' ? darkTheme : lightTheme)
+const theme = computed(() => config.value?.naiveTheme == 'dark' ? darkTheme : lightTheme)
 const customTheme = {
     common: {
         "primaryColor": "rgba(59, 130, 246, 1)",
@@ -28,7 +28,7 @@ const customTheme = {
     }
 }
 const localLang = computed(() => {
-    switch (config.value.language) {
+    switch (config.value?.language) {
         case "ZH_CN":
             return zhCN
         case "ZH_TW":

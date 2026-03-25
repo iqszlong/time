@@ -54,7 +54,7 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   const setCurrentBackground = async (background) => {
-    currentBackground.value = background;
+    currentBackground.value = background
     try {
       currentBackground.value.sourcePath = await getFileURL(currentBackground.value.source)
     } catch (error) {
@@ -164,7 +164,7 @@ export const useBackgroundStore = defineStore('background', () => {
   async function addBackground(background) {
     try {
       await backgroundService.save({ ...background, createTime: dayjs().toDate() });
-      await loadBackgrounds(0);
+      await loadBackgrounds();
       return true;
     } catch (error) {
       console.error('添加背景失败:', error);
@@ -205,12 +205,16 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   async function refresh() {
-    await loadBackgrounds(0);
+    await loadBackgrounds();
   }
 
   const resetBackground = async () => {
-    await updateBackground({ ...currentBackground.value, ...defaultData })
-    await loadBackgrounds(0);
+    try {
+      await updateBackground({ ...currentBackground.value, ...defaultData })
+      await loadBackgrounds();
+    } catch (error) {
+      console.error('重置背景失败:', error);
+    }
   }
 
   async function clearAll() {
@@ -226,21 +230,37 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function updateSource(id, sourceData) {
     try {
-      const updated = await backgroundService.updateSource(id, sourceData);
-      if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
-        if (index !== -1) {
-          backgrounds.value[index] = updated;
+      const updatedId = await backgroundService.updateSource(id, sourceData);
+      if (updatedId) {
+        if (currentBackground.value?.id === updatedId) {
+          const item = await backgroundService.getById(updatedId);
+          await setCurrentBackground(item);
         }
-        if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
-
-        }
+        await loadBackgrounds();
         return true;
       }
       return false;
     } catch (error) {
       console.error('更新背景源失败:', error);
+      return false;
+    }
+  }
+
+  const updateState = async (id,state) => {
+    try {
+      const updatedId = await backgroundService.updateState(id,state);
+      // console.log('更新状态:',updatedId)
+      if(updatedId){
+        if (currentBackground.value?.id === updatedId) {
+          const item = await backgroundService.getById(updatedId);
+          await setCurrentBackground(item);
+        }
+        await loadBackgrounds();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('更新状态失败:', error);
       return false;
     }
   }
@@ -385,6 +405,7 @@ export const useBackgroundStore = defineStore('background', () => {
     refresh,
     clearAll,
     updateSource,
+    updateState,
     updateMask,
     updateFit,
     toggleVisible,
