@@ -1,5 +1,5 @@
 <template>
-    <Dialog>
+    <Dialog v-model:open="visible" @update:open="onOpenChange">
         <DialogTrigger as-child>
             <Button variant="outline" size="icon">
                 <Settings2 />
@@ -14,16 +14,7 @@
             </DialogHeader>
 
             <FieldSet class="max-h-[60vh] overflow-y-auto">
-                <template v-if="tabValue === 'local' && isFilePicker">
-                    <Alert>
-                        <AlertCircleIcon />
-                        <AlertTitle>使用本地文件注意</AlertTitle>
-                        <AlertDescription>
-                            <p>如果刷新页面看不见本地文件，请 <Button size="sm" variant="outline"
-                                    @click="needPermission">申请读取权限</Button></p>
-                        </AlertDescription>
-                    </Alert>
-                </template>
+
                 <div class="grid grid-cols-2 gap-6">
                     <div class="grid grid-flow-row">
                         <!-- <FieldLegend class="font-bold">时间设置</FieldLegend>
@@ -66,7 +57,7 @@
                                             <Field>
                                                 <z-filesystem @open="handleFilesystem"
                                                     :open-opt="JSON.stringify(fileTypeOpt)">
-                                                    <Button variant="outline">选择文件</Button>
+                                                    <Button variant="outline" block>选择文件</Button>
                                                 </z-filesystem>
                                                 <FieldDescription class="text-xs">
                                                     文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
@@ -181,16 +172,33 @@
                 <DialogClose as-child>
                     <Button type="submit" @click="onSubmit">保存</Button>
                 </DialogClose>
-                <DialogClose as-child>
-                    <Button variant="outline">取消</Button>
-                </DialogClose>
                 <!-- <DialogClose as-child>
-                    <Button type="reset" @click="onReset" variant="outline">重置</Button>
+                    <Button variant="outline">取消</Button>
                 </DialogClose> -->
+                <AlertDialog v-model:open="resetConfirm">
+                    <AlertDialogTrigger as-child>
+                        <Button type="reset" variant="outline" :disabled="isDefault">恢复默认</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                恢复默认配置，会覆盖当前的设置
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>取消</AlertDialogCancel>
+                            <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
             </DialogFooter>
 
         </DialogContent>
     </Dialog>
+
+
 </template>
 
 <script setup>
@@ -200,14 +208,12 @@ import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore();
-const { updateBackground,  defaultData, verifyPermission } = backgroundStore
-const { currentBackground, isFilePicker } = storeToRefs(backgroundStore)
-const configStore = useConfigStore();
-const { setConfig, resetConfig } = configStore
-const { config } = storeToRefs(configStore)
-const { clone, fileExt, isAssetTypeAnImage, isAssetTypeAnVideo, pathReplace } = utils
+const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground } = backgroundStore
+const { currentBackground, isFilePicker, isDefault } = storeToRefs(backgroundStore)
 
 let tempConfig = reactive({ ...defaultData, sourcePath: null })
+const visible = ref(false)
+const resetConfirm = ref(false)
 
 const fileTypeOpt = {
     types: [
@@ -260,24 +266,29 @@ onBeforeMount(async () => {
 onMounted(async () => {
     // console.trace('onMounted');
 
+
+
+})
+
+const onOpenChange = async (open) => {
+    if (open) {
+        await initTempConfig()
+    }
+}
+
+const initTempConfig = async () => {
     // tempConfig = JSON.parse(JSON.stringify(config.value))
     // console.log(currentBackground.value);
-
-
     Object.assign(tempConfig, currentBackground.value)
     // console.log(tempConfig);
-
-
     // console.log(tempConfig.sourcePath);
-
     tabValue.value = tempConfig.sourceType
     maskValue.value = [tempConfig.maskFrom, tempConfig.maskTo]
     if (tempConfig.sourceType === 'url') {
         urlValue.value = tempConfig.sourcePath
     }
     // console.log(tempConfig.sourcePath);
-
-})
+}
 
 const onSubmit = () => {
     // console.trace(tempConfig);
@@ -294,13 +305,14 @@ const onSubmit = () => {
 }
 
 const onReset = () => {
-    resetConfig()
-    Object.assign(tempConfig, defaultData)
+    // resetConfig()
+    Object.assign(tempConfig, { ...defaultData, sourcePath: defaultData.source })
+    resetBackground()
+    visible.value = false
 }
 
 const handleFile = (e) => {
     const [file] = e.target.files
-    if (!isAssetTypeAnImage(file.type)) return
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => {
@@ -330,11 +342,6 @@ const handleUrl = (e) => {
 }
 
 
-
-
-
-
-
 const handleMaskValue = (values) => {
     // console.log(values);
     tempConfig.maskFrom = values[0]
@@ -344,8 +351,8 @@ const handleMaskValue = (values) => {
 const needPermission = async () => {
     if (currentBackground.value.sourceType == 'url') return
     const userPermission = await verifyPermission(currentBackground.value?.source, false)
-    if (userPermission){
-        toast.success('已授权成功',{position:'top-center'})
+    if (userPermission) {
+        toast.success('已授权成功', { position: 'top-center' })
         // location.reload();
     }
 }

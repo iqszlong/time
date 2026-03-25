@@ -32,6 +32,13 @@ export const useBackgroundStore = defineStore('background', () => {
     return backgrounds.value.length < total.value;
   });
 
+  const isDefault = computed(() => {
+    return currentBackground.value?.filename === defaultData.filename &&
+      currentBackground.value?.source === defaultData.source
+  })
+
+
+
   const isFilePicker = computed(() => {
     return "showDirectoryPicker" in window &&
       "showOpenFilePicker" in window &&
@@ -51,27 +58,29 @@ export const useBackgroundStore = defineStore('background', () => {
     try {
       currentBackground.value.sourcePath = await getFileURL(currentBackground.value.source)
     } catch (error) {
-      // console.error('获取背景文件URL失败:', error);
-      toast.warning('获取背景文件URL失败',{
+      console.error('获取背景文件URL失败:', error);
+      toast.warning('获取背景文件URL失败', {
         description: '请检查背景文件是否存在或是否被授权访问',
         position: 'top-center',
-        duration:999999,
+        duration: 999999,
         action: {
           label: '授权',
           onClick: async () => {
             const userPermission = await verifyPermission(currentBackground.value.source, false);
-            if (userPermission){
-                toast.success('已授权成功',{position:'top-center',onAutoClose:()=>{
-                    location.reload();
-                }})
+            if (userPermission) {
+              toast.success('已授权成功，稍后将自动刷新页面', {
+                position: 'top-center', onAutoClose: () => {
+                  location.reload();
+                }
+              })
             }
           }
         }
       })
     }
-    
-    
   }
+
+
 
   async function loadBackgrounds(page = 0, size = 10) {
     loading.value = true;
@@ -119,11 +128,11 @@ export const useBackgroundStore = defineStore('background', () => {
     return '';
   }
 
-  async function verifyPermission(fileHandle, withWrite=false) {
+  async function verifyPermission(fileHandle, withWrite = false) {
     const opts = {};
     if (withWrite) {
       opts.mode = "readwrite";
-    }else{
+    } else {
       opts.mode = "read";
     }
 
@@ -145,7 +154,7 @@ export const useBackgroundStore = defineStore('background', () => {
     const opts = {};
     if (withWrite) {
       opts.mode = "readwrite";
-    }else{
+    } else {
       opts.mode = "read";
     }
     return await fileHandle.queryPermission(opts)
@@ -196,6 +205,11 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   async function refresh() {
+    await loadBackgrounds(0);
+  }
+
+  const resetBackground = async () => {
+    await updateBackground({ ...currentBackground.value, ...defaultData })
     await loadBackgrounds(0);
   }
 
@@ -356,9 +370,11 @@ export const useBackgroundStore = defineStore('background', () => {
     total,
     loading,
     hasMore,
+    isDefault,
     isFilePicker,
     verifyPermission,
     initBackground,
+    resetBackground,
     loadBackgrounds,
     loadMore,
     getFileURL,
