@@ -17,21 +17,21 @@
 
                 <div class="grid grid-cols-2 gap-6">
                     <div class="grid grid-flow-row gap-4">
-                        
+
                         <FieldGroup>
                             <FieldSet>
-                            <FieldLegend class="font-bold">时间设置</FieldLegend>
-                            <Field>
-                                <FieldLabel for="display">时间格式</FieldLabel>
-                                <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
-                                    <ToggleGroupItem value="12">
-                                        12小时
-                                    </ToggleGroupItem>
-                                    <ToggleGroupItem value="24">
-                                        24小时
-                                    </ToggleGroupItem>
-                                </ToggleGroup>
-                            </Field>
+                                <FieldLegend class="font-bold">时间设置</FieldLegend>
+                                <Field>
+                                    <FieldLabel for="display">时间格式</FieldLabel>
+                                    <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
+                                        <ToggleGroupItem value="12">
+                                            12小时
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="24">
+                                            24小时
+                                        </ToggleGroupItem>
+                                    </ToggleGroup>
+                                </Field>
                             </FieldSet>
                         </FieldGroup>
 
@@ -178,6 +178,18 @@
                 <!-- <DialogClose as-child>
                     <Button variant="outline">取消</Button>
                 </DialogClose> -->
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button variant="outline" @click="needPermission">授权访问</Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
+                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
+                            请确保您信任该程序，以避免潜在的安全风险。
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
                 <AlertDialog v-model:open="resetConfirm">
                     <AlertDialogTrigger as-child>
                         <Button type="reset" variant="outline" :disabled="isDefault">恢复默认</Button>
@@ -359,10 +371,13 @@ const handleMaskValue = (values) => {
 
 const needPermission = async () => {
     if (currentBackground.value.sourceType == 'url') return
-    const userPermission = await verifyPermission(currentBackground.value?.source, false)
+    const userPermission = await verifyPermission(currentBackground.value.source, false);
     if (userPermission) {
-        toast.success('已授权成功', { position: 'top-center' })
-        // location.reload();
+        toast.success('已授权成功，稍后将自动刷新页面', {
+            position: 'top-center', onAutoClose: () => {
+                location.reload();
+            }
+        })
     }
 }
 
