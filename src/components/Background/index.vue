@@ -3,7 +3,7 @@
         <Transition name="site-bg">
             <Preview :source="source" :state="source.state" :visible="source.visible"></Preview>
         </Transition>
-        <z-pagevisible @get-state="pageState"></z-pagevisible>
+        <!-- <z-pagevisible @get-state="pageState"></z-pagevisible> -->
     </div>
 </template>
 

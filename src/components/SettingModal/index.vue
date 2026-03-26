@@ -1,215 +1,299 @@
 <template>
-    <Dialog v-model:open="visible" @update:open="onOpenChange">
+    <Dialog v-model:open="visible" @update:open="onOpenChange" class="setting-modal">
         <DialogTrigger as-child>
             <Button variant="outline" size="icon">
                 <Settings2 />
             </Button>
         </DialogTrigger>
-        <DialogContent class="sm:max-w-3xl">
-            <DialogHeader>
+        <DialogContent class="p-0 sm:max-w-4xl max-h-[60vh] overflow-hidden">
+            <DialogHeader class="px-4 pt-4 sr-only">
                 <DialogTitle>设置</DialogTitle>
                 <DialogDescription>
                     页面设置时间、背景图片。
                 </DialogDescription>
             </DialogHeader>
 
-            <FieldSet class="max-h-[60vh] overflow-y-auto">
+            <SidebarProvider class="items-start">
+                <Sidebar collapsible="none" class="hidden md:flex w-32">
+                    <SidebarHeader>
+                        <h1 class="font-bold">设置</h1>
+                    </SidebarHeader>
+                    <SidebarContent>
+                        <SidebarGroup>
+                            <SidebarGroupContent>
+                                <SidebarMenu>
+                                    <SidebarMenuItem v-for="item in menuList" :key="item.name">
+                                        <SidebarMenuButton as-child :is-active="item.name === currentMenu">
+                                            <a href="#" @click="setMenu(item.name)">
+                                                <!-- <component :is="item.icon" /> -->
+                                                <span>{{ item.title }}</span>
+                                            </a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                </SidebarMenu>
+                            </SidebarGroupContent>
+                        </SidebarGroup>
+                    </SidebarContent>
+                </Sidebar>
+                <main class="flex flex-col flex-1">
+                    <header
+                        class="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                        <div class="flex items-center gap-2 px-4 ">
+                            <h2>{{ currentItem.title }}</h2>
+                            <template v-if="currentMenu == 'time'">
+                                <p class="text-sm text-muted-foreground">更改时间显示格式</p>
+                            </template>
+                            <template v-else>
+                                <p class="text-sm text-muted-foreground">使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。</p>
+                            </template>
+                        </div>
+                    </header>
+                    <section class="h-[calc(60vh-64px-48px)] overflow-y-auto p-4">
+                        <FieldSet v-show="currentMenu == 'time'">
 
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="grid grid-flow-row gap-4">
-
-                        <FieldGroup>
-                            <FieldSet>
-                                <FieldLegend class="font-bold">时间设置</FieldLegend>
-                                <Field>
-                                    <FieldLabel for="display">时间格式</FieldLabel>
-                                    <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
-                                        <ToggleGroupItem value="12">
-                                            12小时
-                                        </ToggleGroupItem>
-                                        <ToggleGroupItem value="24">
-                                            24小时
-                                        </ToggleGroupItem>
-                                    </ToggleGroup>
-                                </Field>
-                            </FieldSet>
-                        </FieldGroup>
-
-                        <FieldSeparator />
-
-
-
-
-                        <FieldGroup>
-                            <FieldSet>
-                                <FieldLegend class="font-bold">背景设置</FieldLegend>
-                                <FieldDescription>
-                                    可使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。
-                                </FieldDescription>
-                                <Tabs v-model:modelValue="tabValue">
-                                    <TabsList>
-                                        <TabsTrigger value="local">
-                                            本地
-                                        </TabsTrigger>
-                                        <TabsTrigger value="url">
-                                            远程
-                                        </TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="local">
-                                        <template v-if="isFilePicker">
-                                            <Field>
-                                                <z-filesystem @open="handleFilesystem"
-                                                    :open-opt="JSON.stringify(fileTypeOpt)">
-                                                    <Button variant="outline" block>选择文件</Button>
-                                                </z-filesystem>
-                                                <FieldDescription class="text-xs">
-                                                    文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
-                                                </FieldDescription>
-
-                                            </Field>
-
-                                        </template>
-                                        <template v-else>
-                                            <Field>
-                                                <Input id="picture" type="file" accept="image/*" @change="handleFile" />
-                                                <FieldDescription class="text-xs">
-                                                    文件格式：jpg、png、gif、jpeg、bmp、webp
-                                                </FieldDescription>
-                                            </Field>
-                                        </template>
-                                    </TabsContent>
-                                    <TabsContent value="url">
+                            <div class="grid grid-flow-row gap-4">
+                                <FieldGroup>
+                                    <FieldSet>
+                                        <FieldLegend class="font-bold sr-only">时间设置</FieldLegend>
                                         <Field>
-                                            <Input id="url" type="text" placeholder="https://" @blur="handleUrl"
-                                                :modelValue="urlValue" />
-                                            <FieldDescription class="text-xs">
-                                                文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
-                                            </FieldDescription>
+                                            <FieldLabel for="display">时间格式</FieldLabel>
+                                            <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
+                                                <ToggleGroupItem value="12">
+                                                    12小时
+                                                </ToggleGroupItem>
+                                                <ToggleGroupItem value="24">
+                                                    24小时
+                                                </ToggleGroupItem>
+                                            </ToggleGroup>
                                         </Field>
-                                    </TabsContent>
-                                </Tabs>
+                                    </FieldSet>
+                                </FieldGroup>
 
-                                <!-- <Separator /> -->
+                                <!-- <FieldSeparator /> -->
+                            </div>
 
-                                <Field>
-                                    <FieldLabel for="fit">填充方式</FieldLabel>
-                                    <Select id="fit" v-model="tempConfig.fit">
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="item in fitOptions" :key="item.value"
-                                                :value="item.value">
-                                                {{ item.label }} ({{ item.value }})
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </Field>
+                        </FieldSet>
+                        <FieldSet v-show="currentMenu == 'background'">
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <div class="sticky top-0">
+                                        <div class="grid grid-flow-row gap-4">
+                                            <div
+                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
+                                                <Preview :source="tempConfig"></Preview>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center justify-between gap-2 mb-2">
+                                                    <h2 class="">列表</h2>
+                                                    <Button size="sm" variant="outline">
+                                                        <Plus />
+                                                    </Button>
+                                                </div>
+                                                <ItemGroup>
+                                                    <template v-for="item in backgrounds" :key="item.id">
+                                                        <Item size="sm" :variant="item.id == tempConfig.id ? 'muted' : ''">
+                                                            <ItemMedia>
+                                                                <template v-if="item.type == 'local'">
+                                                                    <FileImage class="size-3" />
+                                                                </template>
+                                                                <template v-else>
+                                                                    <Link class="size-3" />
+                                                                </template>
+                                                            </ItemMedia>
+                                                            <ItemContent>
+                                                                <ItemTitle>{{ item.filename }}</ItemTitle>
+                                                            </ItemContent>
+                                                            <ItemActions>
+                                                                <Button size="icon" variant="ghost">
+                                                                    <Edit />
+                                                                </Button>
+                                                                <Button size="icon" variant="ghost" :disabled="total <= 1">
+                                                                    <Trash />
+                                                                </Button>
+                                                            </ItemActions>
+                                                        </Item>
+                                                    </template>
+                                                </ItemGroup>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="grid grid-flow-row gap-4">
+
+                                    <FieldGroup>
+                                        <FieldSet>
+                                            <FieldLegend class="font-bold sr-only">背景设置</FieldLegend>
+                                            <FieldDescription class="sr-only">
+                                                可使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。
+                                            </FieldDescription>
+                                            <Tabs v-model:modelValue="tabValue">
+                                                <TabsList>
+                                                    <TabsTrigger value="local">
+                                                        本地
+                                                    </TabsTrigger>
+                                                    <TabsTrigger value="url">
+                                                        远程
+                                                    </TabsTrigger>
+                                                </TabsList>
+                                                <TabsContent value="local">
+                                                    <template v-if="isFilePicker">
+                                                        <Field>
+                                                            <div class="flex gap-2">
+
+                                                                <z-filesystem @open="handleFilesystem"
+                                                                    :open-opt="JSON.stringify(fileTypeOpt)"
+                                                                    style="width: 100%;">
+                                                                    <Button variant="outline"
+                                                                        class="w-full">选择文件</Button>
+                                                                </z-filesystem>
+
+                                                                <TooltipProvider>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger as-child>
+                                                                            <Button variant="outline"
+                                                                                @click="needPermission">授权访问</Button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
+                                                                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
+                                                                            请确保您信任该程序，以避免潜在的安全风险。
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </TooltipProvider>
+                                                            </div>
+                                                            <FieldDescription class="text-xs">
+                                                                文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                                            </FieldDescription>
+
+                                                        </Field>
+                                                    </template>
+                                                    <template v-else>
+                                                        <Field>
+                                                            <Input id="picture" type="file" accept="image/*"
+                                                                @change="handleFile" />
+                                                            <FieldDescription class="text-xs">
+                                                                文件格式：jpg、png、gif、jpeg、bmp、webp
+                                                            </FieldDescription>
+                                                        </Field>
+                                                    </template>
+                                                </TabsContent>
+                                                <TabsContent value="url">
+                                                    <Field>
+                                                        <Input id="url" type="text" placeholder="https://"
+                                                            @blur="handleUrl" :modelValue="urlValue" />
+                                                        <FieldDescription class="text-xs">
+                                                            文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                                        </FieldDescription>
+                                                    </Field>
+                                                </TabsContent>
+                                            </Tabs>
+
+                                            <!-- <Separator /> -->
+
+                                            <Field>
+                                                <FieldLabel for="fit">填充方式</FieldLabel>
+                                                <Select id="fit" v-model="tempConfig.fit">
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem v-for="item in fitOptions" :key="item.value"
+                                                            :value="item.value">
+                                                            {{ item.label }} ({{ item.value }})
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </Field>
 
 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <Field>
-                                        <FieldLabel for="position">水平填充位置</FieldLabel>
-                                        <Select id="position" v-model="tempConfig.hposition">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem
-                                                    v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
-                                                    :key="item.value" :value="item.value">
-                                                    {{ item.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </Field>
-                                    <Field>
-                                        <FieldLabel for="position">垂直填充位置</FieldLabel>
-                                        <Select id="position" v-model="tempConfig.vposition">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem
-                                                    v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                    :key="item.value" :value="item.value">
-                                                    {{ item.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </Field>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <Field>
+                                                    <FieldLabel for="position">水平位置</FieldLabel>
+                                                    <Select id="position" v-model="tempConfig.hposition">
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem
+                                                                v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
+                                                                :key="item.value" :value="item.value">
+                                                                {{ item.label }}
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
+                                                <Field>
+                                                    <FieldLabel for="position">垂直位置</FieldLabel>
+                                                    <Select id="position" v-model="tempConfig.vposition">
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem
+                                                                v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
+                                                                :key="item.value" :value="item.value">
+                                                                {{ item.label }}
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
+                                            </div>
+
+
+                                            <Field>
+                                                <FieldLabel for="mask">背景遮挡</FieldLabel>
+                                                <div class="flex items-center space-x-2">
+                                                    <Switch id="mask" v-model="tempConfig.maskEnabled" />
+                                                    <span>{{ maskValue[0] }}</span>
+                                                    <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
+                                                        :max="100" :step="1" :disabled="!tempConfig.maskEnabled"
+                                                        @update:modelValue="handleMaskValue" />
+                                                    <span>{{ maskValue[1] }}</span>
+                                                </div>
+
+                                            </Field>
+                                        </FieldSet>
+                                    </FieldGroup>
                                 </div>
 
-                                <!-- <Separator /> -->
-
-                                <Field>
-                                    <FieldLabel for="mask">背景遮挡</FieldLabel>
-                                    <div class="flex items-center space-x-2">
-                                        <Switch id="mask" v-model="tempConfig.maskEnabled" />
-                                        <span>{{ maskValue[0] }}</span>
-                                        <Slider :default-value="[0, 100]" v-model="maskValue" :min="0" :max="100"
-                                            :step="1" :disabled="!tempConfig.maskEnabled"
-                                            @update:modelValue="handleMaskValue" />
-                                        <span>{{ maskValue[1] }}</span>
-                                    </div>
-
-                                </Field>
-                            </FieldSet>
-                        </FieldGroup>
-                    </div>
-                    <div>
-                        <div class="sticky top-0">
-                            <h3>预览</h3>
-                            <div class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                <Preview :source="tempConfig"></Preview>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
 
-            </FieldSet>
+                        </FieldSet>
+                    </section>
+                    <DialogFooter class="h-16 px-4 items-center">
+                        <DialogClose as-child>
+                            <Button type="submit" @click="onSubmit">保存</Button>
+                        </DialogClose>
+                        <DialogClose as-child>
+                            <Button variant="outline">取消</Button>
+                        </DialogClose>
+
+                        <AlertDialog v-model:open="resetConfirm">
+                            <AlertDialogTrigger as-child>
+                                <Button type="reset" variant="outline" :disabled="isDefault">恢复默认</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        恢复默认配置，会覆盖当前的设置
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>取消</AlertDialogCancel>
+                                    <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                    </DialogFooter>
+                </main>
 
 
-            <DialogFooter>
-                <DialogClose as-child>
-                    <Button type="submit" @click="onSubmit">保存</Button>
-                </DialogClose>
-                <!-- <DialogClose as-child>
-                    <Button variant="outline">取消</Button>
-                </DialogClose> -->
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger as-child>
-                            <Button variant="outline" @click="needPermission">授权访问</Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
-                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
-                            请确保您信任该程序，以避免潜在的安全风险。
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-                <AlertDialog v-model:open="resetConfirm">
-                    <AlertDialogTrigger as-child>
-                        <Button type="reset" variant="outline" :disabled="isDefault">恢复默认</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                恢复默认配置，会覆盖当前的设置
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>取消</AlertDialogCancel>
-                            <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-
-            </DialogFooter>
-
+            </SidebarProvider>
         </DialogContent>
     </Dialog>
 
@@ -217,17 +301,22 @@
 </template>
 
 <script setup>
-import { AlertCircleIcon, Settings2 } from 'lucide-vue-next';
+import { FileImage, Link, Settings2, Plus, Trash, Edit } from 'lucide-vue-next';
+import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
+import ItemActions from '../ui/item/ItemActions.vue';
 const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config } = storeToRefs(configStore)
-const backgroundStore = useBackgroundStore();
+const backgroundStore = useBackgroundStore()
 const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground } = backgroundStore
-const { currentBackground, isFilePicker, isDefault } = storeToRefs(backgroundStore)
+const { currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
+const menuStore = useMenuStore()
+const { setMenu } = menuStore
+const { currentItem, currentMenu, menuList } = storeToRefs(menuStore)
 
 let tempConfig = reactive({ ...defaultData, sourcePath: null })
 const visible = ref(false)
@@ -384,6 +473,8 @@ const needPermission = async () => {
 </script>
 
 <style scoped>
+.setting-modal {}
+
 .preview-wrapper {
     aspect-ratio: 16 / 9;
 }
