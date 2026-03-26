@@ -30,15 +30,11 @@ const { updateState } = backgroundStore;
 const { currentBackground } = storeToRefs(backgroundStore);
 
 function pageState(e) {
-    
     const state = e.detail[0];
-
     if (state == 'hidden') {
         updateState(currentBackground.value.id, 'pause');
-        // config.visible = false;
     }
     if (state == 'visible') {
-        // config.visible = true;
         updateState(currentBackground.value.id, 'play');
     }
     // console.log(state);

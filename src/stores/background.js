@@ -58,25 +58,28 @@ export const useBackgroundStore = defineStore('background', () => {
     try {
       currentBackground.value.sourcePath = await getFileURL(currentBackground.value.source)
     } catch (error) {
-      console.error('获取背景文件URL失败:', error);
-      toast.warning('获取背景文件URL失败', {
-        description: '请检查背景文件是否存在或是否被授权访问',
-        position: 'top-center',
-        duration: 999999,
-        action: {
-          label: '授权',
-          onClick: async () => {
-            const userPermission = await verifyPermission(currentBackground.value.source, false);
-            if (userPermission) {
-              toast.success('已授权成功，稍后将自动刷新页面', {
-                position: 'top-center', onAutoClose: () => {
-                  location.reload();
-                }
-              })
+      // console.error(error.message)
+      if (error.message.includes('FileSystemFileHandle')) {
+        toast.warning('获取背景文件URL失败', {
+          description: '请检查背景文件是否存在或是否被授权访问',
+          position: 'top-center',
+          duration: 999999,
+          action: {
+            label: '授权',
+            onClick: async () => {
+              const userPermission = await verifyPermission(currentBackground.value.source, false);
+              if (userPermission) {
+                toast.success('已授权成功，稍后将自动刷新页面', {
+                  position: 'top-center', onAutoClose: () => {
+                    location.reload();
+                  }
+                })
+              }
             }
           }
-        }
-      })
+        })
+      }
+
     }
   }
 
@@ -246,11 +249,11 @@ export const useBackgroundStore = defineStore('background', () => {
     }
   }
 
-  const updateState = async (id,state) => {
+  const updateState = async (id, state) => {
     try {
-      const updatedId = await backgroundService.updateState(id,state);
+      const updatedId = await backgroundService.updateState(id, state);
       // console.log('更新状态:',updatedId)
-      if(updatedId){
+      if (updatedId) {
         if (currentBackground.value?.id === updatedId) {
           const item = await backgroundService.getById(updatedId);
           await setCurrentBackground(item);
