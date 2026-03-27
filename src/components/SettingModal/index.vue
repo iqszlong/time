@@ -75,73 +75,44 @@
                         </FieldSet>
                         <FieldSet v-show="currentMenu == 'background'">
 
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <div class="sticky top-0">
-                                        <div class="grid grid-flow-row gap-4">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <Select v-model="currentBackgroundId"
-                                                        @update:modelValue="changeTempConfig">
-                                                        <SelectTrigger class="flex-1 w-full">
-                                                            <SelectValue placeholder="Select a background"  class="block max-w-[200px] truncate"/>
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <template v-for="item in backgrounds" :key="item.id">
-                                                                <SelectItem :value="item.id">{{ item.filename }}
-                                                                </SelectItem>
-                                                            </template>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <Button variant="outline" @click="handleNew">
-                                                        <Plus />
-                                                    </Button>
-                                                </div>
-                                                <!-- <ItemGroup>
-                                                    <template v-for="item in backgrounds" :key="item.id">
-                                                        <Item size="sm" :variant="item.id == tempConfig.id ? 'muted' : ''">
-                                                            <ItemMedia>
-                                                                <template v-if="item.type == 'local'">
-                                                                    <FileImage class="size-3" />
-                                                                </template>
-                                                                <template v-else>
-                                                                    <Link class="size-3" />
-                                                                </template>
-                                                            </ItemMedia>
-                                                            <ItemContent>
-                                                                <ItemTitle>{{ item.filename }}</ItemTitle>
-                                                            </ItemContent>
-                                                            <ItemActions>
-                                                                <Button size="icon" variant="ghost">
-                                                                    <Edit />
-                                                                </Button>
-                                                                <Button size="icon" variant="ghost" :disabled="total <= 1">
-                                                                    <Trash />
-                                                                </Button>
-                                                            </ItemActions>
-                                                        </Item>
-                                                    </template>
-                                                </ItemGroup> -->
-                                            </div>
-                                            <div
-                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                                <Preview :source="tempConfig"></Preview>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
+                            <div class="grid grid-cols-[1fr_200px] gap-4">
                                 <div class="grid grid-flow-row gap-4">
+                                    <div>
+                                        <div class="mb-2">选择背景</div>
+                                        <div class="flex items-center gap-2">
+                                            <Select v-model="currentBackgroundId" @update:modelValue="changeTempConfig">
+                                                <SelectTrigger class="flex-1 w-full">
+                                                    <SelectValue placeholder="Select a background"
+                                                        class="block max-w-[200px] truncate" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <template v-for="item in backgrounds" :key="item.id">
+                                                        <SelectItem :value="item.id">{{ item.filename }}
+                                                        </SelectItem>
+                                                    </template>
+                                                </SelectContent>
+                                            </Select>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger as-child>
+                                                    <Button variant="outline" size="icon" >
+                                                        <EllipsisVertical />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem @click="handleNew"><Plus />添加新背景</DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem @click="handleDelete" :disabled="total <= 1"><Trash />删除当前背景</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                    </div>
+                                    <Separator />
 
                                     <FieldGroup>
                                         <FieldSet>
-                                            <FieldLegend class="font-bold sr-only">背景设置</FieldLegend>
-                                            <FieldDescription class="sr-only">
-                                                可使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。
-                                            </FieldDescription>
+
                                             <Tabs v-model:modelValue="tabValue">
-                                                <TabsList>
+                                                <TabsList class="w-full">
                                                     <TabsTrigger value="local">
                                                         本地
                                                     </TabsTrigger>
@@ -154,7 +125,7 @@
                                                         <Field>
                                                             <div class="flex gap-2">
 
-                                                                <z-filesystem @open="handleFilesystem"
+                                                                <z-filesystem id="file" @open="handleFilesystem"
                                                                     :open-opt="JSON.stringify(fileTypeOpt)"
                                                                     style="width: 100%;">
                                                                     <Button variant="outline"
@@ -202,7 +173,6 @@
                                                 </TabsContent>
                                             </Tabs>
 
-                                            <!-- <Separator /> -->
 
                                             <Field>
                                                 <FieldLabel for="fit">填充方式</FieldLabel>
@@ -269,6 +239,18 @@
                                         </FieldSet>
                                     </FieldGroup>
                                 </div>
+                                <div>
+                                    <div class="sticky top-0">
+
+                                        <div class="mb-2">预览</div>
+                                        <div class="preview-wrapper border-border border rounded-md overflow-hidden">
+                                            <Preview :source="tempConfig"></Preview>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
 
                             </div>
 
@@ -313,18 +295,17 @@
 </template>
 
 <script setup>
-import { FileImage, Link, Settings2, Plus, Trash, Edit } from 'lucide-vue-next';
+import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
-import ItemActions from '../ui/item/ItemActions.vue';
 const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
-const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground } = backgroundStore
+const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground, removeBackground } = backgroundStore
 const { currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
@@ -482,6 +463,18 @@ const handleNew = async () => {
     }
 }
 
+const handleDelete = async () => {
+    const success = await removeBackground(tempConfig.id)
+    if (success) {
+        toast.success('删除当前背景成功', {
+            position: 'top-center'
+        })
+        await initTempConfig()
+    }
+}
+
+
+
 const needPermission = async () => {
     if (currentBackground.value.sourceType == 'url') return
     const userPermission = await verifyPermission(currentBackground.value.source, false);
@@ -500,7 +493,7 @@ const changeTempConfig = async (id) => {
     if (!id || tempConfig.id == id) return
     const data = await loadBackgroundById(id)
     // console.log(data);
-    data.sourcePath  = await getFileURL(data.source)
+    data.sourcePath = await getFileURL(data.source)
     await initTempConfig(data)
 }
 

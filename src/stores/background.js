@@ -1,17 +1,17 @@
-import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
-import backgroundService from '@/services/background';
-import { dayjs } from '@/utils/day';
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+import backgroundService from '@/services/background'
+import { dayjs } from '@/utils/day'
 import { toast } from 'vue-sonner'
 
 export const useBackgroundStore = defineStore('background', () => {
 
-  const backgrounds = ref([]);
-  const currentBackground = ref(null);
-  const total = ref(0);
-  const loading = ref(false);
-  const currentPage = ref(0);
-  const pageSize = ref(10);
+  const backgrounds = ref([])
+  const currentBackground = ref(null)
+  const total = ref(0)
+  const loading = ref(false)
+  const currentPage = ref(0)
+  const pageSize = ref(10)
 
   const defaultData = {
     filename: "bing wallpaper",
@@ -29,8 +29,8 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   const hasMore = computed(() => {
-    return backgrounds.value.length < total.value;
-  });
+    return backgrounds.value.length < total.value
+  })
 
   const isDefault = computed(() => {
     return currentBackground.value?.filename === defaultData.filename &&
@@ -55,15 +55,15 @@ export const useBackgroundStore = defineStore('background', () => {
 
   const addNewBackground = async ()=>{
     const id = await addBackground(defaultData)
-    console.log(id);
+    console.log(id)
     if (!id) return false
     await loadBackgrounds()
     try {
       await setCurrentBackground(await loadBackgroundById(id))
       return true
     } catch (error) {
-      console.error('添加新背景失败:', error);
-      return false;
+      console.error('添加新背景失败:', error)
+      return false
     }
   }
 
@@ -81,11 +81,11 @@ export const useBackgroundStore = defineStore('background', () => {
           action: {
             label: '授权',
             onClick: async () => {
-              const userPermission = await verifyPermission(currentBackground.value.source, false);
+              const userPermission = await verifyPermission(currentBackground.value.source, false)
               if (userPermission) {
                 toast.success('已授权成功，稍后将自动刷新页面', {
                   position: 'top-center', onAutoClose: () => {
-                    location.reload();
+                    location.reload()
                   }
                 })
               }
@@ -100,80 +100,80 @@ export const useBackgroundStore = defineStore('background', () => {
 
 
   async function loadBackgrounds(page = 0, size = 10) {
-    loading.value = true;
+    loading.value = true
     try {
-      currentPage.value = page;
-      pageSize.value = size;
-      const data = await backgroundService.getAll({ page, size });
-      backgrounds.value = page === 0 ? data : [...backgrounds.value, ...data];
-      total.value = await backgroundService.getTotal();
+      currentPage.value = page
+      pageSize.value = size
+      const data = await backgroundService.getAll({ page, size })
+      backgrounds.value = page === 0 ? data : [...backgrounds.value, ...data]
+      total.value = await backgroundService.getTotal()
 
     } catch (error) {
-      console.error('加载背景列表失败:', error);
+      console.error('加载背景列表失败:', error)
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   }
 
   async function loadMore() {
     if (hasMore.value && !loading.value) {
-      await loadBackgrounds(currentPage.value + 1, pageSize.value);
+      await loadBackgrounds(currentPage.value + 1, pageSize.value)
     }
   }
 
   async function loadBackgroundById(id) {
-    loading.value = true;
+    loading.value = true
     try {     
       return await backgroundService.getById(id)
     } catch (error) {
-      console.error('加载背景详情失败:', error);
-      return null;
+      console.error('加载背景详情失败:', error)
+      return null
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   }
 
   const getFileURL = async (source) => {
     if (source instanceof Object) {
-      const file = await source.getFile();
-      return URL.createObjectURL(file);
+      const file = await source.getFile()
+      return URL.createObjectURL(file)
     } else if (typeof source === 'string') {
       if (source.includes('%')) {
-        return decodeURI(source);
+        return decodeURI(source)
       }
-      return source;
+      return source
     }
-    return '';
+    return ''
   }
 
   async function verifyPermission(fileHandle, withWrite = false) {
-    const opts = {};
+    const opts = {}
     if (withWrite) {
-      opts.mode = "readwrite";
+      opts.mode = "readwrite"
     } else {
-      opts.mode = "read";
+      opts.mode = "read"
     }
 
     // 检查是否已经拥有相应权限，如果是，返回 true。
     if ((await fileHandle.queryPermission(opts)) === "granted") {
-      return true;
+      return true
     }
 
     // 为文件请求权限，如果用户授予了权限，返回 true。
     if ((await fileHandle.requestPermission(opts)) === "granted") {
-      return true;
+      return true
     }
 
     // 用户没有授权，返回 false。
-    return false;
+    return false
   }
 
   const queryPermission = async (fileHandle, withWrite) => {
-    const opts = {};
+    const opts = {}
     if (withWrite) {
-      opts.mode = "readwrite";
+      opts.mode = "readwrite"
     } else {
-      opts.mode = "read";
+      opts.mode = "read"
     }
     return await fileHandle.queryPermission(opts)
   }
@@ -181,223 +181,223 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function addBackground(background) {
     try {
-      const id = await backgroundService.save({ ...background, createTime: dayjs().toDate() });
-      await loadBackgrounds();
-      return id;
+      const id = await backgroundService.save({ ...background, createTime: dayjs().toDate() })
+      await loadBackgrounds()
+      return id
     } catch (error) {
-      console.error('添加背景失败:', error);
-      return false;
+      console.error('添加背景失败:', error)
+      return false
     }
   }
 
   async function updateBackground(background) {
     try {
-      await backgroundService.save({ ...background, updateTime: dayjs().toDate() });
-      const index = backgrounds.value.findIndex(bg => bg.id === background.id);
+      await backgroundService.save({ ...background, updateTime: dayjs().toDate() })
+      const index = backgrounds.value.findIndex(bg => bg.id === background.id)
       if (index !== -1) {
-        backgrounds.value[index] = background;
-        await setCurrentBackground(background);
+        backgrounds.value[index] = background
+        await setCurrentBackground(background)
       }
       // if (currentBackground.value?.id === background.id) {
       // }
-      return true;
+      return true
     } catch (error) {
-      console.error('更新背景失败:', error);
-      return false;
+      console.error('更新背景失败:', error)
+      return false
     }
   }
 
   async function removeBackground(id) {
     try {
-      await backgroundService.remove(id);
-      backgrounds.value = backgrounds.value.filter(bg => bg.id !== id);
-      if (currentBackground.value?.id === id) {
-        currentBackground.value = null;
-      }
-      total.value = await backgroundService.getTotal();
-      return true;
+      await backgroundService.remove(id)
+      await loadBackgrounds()
+      // if (currentBackground.value?.id === id) {
+      await setCurrentBackground(backgrounds.value[0])
+      // }
+      total.value = await backgroundService.getTotal()
+      return true
     } catch (error) {
-      console.error('删除背景失败:', error);
-      return false;
+      console.error('删除背景失败:', error)
+      return false
     }
   }
 
   async function refresh() {
-    await loadBackgrounds();
+    await loadBackgrounds()
   }
 
   const resetBackground = async () => {
     try {
       await updateBackground({ ...currentBackground.value, ...defaultData })
-      await loadBackgrounds();
+      await loadBackgrounds()
     } catch (error) {
-      console.error('重置背景失败:', error);
+      console.error('重置背景失败:', error)
     }
   }
 
   async function clearAll() {
     try {
-      await backgroundService.clear();
-      backgrounds.value = [];
-      currentBackground.value = null;
-      total.value = 0;
+      await backgroundService.clear()
+      backgrounds.value = []
+      currentBackground.value = null
+      total.value = 0
     } catch (error) {
-      console.error('清空背景失败:', error);
+      console.error('清空背景失败:', error)
     }
   }
 
   async function updateSource(id, sourceData) {
     try {
-      const updatedId = await backgroundService.updateSource(id, sourceData);
+      const updatedId = await backgroundService.updateSource(id, sourceData)
       if (updatedId) {
         if (currentBackground.value?.id === updatedId) {
-          const item = await backgroundService.getById(updatedId);
-          await setCurrentBackground(item);
+          const item = await backgroundService.getById(updatedId)
+          await setCurrentBackground(item)
         }
-        await loadBackgrounds();
-        return true;
+        await loadBackgrounds()
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('更新背景源失败:', error);
-      return false;
+      console.error('更新背景源失败:', error)
+      return false
     }
   }
 
   const updateState = async (id, state) => {
     try {
-      const updatedId = await backgroundService.updateState(id, state);
+      const updatedId = await backgroundService.updateState(id, state)
       // console.log('更新状态:',updatedId)
       if (updatedId) {
         if (currentBackground.value?.id === updatedId) {
-          const item = await backgroundService.getById(updatedId);
-          await setCurrentBackground(item);
+          const item = await backgroundService.getById(updatedId)
+          await setCurrentBackground(item)
         }
-        await loadBackgrounds();
-        return true;
+        await loadBackgrounds()
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('更新状态失败:', error);
-      return false;
+      console.error('更新状态失败:', error)
+      return false
     }
   }
 
   async function updateMask(id, maskConfig) {
     try {
-      const updated = await backgroundService.updateMask(id, maskConfig);
+      const updated = await backgroundService.updateMask(id, maskConfig)
       if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        const index = backgrounds.value.findIndex(bg => bg.id === id)
         if (index !== -1) {
-          backgrounds.value[index] = updated;
+          backgrounds.value[index] = updated
         }
         if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
+          await setCurrentBackground(updated)
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('更新遮罩失败:', error);
-      return false;
+      console.error('更新遮罩失败:', error)
+      return false
     }
   }
 
   async function updateFit(id, fit) {
     try {
-      const updated = await backgroundService.updateFit(id, fit);
+      const updated = await backgroundService.updateFit(id, fit)
       if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        const index = backgrounds.value.findIndex(bg => bg.id === id)
         if (index !== -1) {
-          backgrounds.value[index] = updated;
+          backgrounds.value[index] = updated
         }
         if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
+          await setCurrentBackground(updated)
 
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('更新填充模式失败:', error);
-      return false;
+      console.error('更新填充模式失败:', error)
+      return false
     }
   }
 
   async function toggleVisible(id) {
     try {
-      const updated = await backgroundService.toggleVisible(id);
+      const updated = await backgroundService.toggleVisible(id)
       if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        const index = backgrounds.value.findIndex(bg => bg.id === id)
         if (index !== -1) {
-          backgrounds.value[index] = updated;
+          backgrounds.value[index] = updated
         }
         if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
+          await setCurrentBackground(updated)
 
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('切换可见性失败:', error);
-      return false;
+      console.error('切换可见性失败:', error)
+      return false
     }
   }
 
   async function toggleAutoPause(id) {
     try {
-      const updated = await backgroundService.toggleAutoPause(id);
+      const updated = await backgroundService.toggleAutoPause(id)
       if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        const index = backgrounds.value.findIndex(bg => bg.id === id)
         if (index !== -1) {
-          backgrounds.value[index] = updated;
+          backgrounds.value[index] = updated
         }
         if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
+          await setCurrentBackground(updated)
 
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('切换自动暂停失败:', error);
-      return false;
+      console.error('切换自动暂停失败:', error)
+      return false
     }
   }
 
   async function toggleState(id) {
     try {
-      const updated = await backgroundService.toggleState(id);
+      const updated = await backgroundService.toggleState(id)
       if (updated) {
-        const index = backgrounds.value.findIndex(bg => bg.id === id);
+        const index = backgrounds.value.findIndex(bg => bg.id === id)
         if (index !== -1) {
-          backgrounds.value[index] = updated;
+          backgrounds.value[index] = updated
         }
         if (currentBackground.value?.id === id) {
-          await setCurrentBackground(updated);
+          await setCurrentBackground(updated)
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     } catch (error) {
-      console.error('切换状态失败:', error);
-      return false;
+      console.error('切换状态失败:', error)
+      return false
     }
   }
 
   async function searchBackgrounds(query) {
-    loading.value = true;
+    loading.value = true
     try {
-      const results = await backgroundService.search(query);
-      backgrounds.value = results;
-      total.value = results.length;
-      return results;
+      const results = await backgroundService.search(query)
+      backgrounds.value = results
+      total.value = results.length
+      return results
     } catch (error) {
-      console.error('搜索背景失败:', error);
-      return [];
+      console.error('搜索背景失败:', error)
+      return []
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   }
 
@@ -430,5 +430,5 @@ export const useBackgroundStore = defineStore('background', () => {
     toggleAutoPause,
     toggleState,
     searchBackgrounds,
-  };
-});
+  }
+})
