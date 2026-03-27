@@ -11,7 +11,7 @@ export const useMenuStore = defineStore("menus", () => {
     {
       name: "time",
       id: 0,
-      title: "时间",
+      title: "通用",
       parent: "root",
       visible: "true",
     },

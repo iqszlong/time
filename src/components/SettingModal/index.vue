@@ -79,18 +79,25 @@
                                 <div>
                                     <div class="sticky top-0">
                                         <div class="grid grid-flow-row gap-4">
-                                            <div
-                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                                <Preview :source="tempConfig"></Preview>
-                                            </div>
                                             <div>
-                                                <div class="flex items-center justify-between gap-2 mb-2">
-                                                    <h2 class="">列表</h2>
-                                                    <Button size="sm" variant="outline">
+                                                <div class="flex items-center gap-2">
+                                                    <Select v-model="currentBackgroundId"
+                                                        @update:modelValue="changeTempConfig">
+                                                        <SelectTrigger class="flex-1 w-full">
+                                                            <SelectValue placeholder="Select a background"  class="block max-w-[200px] truncate"/>
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <template v-for="item in backgrounds" :key="item.id">
+                                                                <SelectItem :value="item.id">{{ item.filename }}
+                                                                </SelectItem>
+                                                            </template>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <Button variant="outline" @click="handleNew">
                                                         <Plus />
                                                     </Button>
                                                 </div>
-                                                <ItemGroup>
+                                                <!-- <ItemGroup>
                                                     <template v-for="item in backgrounds" :key="item.id">
                                                         <Item size="sm" :variant="item.id == tempConfig.id ? 'muted' : ''">
                                                             <ItemMedia>
@@ -114,8 +121,13 @@
                                                             </ItemActions>
                                                         </Item>
                                                     </template>
-                                                </ItemGroup>
+                                                </ItemGroup> -->
                                             </div>
+                                            <div
+                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
+                                                <Preview :source="tempConfig"></Preview>
+                                            </div>
+
                                         </div>
 
                                     </div>
@@ -312,7 +324,7 @@ const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
-const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground } = backgroundStore
+const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground } = backgroundStore
 const { currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
@@ -321,6 +333,7 @@ const { currentItem, currentMenu, menuList } = storeToRefs(menuStore)
 let tempConfig = reactive({ ...defaultData, sourcePath: null })
 const visible = ref(false)
 const resetConfirm = ref(false)
+const currentBackgroundId = ref('')
 
 const fileTypeOpt = {
     types: [
@@ -383,12 +396,13 @@ const onOpenChange = async (open) => {
     }
 }
 
-const initTempConfig = async () => {
+const initTempConfig = async (background) => {
     // tempConfig = JSON.parse(JSON.stringify(config.value))
     // console.log(currentBackground.value);
     Object.assign(tempConfig, config.value)
-    Object.assign(tempConfig, currentBackground.value)
+    Object.assign(tempConfig, background ?? currentBackground.value)
     // console.log(tempConfig);
+    currentBackgroundId.value = tempConfig.id
     // console.log(tempConfig.sourcePath);
     tabValue.value = tempConfig.sourceType
     maskValue.value = [tempConfig.maskFrom, tempConfig.maskTo]
@@ -458,6 +472,16 @@ const handleMaskValue = (values) => {
     tempConfig.maskTo = values[1]
 }
 
+const handleNew = async () => {
+    const success = await addNewBackground()
+    if (success) {
+        toast.success('添加新背景成功', {
+            position: 'top-center'
+        })
+        await initTempConfig()
+    }
+}
+
 const needPermission = async () => {
     if (currentBackground.value.sourceType == 'url') return
     const userPermission = await verifyPermission(currentBackground.value.source, false);
@@ -468,6 +492,16 @@ const needPermission = async () => {
             }
         })
     }
+}
+
+const changeTempConfig = async (id) => {
+    // console.log(id,tempConfig.id)
+    currentBackgroundId.value = id
+    if (!id || tempConfig.id == id) return
+    const data = await loadBackgroundById(id)
+    // console.log(data);
+    data.sourcePath  = await getFileURL(data.source)
+    await initTempConfig(data)
 }
 
 </script>

@@ -53,6 +53,20 @@ export const useBackgroundStore = defineStore('background', () => {
     await setCurrentBackground(backgrounds.value[0])
   }
 
+  const addNewBackground = async ()=>{
+    const id = await addBackground(defaultData)
+    console.log(id);
+    if (!id) return false
+    await loadBackgrounds()
+    try {
+      await setCurrentBackground(await loadBackgroundById(id))
+      return true
+    } catch (error) {
+      console.error('添加新背景失败:', error);
+      return false;
+    }
+  }
+
   const setCurrentBackground = async (background) => {
     currentBackground.value = background
     try {
@@ -109,10 +123,11 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function loadBackgroundById(id) {
     loading.value = true;
-    try {
-      await setCurrentBackground(await backgroundService.getById(id));
+    try {     
+      return await backgroundService.getById(id)
     } catch (error) {
       console.error('加载背景详情失败:', error);
+      return null;
     } finally {
       loading.value = false;
     }
@@ -166,9 +181,9 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function addBackground(background) {
     try {
-      await backgroundService.save({ ...background, createTime: dayjs().toDate() });
+      const id = await backgroundService.save({ ...background, createTime: dayjs().toDate() });
       await loadBackgrounds();
-      return true;
+      return id;
     } catch (error) {
       console.error('添加背景失败:', error);
       return false;
@@ -181,10 +196,10 @@ export const useBackgroundStore = defineStore('background', () => {
       const index = backgrounds.value.findIndex(bg => bg.id === background.id);
       if (index !== -1) {
         backgrounds.value[index] = background;
-      }
-      if (currentBackground.value?.id === background.id) {
         await setCurrentBackground(background);
       }
+      // if (currentBackground.value?.id === background.id) {
+      // }
       return true;
     } catch (error) {
       console.error('更新背景失败:', error);
@@ -402,7 +417,7 @@ export const useBackgroundStore = defineStore('background', () => {
     loadMore,
     getFileURL,
     loadBackgroundById,
-    addBackground,
+    addNewBackground,
     updateBackground,
     removeBackground,
     refresh,
