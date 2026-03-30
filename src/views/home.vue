@@ -12,7 +12,7 @@
         </section>
         <section class="media">
             <template v-for="item in backgrounds" :key="item.id">
-                <Background class="item" :source="item" :style="{ 'z-index': item.id }"></Background>
+                <Background class="item" :source="item" :style="{ 'z-index': item.order }"></Background>
             </template>
         </section>
     </main>

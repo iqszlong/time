@@ -23,8 +23,9 @@
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     <SidebarMenuItem v-for="item in menuList" :key="item.name">
-                                        <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu" @click="handleClick(item)">
-                                            <span class="flex items-center gap-2 " >
+                                        <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu"
+                                            @click="handleClick(item)">
+                                            <span class="flex items-center gap-2 ">
                                                 <!-- <component :is="item.icon" /> -->
                                                 <span>{{ item.title }}</span>
                                             </span>
@@ -94,14 +95,18 @@
                                             </Select>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger as-child>
-                                                    <Button variant="outline" size="icon" >
+                                                    <Button variant="outline" size="icon">
                                                         <EllipsisVertical />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent>
-                                                    <DropdownMenuItem @click="handleNew"><Plus />添加新背景</DropdownMenuItem>
+                                                    <DropdownMenuItem @click="handleNew">
+                                                        <Plus />添加新背景
+                                                    </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem @click="handleDelete" :disabled="total <= 1"><Trash />删除当前背景</DropdownMenuItem>
+                                                    <DropdownMenuItem @click="handleDelete" :disabled="total <= 1">
+                                                        <Trash />删除当前背景
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
@@ -114,10 +119,10 @@
                                             <Tabs v-model:modelValue="tabValue">
                                                 <TabsList class="w-full">
                                                     <TabsTrigger value="local">
-                                                        本地
+                                                        本地文件
                                                     </TabsTrigger>
                                                     <TabsTrigger value="url">
-                                                        远程
+                                                        远程链接
                                                     </TabsTrigger>
                                                 </TabsList>
                                                 <TabsContent value="local">
@@ -129,7 +134,9 @@
                                                                     :open-opt="JSON.stringify(fileTypeOpt)"
                                                                     style="width: 100%;">
                                                                     <Button variant="outline"
-                                                                        class="w-full">选择文件</Button>
+                                                                        class="w-full text-ellipsis whitespace-nowrap overflow-hidden">
+                                                                        {{selectedFileName ?? '选择文件'}}
+                                                                    </Button>
                                                                 </z-filesystem>
 
                                                                 <TooltipProvider>
@@ -174,23 +181,32 @@
                                             </Tabs>
 
 
-                                            <Field>
-                                                <FieldLabel for="fit">填充方式</FieldLabel>
-                                                <Select id="fit" v-model="tempConfig.fit">
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem v-for="item in fitOptions" :key="item.value"
-                                                            :value="item.value">
-                                                            {{ item.label }} ({{ item.value }})
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-
-
                                             <div class="grid grid-cols-2 gap-4">
+
+                                                <Field>
+                                                    <FieldLabel for="order">显示层级</FieldLabel>
+                                                    <Input id="order" v-model="tempConfig.order" type="number"
+                                                        placeholder="显示层级" />
+                                                    <FieldDescription class="text-xs">
+                                                        层级越大，显示越靠前
+                                                    </FieldDescription>
+                                                </Field>
+
+                                                <Field>
+                                                    <FieldLabel for="fit">填充方式</FieldLabel>
+                                                    <Select id="fit" v-model="tempConfig.fit">
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem v-for="item in fitOptions" :key="item.value"
+                                                                :value="item.value">
+                                                                {{ item.label }} ({{ item.value }})
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
+
                                                 <Field>
                                                     <FieldLabel for="position">水平位置</FieldLabel>
                                                     <Select id="position" v-model="tempConfig.hposition">
@@ -246,7 +262,9 @@
                                         <div class="preview-wrapper border-border border rounded-md overflow-hidden">
                                             <Preview :source="tempConfig"></Preview>
                                         </div>
-
+                                        <div v-if="tempConfig.updatedAt" class="text-sm text-muted-foreground">
+                                            最后更新日期: {{ dayjs(tempConfig.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                                        </div>
 
                                     </div>
                                 </div>
@@ -301,12 +319,15 @@ import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
+import utils from '@/utils'
+
+const { dayjs } = utils
 const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
 const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground, removeBackground } = backgroundStore
-const { currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
+const { currentBackgroundId, currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
 const { currentItem, currentMenu, menuList } = storeToRefs(menuStore)
@@ -314,7 +335,10 @@ const { currentItem, currentMenu, menuList } = storeToRefs(menuStore)
 let tempConfig = reactive({ ...defaultData, sourcePath: null })
 const visible = ref(false)
 const resetConfirm = ref(false)
-const currentBackgroundId = ref('')
+const tabValue = ref('upload')
+const urlValue = ref('')
+const maskValue = ref([0])
+const selectedFileName = ref(null)
 
 const fileTypeOpt = {
     types: [
@@ -355,9 +379,7 @@ const postionOptions = computed(() => {
     })
 })
 
-const tabValue = ref('upload')
-const urlValue = ref('')
-const maskValue = ref([0])
+
 
 
 onBeforeMount(async () => {
@@ -378,16 +400,17 @@ const onOpenChange = async (open) => {
 }
 
 const initTempConfig = async (background) => {
-    // console.log(currentBackground.value);
-    Object.assign(tempConfig, {...config.value})
-    Object.assign(tempConfig, {...(background ?? backgrounds.value[0])})
+    Object.assign(tempConfig, { ...config.value })
+    Object.assign(tempConfig, { ...(background ?? currentBackground.value) })
     // console.log(tempConfig);
-    currentBackgroundId.value = tempConfig.id
+    // currentBackgroundId.value = tempConfig.id
     // console.log(tempConfig.sourcePath);
     tabValue.value = tempConfig.sourceType
     maskValue.value = [tempConfig.maskFrom, tempConfig.maskTo]
     if (tempConfig.sourceType === 'url') {
         urlValue.value = tempConfig.sourcePath
+    }else{
+        selectedFileName.value = null
     }
 }
 
@@ -398,13 +421,18 @@ const onSubmit = () => {
         tempConfig.source = decodeURI(tempConfig.source)
     }
     tempConfig.sourceType = tabValue.value
-    const data = { ...tempConfig }
+    const data = Object.keys(defaultData).reduce((acc, key) => {
+        acc[key] = tempConfig[key]
+        return acc
+    }, {})
     // delete data.sourcePath
-    delete data.timeDisplay
-    delete data.naiveTheme
-    delete data.language
-    delete data.location
-    // console.log(data);
+    // delete data.timeDisplay
+    // delete data.naiveTheme
+    // delete data.language
+    // delete data.location
+    data.id = tempConfig.id
+    data.createTime = tempConfig.createTime
+    console.log(data);
     // return
     updateBackground(data)
     updateTimeDisplay(config.value.id, tempConfig.timeDisplay)
@@ -412,7 +440,7 @@ const onSubmit = () => {
 
 const onReset = () => {
     // resetConfig()
-    Object.assign(tempConfig, { ...defaultData, sourcePath: defaultData.source })
+    Object.assign(tempConfig, { ...defaultData })
     resetBackground()
     visible.value = false
 }
@@ -431,9 +459,10 @@ const handleFile = (e) => {
 const handleFilesystem = async (e) => {
     const { handle } = e.detail[0];
     // console.log(handle);
+    selectedFileName.value = handle.name
     tempConfig.filename = handle.name
     tempConfig.source = handle;
-    tempConfig.sourcePath = await getFileURL(handle)    
+    tempConfig.sourcePath = await getFileURL(handle)
     // console.log(tempConfig);
 
 }
@@ -459,13 +488,12 @@ const handleNew = async () => {
     if (successId) {
         // console.log(successId);
         currentBackgroundId.value = successId
-        const data = backgrounds.value.find(item => item.id == successId)
+        // const data = backgrounds.value.find(item => item.id == successId)
         // console.log(data);
-        currentBackground.value = data
         toast.success('添加新背景成功', {
             position: 'top-center'
         })
-        await initTempConfig(data)
+        await initTempConfig()
     }
 }
 
@@ -500,14 +528,9 @@ const needPermission = async () => {
 }
 
 const changeTempConfig = async (id) => {
-    // console.log(id,tempConfig.id)
     currentBackgroundId.value = id
     if (!id || tempConfig.id == id) return
-    const data = backgrounds.value.find(item => item.id == id)
-    console.log(data);
-    currentBackground.value = data
-    // data.sourcePath = await getFileURL(data.source)
-    await initTempConfig(data)
+    await initTempConfig()
 }
 
 </script>

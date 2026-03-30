@@ -7,7 +7,7 @@ import { toast } from 'vue-sonner'
 export const useBackgroundStore = defineStore('background', () => {
 
   const backgrounds = ref([])
-  const currentBackground = ref(null)
+  const currentBackgroundId = ref(null)
   const total = ref(0)
   const loading = ref(false)
   const currentPage = ref(0)
@@ -16,6 +16,7 @@ export const useBackgroundStore = defineStore('background', () => {
   const defaultData = {
     filename: "bing wallpaper",
     source: "//api.paugram.com/bing",
+    sourcePath: "//api.paugram.com/bing",
     sourceType: "url",
     fit: "cover", // 背景填充方式
     hposition: "center", // 背景填充水平位置
@@ -26,15 +27,21 @@ export const useBackgroundStore = defineStore('background', () => {
     maskTo: 100,
     state: "idle", // pause || play
     autoPause: true, // 播放页离开自动暂停
+    order: 0, // 背景排序
   }
+
+  const currentBackground = computed(() => {
+    return backgrounds.value.find(item => item.id === currentBackgroundId.value)
+  })
 
   const hasMore = computed(() => {
     return backgrounds.value.length < total.value
   })
 
+
   const isDefault = computed(() => {
     return currentBackground.value?.filename === defaultData.filename &&
-      currentBackground.value?.source === defaultData.source
+      currentBackground.value?.sourcePath === defaultData.sourcePath
   })
 
 
@@ -50,8 +57,8 @@ export const useBackgroundStore = defineStore('background', () => {
     if (total.value === 0) {
       await addBackground(defaultData)
     }
-    await loadAllPath()
-    await setCurrentBackground(backgrounds.value[0])
+    await loadAllPath()    
+    currentBackgroundId.value = backgrounds.value[0].id
   }
 
   const addNewBackground = async () => {
@@ -60,8 +67,6 @@ export const useBackgroundStore = defineStore('background', () => {
       // console.log(id)
       if (!id) return false
       await loadBackgrounds()
-
-      // await setCurrentBackground(await loadBackgroundById(id))
       return id
     } catch (error) {
       console.error('添加新背景失败:', error)
@@ -69,22 +74,16 @@ export const useBackgroundStore = defineStore('background', () => {
     }
   }
 
-  const setCurrentBackground = async (background) => {
-    currentBackground.value = background
-    // currentBackground.value.sourcePath = await getFileURL(currentBackground.value.source)
-  }
 
 
 
-  async function loadBackgrounds(page = 0, size = 10) {
+  async function loadBackgrounds() {
     loading.value = true
     try {
-      currentPage.value = page
-      pageSize.value = size
-      const data = await backgroundService.getAll({ page, size })
-      backgrounds.value = page === 0 ? data : [...backgrounds.value, ...data]
+      const data = await backgroundService.getAll({ page: currentPage.value, size: pageSize.value })
+      backgrounds.value = currentPage.value === 0 ? data : [...backgrounds.value, ...data]
+      console.log(data,backgrounds.value)
       total.value = await backgroundService.getTotal()
-      
     } catch (error) {
       console.error('加载背景列表失败:', error)
     } finally {
@@ -94,7 +93,7 @@ export const useBackgroundStore = defineStore('background', () => {
 
   const loadAllPath = async () => {
     for (const item of backgrounds.value) {
-      if (item.sourcePath) continue
+      // if (item.sourcePath) continue
       if (item.sourceType === 'url') item.sourcePath = item.source
       else item.sourcePath = await getFileURL(item.source)
     }
@@ -179,17 +178,6 @@ export const useBackgroundStore = defineStore('background', () => {
     return false
   }
 
-  const queryPermission = async (fileHandle, withWrite) => {
-    const opts = {}
-    if (withWrite) {
-      opts.mode = "readwrite"
-    } else {
-      opts.mode = "read"
-    }
-    return await fileHandle.queryPermission(opts)
-  }
-
-
   async function addBackground(background) {
     try {
       const id = await backgroundService.save({ ...background, createTime: dayjs().toDate() })
@@ -203,12 +191,10 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function updateBackground(background) {
     try {
-      const data = { ...background }
-      delete data.sourcePath
-      const updatedId = await backgroundService.save({ ...data, updateTime: dayjs().toDate() })
-      const index = backgrounds.value.findIndex(bg => bg.id === updatedId)
-      if (index !== -1) {
-        backgrounds.value[index] = background
+      const updatedId = await backgroundService.save({ ...background, updateTime: dayjs().toDate() })
+      console.log(updatedId)
+      if(updatedId){
+        await loadBackgrounds()
       }
       return true
     } catch (error) {
@@ -221,9 +207,7 @@ export const useBackgroundStore = defineStore('background', () => {
     try {
       await backgroundService.remove(id)
       await loadBackgrounds()
-      // if (currentBackground.value?.id === id) {
-      await setCurrentBackground(backgrounds.value[0])
-      // }
+
       total.value = await backgroundService.getTotal()
       return true
     } catch (error) {
@@ -260,10 +244,7 @@ export const useBackgroundStore = defineStore('background', () => {
     try {
       const updatedId = await backgroundService.updateSource(id, sourceData)
       if (updatedId) {
-        if (currentBackground.value?.id === updatedId) {
-          const item = await backgroundService.getById(updatedId)
-          await setCurrentBackground(item)
-        }
+        currentBackgroundId.value = updatedId
         await loadBackgrounds()
         return true
       }
@@ -279,10 +260,7 @@ export const useBackgroundStore = defineStore('background', () => {
       const updatedId = await backgroundService.updateState(id, state)
       // console.log('更新状态:',updatedId)
       if (updatedId) {
-        if (currentBackground.value?.id === updatedId) {
-          const item = await backgroundService.getById(updatedId)
-          await setCurrentBackground(item)
-        }
+        currentBackgroundId.value = updatedId
         await loadBackgrounds()
         return true
       }
@@ -313,6 +291,7 @@ export const useBackgroundStore = defineStore('background', () => {
   return {
     defaultData,
     backgrounds,
+    currentBackgroundId,
     currentBackground,
     total,
     loading,
