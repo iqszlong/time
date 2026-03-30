@@ -81,10 +81,11 @@
                                     <div>
                                         <div class="mb-2">当前背景</div>
                                         <div class="flex items-center gap-2">
+
                                             <Select v-model="currentBackgroundId" @update:modelValue="changeTempConfig">
-                                                <SelectTrigger class="flex-1 w-full">
+                                                <SelectTrigger class="w-[calc(100%-36px-8px)]">
                                                     <SelectValue placeholder="Select a background"
-                                                        class="block max-w-[200px] truncate" />
+                                                        class="max-w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <template v-for="item in backgrounds" :key="item.id">
@@ -129,16 +130,20 @@
                                                     <template v-if="isFilePicker">
                                                         <Field>
                                                             <div class="flex gap-2">
+                                                                <div class="flex-1 w-[calc(100%-90px-8px)]">
+                                                                    <z-filesystem id="file" @open="handleFilesystem"
+                                                                        :open-opt="JSON.stringify(fileTypeOpt)"
+                                                                        style="width: 100%;">
 
-                                                                <z-filesystem id="file" @open="handleFilesystem"
-                                                                    :open-opt="JSON.stringify(fileTypeOpt)"
-                                                                    style="width: 100%;">
-                                                                    <Button variant="outline"
-                                                                        class="w-full text-ellipsis whitespace-nowrap overflow-hidden">
-                                                                        {{selectedFileName ?? '选择文件'}}
-                                                                    </Button>
-                                                                </z-filesystem>
+                                                                        <Button variant="outline" class="w-full">
+                                                                            <span
+                                                                                class="block max-w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
+                                                                                {{ selectedFileName ?? '选择文件' }}
+                                                                            </span>
+                                                                        </Button>
 
+                                                                    </z-filesystem>
+                                                                </div>
                                                                 <TooltipProvider>
                                                                     <Tooltip>
                                                                         <TooltipTrigger as-child>
@@ -262,8 +267,8 @@
                                         <div class="preview-wrapper border-border border rounded-md overflow-hidden">
                                             <Preview :source="tempConfig"></Preview>
                                         </div>
-                                        <div v-if="tempConfig.updatedAt" class="text-sm text-muted-foreground">
-                                            最后更新日期: {{ dayjs(tempConfig.updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+                                        <div v-if="tempConfig.updateTime" class="text-xs mt-1 text-muted-foreground">
+                                            更新日期: {{ dayjs(tempConfig.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
                                         </div>
 
                                     </div>
@@ -396,12 +401,15 @@ onMounted(async () => {
 const onOpenChange = async (open) => {
     if (open) {
         await initTempConfig()
+    } else {
+        selectedFileName.value = null
+
     }
 }
 
-const initTempConfig = async (background) => {
+const initTempConfig = async () => {
     Object.assign(tempConfig, { ...config.value })
-    Object.assign(tempConfig, { ...(background ?? currentBackground.value) })
+    Object.assign(tempConfig, { ...currentBackground.value })
     // console.log(tempConfig);
     // currentBackgroundId.value = tempConfig.id
     // console.log(tempConfig.sourcePath);
@@ -409,12 +417,10 @@ const initTempConfig = async (background) => {
     maskValue.value = [tempConfig.maskFrom, tempConfig.maskTo]
     if (tempConfig.sourceType === 'url') {
         urlValue.value = tempConfig.sourcePath
-    }else{
-        selectedFileName.value = null
     }
 }
 
-const onSubmit = () => {
+const onSubmit = async () => {
     // console.trace(tempConfig);
     // 如果url是编码过的，则解码
     if (tabValue.value === 'url' && tempConfig.source.includes('%')) {
@@ -432,10 +438,22 @@ const onSubmit = () => {
     // delete data.location
     data.id = tempConfig.id
     data.createTime = tempConfig.createTime
-    console.log(data);
+    // console.log(data);
     // return
-    updateBackground(data)
-    updateTimeDisplay(config.value.id, tempConfig.timeDisplay)
+    try {
+        await updateBackground(data)
+        await updateTimeDisplay(config.value.id, tempConfig.timeDisplay)
+        toast.success('更新成功', {
+            position: 'top-center'
+        })
+    } catch (error) {
+        console.error('更新失败:', error)
+        toast.error('更新失败', {
+            type: 'error',
+            description: error.message,
+            position: 'top-center'
+        })
+    }
 }
 
 const onReset = () => {
@@ -491,6 +509,7 @@ const handleNew = async () => {
         // const data = backgrounds.value.find(item => item.id == successId)
         // console.log(data);
         toast.success('添加新背景成功', {
+            type: 'success',
             position: 'top-center'
         })
         await initTempConfig()
@@ -500,7 +519,9 @@ const handleNew = async () => {
 const handleDelete = async () => {
     const success = await removeBackground(tempConfig.id)
     if (success) {
+        currentBackgroundId.value = backgrounds.value[0]?.id
         toast.success('删除当前背景成功', {
+            type: 'success',
             position: 'top-center'
         })
         await initTempConfig()

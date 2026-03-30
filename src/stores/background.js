@@ -57,22 +57,11 @@ export const useBackgroundStore = defineStore('background', () => {
     if (total.value === 0) {
       await addBackground(defaultData)
     }
-    await loadAllPath()    
+    await loadAllPath()
     currentBackgroundId.value = backgrounds.value[0].id
   }
 
-  const addNewBackground = async () => {
-    try {
-      const id = await addBackground(defaultData)
-      // console.log(id)
-      if (!id) return false
-      await loadBackgrounds()
-      return id
-    } catch (error) {
-      console.error('添加新背景失败:', error)
-      return false
-    }
-  }
+
 
 
 
@@ -82,7 +71,7 @@ export const useBackgroundStore = defineStore('background', () => {
     try {
       const data = await backgroundService.getAll({ page: currentPage.value, size: pageSize.value })
       backgrounds.value = currentPage.value === 0 ? data : [...backgrounds.value, ...data]
-      console.log(data,backgrounds.value)
+      // console.log(data, backgrounds.value)
       total.value = await backgroundService.getTotal()
     } catch (error) {
       console.error('加载背景列表失败:', error)
@@ -178,11 +167,27 @@ export const useBackgroundStore = defineStore('background', () => {
     return false
   }
 
+  const addNewBackground = async () => {
+    try {
+      const updatedId = await addBackground({ ...defaultData, order: total.value + 1 })
+      console.log(updatedId)
+      const newData = await loadBackgroundById(updatedId)
+      if (newData) {
+        backgrounds.value.push(newData)
+      }
+      total.value = await backgroundService.getTotal()
+      if (!updatedId) return false
+      return updatedId
+    } catch (error) {
+      console.error('添加新背景失败:', error)
+      return false
+    }
+  }
+
   async function addBackground(background) {
     try {
-      const id = await backgroundService.save({ ...background, createTime: dayjs().toDate() })
-      await loadBackgrounds()
-      return id
+      const updatedId = await backgroundService.save({ ...background, createTime: dayjs().toDate() })
+      return updatedId
     } catch (error) {
       console.error('添加背景失败:', error)
       return false
@@ -191,10 +196,14 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function updateBackground(background) {
     try {
-      const updatedId = await backgroundService.save({ ...background, updateTime: dayjs().toDate() })
-      console.log(updatedId)
-      if(updatedId){
-        await loadBackgrounds()
+      const bData = { ...background, updateTime: dayjs().toDate() }
+      const updatedId = await backgroundService.save(bData)
+      // console.log(updatedId)
+      if (updatedId) {
+        const index = backgrounds.value.findIndex(item => item.id == updatedId)
+        if (index !== -1) {
+          backgrounds.value[index] = bData
+        }
       }
       return true
     } catch (error) {
@@ -206,8 +215,7 @@ export const useBackgroundStore = defineStore('background', () => {
   async function removeBackground(id) {
     try {
       await backgroundService.remove(id)
-      await loadBackgrounds()
-
+      backgrounds.value = backgrounds.value.filter(item => item.id !== id)
       total.value = await backgroundService.getTotal()
       return true
     } catch (error) {
