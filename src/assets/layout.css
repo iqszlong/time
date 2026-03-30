@@ -45,6 +45,11 @@ body{
         position: fixed;
         inset: 0;
         z-index: -1;
+
+        .item{
+            position: absolute;
+            inset: 0;
+        }
     }
 
     .ctrl-bar{

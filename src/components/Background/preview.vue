@@ -61,6 +61,7 @@ const isImg = (path) => {
 }
 
 watchEffect(() => {
+    // console.log(props.source);
     const state = props.state
     if (!videoDom.value) return;
     if (state == 'pause') {

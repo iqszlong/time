@@ -1,18 +1,20 @@
 <template>
     <main class="home-layout">
-        <div class="logo" :class="[{ 'is-hidden': isHidden }]">
+        <section class="logo" :class="[{ 'is-hidden': isHidden }]">
             <z-logo v-if="!isEmpty(VITE_SITE_LOGO)" :src="VITE_SITE_LOGO" :alt="VITE_TITLE" class="min"></z-logo>
-        </div>
-        <div class="wrapper">
-
+        </section>
+        <section class="wrapper">
             <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
             </div>
             <Timer class="timer" :display="config.timeDisplay"></Timer>
             <Footer></Footer>
-        </div>
-
-        <Background class="media" :source="currentBackground"></Background>
+        </section>
+        <section class="media">
+            <template v-for="item in backgrounds" :key="item.id">
+                <Background class="item" :source="item" :style="{ 'z-index': item.id }"></Background>
+            </template>
+        </section>
     </main>
 </template>
 

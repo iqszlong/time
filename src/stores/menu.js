@@ -9,21 +9,21 @@ export const useMenuStore = defineStore("menus", () => {
   const { getPost, serialize } = utils;
   const staticList = [
     {
-      name: "time",
-      id: 0,
-      title: "通用",
-      parent: "root",
-      visible: "true",
-    },
-    {
       name: "background",
       id: 0,
       title: "背景",
       parent: "root",
       visible: "true",
+    },{
+      name: "time",
+      id: 1,
+      title: "通用",
+      parent: "root",
+      visible: "true",
     },
+    
   ];
-  const currentMenu = ref("time");
+  const currentMenu = ref(staticList[0].name);
   const menuList = ref([...staticList]);
   const loading = ref(false);
 

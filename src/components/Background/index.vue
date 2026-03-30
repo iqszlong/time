@@ -46,7 +46,9 @@ onMounted(() => {
     // console.log(props.source);
 })
 
-
+watchEffect(() => {
+    // console.log('background watchEffect',props.source);
+})
 
 </script>
 

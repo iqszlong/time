@@ -23,11 +23,11 @@
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     <SidebarMenuItem v-for="item in menuList" :key="item.name">
-                                        <SidebarMenuButton as-child :is-active="item.name === currentMenu">
-                                            <a href="#" @click="setMenu(item.name)">
+                                        <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu" @click="handleClick(item)">
+                                            <span class="flex items-center gap-2 " >
                                                 <!-- <component :is="item.icon" /> -->
                                                 <span>{{ item.title }}</span>
-                                            </a>
+                                            </span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 </SidebarMenu>
@@ -49,7 +49,7 @@
                         </div>
                     </header>
                     <section class="h-[calc(60vh-64px-48px)] overflow-y-auto p-4">
-                        <FieldSet v-show="currentMenu == 'time'">
+                        <FieldSet v-if="currentMenu == 'time'">
 
                             <div class="grid grid-flow-row gap-4">
                                 <FieldGroup>
@@ -73,12 +73,12 @@
                             </div>
 
                         </FieldSet>
-                        <FieldSet v-show="currentMenu == 'background'">
+                        <FieldSet v-if="currentMenu == 'background'">
 
                             <div class="grid grid-cols-[1fr_200px] gap-4">
                                 <div class="grid grid-flow-row gap-4">
                                     <div>
-                                        <div class="mb-2">选择背景</div>
+                                        <div class="mb-2">当前背景</div>
                                         <div class="flex items-center gap-2">
                                             <Select v-model="currentBackgroundId" @update:modelValue="changeTempConfig">
                                                 <SelectTrigger class="flex-1 w-full">
@@ -331,7 +331,7 @@ const fileTypeOpt = {
             },
         },
     ],
-    excludeAcceptAllOption: false,
+    excludeAcceptAllOption: true,
     multiple: false,
 }
 
@@ -378,10 +378,9 @@ const onOpenChange = async (open) => {
 }
 
 const initTempConfig = async (background) => {
-    // tempConfig = JSON.parse(JSON.stringify(config.value))
     // console.log(currentBackground.value);
-    Object.assign(tempConfig, config.value)
-    Object.assign(tempConfig, background ?? currentBackground.value)
+    Object.assign(tempConfig, {...config.value})
+    Object.assign(tempConfig, {...(background ?? backgrounds.value[0])})
     // console.log(tempConfig);
     currentBackgroundId.value = tempConfig.id
     // console.log(tempConfig.sourcePath);
@@ -390,7 +389,6 @@ const initTempConfig = async (background) => {
     if (tempConfig.sourceType === 'url') {
         urlValue.value = tempConfig.sourcePath
     }
-    // console.log(tempConfig.sourcePath);
 }
 
 const onSubmit = () => {
@@ -401,8 +399,11 @@ const onSubmit = () => {
     }
     tempConfig.sourceType = tabValue.value
     const data = { ...tempConfig }
-    delete data.sourcePath
+    // delete data.sourcePath
     delete data.timeDisplay
+    delete data.naiveTheme
+    delete data.language
+    delete data.location
     // console.log(data);
     // return
     updateBackground(data)
@@ -432,7 +433,7 @@ const handleFilesystem = async (e) => {
     // console.log(handle);
     tempConfig.filename = handle.name
     tempConfig.source = handle;
-    tempConfig.sourcePath = await getFileURL(handle)
+    tempConfig.sourcePath = await getFileURL(handle)    
     // console.log(tempConfig);
 
 }
@@ -454,12 +455,17 @@ const handleMaskValue = (values) => {
 }
 
 const handleNew = async () => {
-    const success = await addNewBackground()
-    if (success) {
+    const successId = await addNewBackground()
+    if (successId) {
+        // console.log(successId);
+        currentBackgroundId.value = successId
+        const data = backgrounds.value.find(item => item.id == successId)
+        // console.log(data);
+        currentBackground.value = data
         toast.success('添加新背景成功', {
             position: 'top-center'
         })
-        await initTempConfig()
+        await initTempConfig(data)
     }
 }
 
@@ -473,11 +479,17 @@ const handleDelete = async () => {
     }
 }
 
+const handleClick = (item) => {
+    setMenu(item.name)
+}
+
 
 
 const needPermission = async () => {
-    if (currentBackground.value.sourceType == 'url') return
-    const userPermission = await verifyPermission(currentBackground.value.source, false);
+    const background = backgrounds.value.find(item => item.id == currentBackgroundId.value)
+    if (!background) return
+    if (background.sourceType == 'url') return
+    const userPermission = await verifyPermission(background.source, false);
     if (userPermission) {
         toast.success('已授权成功，稍后将自动刷新页面', {
             position: 'top-center', onAutoClose: () => {
@@ -491,17 +503,16 @@ const changeTempConfig = async (id) => {
     // console.log(id,tempConfig.id)
     currentBackgroundId.value = id
     if (!id || tempConfig.id == id) return
-    const data = await loadBackgroundById(id)
-    // console.log(data);
-    data.sourcePath = await getFileURL(data.source)
+    const data = backgrounds.value.find(item => item.id == id)
+    console.log(data);
+    currentBackground.value = data
+    // data.sourcePath = await getFileURL(data.source)
     await initTempConfig(data)
 }
 
 </script>
 
 <style scoped>
-.setting-modal {}
-
 .preview-wrapper {
     aspect-ratio: 16 / 9;
 }

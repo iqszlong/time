@@ -49,64 +49,12 @@ export const backgroundService = {
     return null;
   },
 
-  async updateMask(id, maskConfig) {
-    const background = await this.getById(id);
-    if (background) {
-      background.maskEnabled = maskConfig.enabled;
-      background.maskFrom = maskConfig.from;
-      background.maskTo = maskConfig.to;
-      background.updateTime = dayjs().toDate();
-      return await this.save(background);
-    }
-    return null;
-  },
-
-  async updateFit(id, fit) {
-    const background = await this.getById(id);
-    if (background) {
-      background.fit = fit;
-      background.hposition = fit.hposition;
-      background.vposition = fit.vposition;
-      background.updateTime = dayjs().toDate();
-      return await this.save(background);
-    }
-    return null;
-  },
+  
 
   async updateState(id, state) {
     const background = await this.getById(id);
     if (background) {
       background.state = state;
-      background.updateTime = dayjs().toDate();
-      return await this.save(background);
-    }
-    return null;
-  },
-
-  async toggleVisible(id) {
-    const background = await this.getById(id);
-    if (background) {
-      background.visible = !background.visible;
-      background.updateTime = dayjs().toDate();
-      return await this.save(background);
-    }
-    return null;
-  },
-
-  async toggleAutoPause(id) {
-    const background = await this.getById(id);
-    if (background) {
-      background.autoPause = !background.autoPause;
-      background.updateTime = dayjs().toDate();
-      return await this.save(background);
-    }
-    return null;
-  },
-
-  async toggleState(id) {
-    const background = await this.getById(id);
-    if (background) {
-      background.state = background.state === 'play' ? 'pause' : 'play';
       background.updateTime = dayjs().toDate();
       return await this.save(background);
     }
