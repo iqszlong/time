@@ -61,6 +61,15 @@ export const backgroundService = {
     return null;
   },
 
+  async updateSourcePath(id, sourcePath) {
+    const background = await this.getById(id);
+    if (background) {
+      background.sourcePath = sourcePath;
+      return await this.save(background);
+    }
+    return null;
+  },
+
   async clear() {
     return await db.background.clear();
   },

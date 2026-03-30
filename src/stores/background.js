@@ -84,7 +84,14 @@ export const useBackgroundStore = defineStore('background', () => {
     for (const item of backgrounds.value) {
       // if (item.sourcePath) continue
       if (item.sourceType === 'url') item.sourcePath = item.source
-      else item.sourcePath = await getFileURL(item.source)
+      else {
+        // 释放旧的blob URL
+        if (item.sourcePath.startsWith('blob:')) URL.revokeObjectURL(item.sourcePath)
+        // 获取新的blob URL
+        item.sourcePath = await getFileURL(item.source)
+        // 更新数据库
+        await updateSourcePath(item.id, item.sourcePath)
+      }
     }
   }
 
@@ -194,15 +201,33 @@ export const useBackgroundStore = defineStore('background', () => {
     }
   }
 
+  const updateSourcePath = async (id, sourcePath) => {
+    try {
+      const updatedId = await backgroundService.updateSourcePath(id, sourcePath)
+      if (updatedId) {
+        const index = backgrounds.value.findIndex(item => item.id == updatedId)
+        if (index !== -1) {
+          const item = await loadBackgroundById(updatedId)
+          backgrounds.value[index] = item
+        }
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('更新背景源路径失败:', error)
+      return false
+    }
+  }
+
   async function updateBackground(background) {
     try {
-      const bData = { ...background, updateTime: dayjs().toDate() }
-      const updatedId = await backgroundService.save(bData)
+      const updatedId = await backgroundService.save(background)
       // console.log(updatedId)
       if (updatedId) {
         const index = backgrounds.value.findIndex(item => item.id == updatedId)
         if (index !== -1) {
-          backgrounds.value[index] = bData
+          const item = await loadBackgroundById(updatedId)
+          backgrounds.value[index] = item
         }
       }
       return true
@@ -226,6 +251,7 @@ export const useBackgroundStore = defineStore('background', () => {
 
   async function refresh() {
     await loadBackgrounds()
+    await loadAllPath()
   }
 
   const resetBackground = async () => {
