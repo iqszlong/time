@@ -22,10 +22,16 @@ const props = defineProps({
 const state = ref('play')
 
 
+let stateTimer = null;
 function pageState(e) {
     const stateVal = e.detail[0];
-    if (stateVal == 'hidden') state.value = 'pause';
-    if (stateVal == 'visible') state.value = 'play';
+    // 添加延迟，避免在页面可见性变化时立即触发视频播放/暂停
+    // 这可以解决 Edge 浏览器中窗口最小化和任务栏图标变亮的问题
+    clearTimeout(stateTimer);
+    stateTimer = setTimeout(() => {
+        if (stateVal == 'hidden') state.value = 'pause';
+        if (stateVal == 'visible') state.value = 'play';
+    }, 150);
 }
 
 watchEffect(() => {

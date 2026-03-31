@@ -1,11 +1,11 @@
 <template>
-    <Dialog v-model:open="visible" @update:open="onOpenChange" class="setting-modal">
+    <Dialog v-model:open="visibleModal" @update:open="onOpenChange" class="setting-modal">
         <DialogTrigger as-child>
             <Button variant="outline" size="icon">
                 <Settings2 />
             </Button>
         </DialogTrigger>
-        <DialogContent class="p-0 sm:max-w-4xl max-h-[60vh] overflow-hidden">
+        <DialogContent class="p-0 sm:max-w-4xl max-h-[70vh] overflow-hidden">
             <DialogHeader class="px-4 pt-4 sr-only">
                 <DialogTitle>设置</DialogTitle>
                 <DialogDescription>
@@ -49,7 +49,7 @@
                             </template>
                         </div>
                     </header>
-                    <section class="h-[calc(60vh-64px-48px)] overflow-y-auto p-4">
+                    <section class="h-[calc(70vh-64px-48px)] overflow-y-auto p-4">
                         <FieldSet v-if="currentMenu == 'time'">
 
                             <div class="grid grid-flow-row gap-4">
@@ -58,7 +58,7 @@
                                         <FieldLegend class="font-bold sr-only">时间设置</FieldLegend>
                                         <Field>
                                             <FieldLabel for="display">时间格式</FieldLabel>
-                                            <ToggleGroup id="display" v-model="tempConfig.timeDisplay" type="single">
+                                            <ToggleGroup id="display" v-model="tempConfig.timerConfig.timeDisplay" type="single">
                                                 <ToggleGroupItem value="12">
                                                     12小时
                                                 </ToggleGroupItem>
@@ -88,7 +88,7 @@
                                                         class="max-w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <template v-for="item in backgrounds" :key="item.id">
+                                                    <template v-for="item in tempConfig.backgroundConfigs" :key="item.id">
                                                         <SelectItem :value="item.id">{{ item.filename }}
                                                         </SelectItem>
                                                     </template>
@@ -105,7 +105,7 @@
                                                         <Plus />添加新背景
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem @click="handleDelete" :disabled="total <= 1">
+                                                    <DropdownMenuItem @click="()=>deleteConfirm = true" :disabled="total <= 1">
                                                         <Trash />删除当前背景
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -117,7 +117,7 @@
                                     <FieldGroup>
                                         <FieldSet>
 
-                                            <Tabs v-model:modelValue="tabValue">
+                                            <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
                                                 <TabsList class="w-full">
                                                     <TabsTrigger value="local">
                                                         本地文件
@@ -177,7 +177,7 @@
                                                 <TabsContent value="url">
                                                     <Field>
                                                         <Input id="url" type="text" placeholder="https://"
-                                                            @blur="handleUrl" :modelValue="urlValue" />
+                                                            @blur="handleUrl" @focus="(e)=>e.target.select()" :modelValue="urlValue" />
                                                         <FieldDescription class="text-xs">
                                                             文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
                                                         </FieldDescription>
@@ -190,7 +190,7 @@
 
                                                 <Field>
                                                     <FieldLabel for="order">显示层级</FieldLabel>
-                                                    <Input id="order" v-model="tempConfig.order" type="number"
+                                                    <Input id="order" v-model="tempConfig.currentBackground.order" type="number"
                                                         placeholder="显示层级" />
                                                     <FieldDescription class="text-xs">
                                                         层级越大，显示越靠前
@@ -199,7 +199,7 @@
 
                                                 <Field>
                                                     <FieldLabel for="fit">填充方式</FieldLabel>
-                                                    <Select id="fit" v-model="tempConfig.fit">
+                                                    <Select id="fit" v-model="tempConfig.currentBackground.fit">
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="" />
                                                         </SelectTrigger>
@@ -214,7 +214,7 @@
 
                                                 <Field>
                                                     <FieldLabel for="position">水平位置</FieldLabel>
-                                                    <Select id="position" v-model="tempConfig.hposition">
+                                                    <Select id="position" v-model="tempConfig.currentBackground.hposition">
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="" />
                                                         </SelectTrigger>
@@ -229,7 +229,7 @@
                                                 </Field>
                                                 <Field>
                                                     <FieldLabel for="position">垂直位置</FieldLabel>
-                                                    <Select id="position" v-model="tempConfig.vposition">
+                                                    <Select id="position" v-model="tempConfig.currentBackground.vposition">
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="" />
                                                         </SelectTrigger>
@@ -248,10 +248,10 @@
                                             <Field>
                                                 <FieldLabel for="mask">背景遮挡</FieldLabel>
                                                 <div class="flex items-center space-x-2">
-                                                    <Switch id="mask" v-model="tempConfig.maskEnabled" />
+                                                    <Switch id="mask" v-model="tempConfig.currentBackground.maskEnabled" />
                                                     <span>{{ maskValue[0] }}</span>
                                                     <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
-                                                        :max="100" :step="1" :disabled="!tempConfig.maskEnabled"
+                                                        :max="100" :step="1" :disabled="!tempConfig.currentBackground.maskEnabled"
                                                         @update:modelValue="handleMaskValue" />
                                                     <span>{{ maskValue[1] }}</span>
                                                 </div>
@@ -265,14 +265,32 @@
 
                                         <div class="mb-2">预览</div>
                                         <div class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                            <Preview :source="tempConfig"></Preview>
+                                            <Preview :source="tempConfig.currentBackground"></Preview>
                                         </div>
-                                        <div v-if="tempConfig.updateTime" class="text-xs mt-1 text-muted-foreground">
-                                            更新日期: {{ dayjs(tempConfig.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
+                                        <div v-if="tempConfig.currentBackground.updateTime" class="text-xs mt-1 text-muted-foreground">
+                                            更新日期: {{ dayjs(tempConfig.currentBackground.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
                                         </div>
 
                                     </div>
                                 </div>
+
+
+                                <AlertDialog v-model:open="deleteConfirm">
+                                    
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定删除吗?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                删除当前背景，将无法恢复。是否继续？
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>取消</AlertDialogCancel>
+                                            <AlertDialogAction @click="handleDelete">确定删除
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
 
 
                             </div>
@@ -281,9 +299,9 @@
                         </FieldSet>
                     </section>
                     <DialogFooter class="h-16 px-4 items-center">
-                        <DialogClose as-child>
-                            <Button type="submit" @click="onSubmit">保存</Button>
-                        </DialogClose>
+                        
+                        <Button type="submit" @click="onSubmit">保存</Button>
+                        
                         <DialogClose as-child>
                             <Button variant="outline">取消</Button>
                         </DialogClose>
@@ -314,6 +332,8 @@
         </DialogContent>
     </Dialog>
 
+    
+
 
 </template>
 
@@ -331,16 +351,16 @@ const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
-const { updateBackground, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground, removeBackground } = backgroundStore
+const { updateBackground, updateAllBackgrounds, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground, removeBackground } = backgroundStore
 const { currentBackgroundId, currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
 const { currentItem, currentMenu, menuList } = storeToRefs(menuStore)
 
-let tempConfig = reactive({ ...defaultData, sourcePath: null })
-const visible = ref(false)
+let tempConfig = reactive({ timerConfig: {} ,backgroundConfigs: [],currentBackground: {}})
+const visibleModal = ref(false)
 const resetConfirm = ref(false)
-const tabValue = ref('upload')
+const deleteConfirm = ref(false)
 const urlValue = ref('')
 const maskValue = ref([0])
 const selectedFileName = ref(null)
@@ -393,9 +413,6 @@ onBeforeMount(async () => {
 
 onMounted(async () => {
     // console.trace('onMounted');
-
-
-
 })
 
 const onOpenChange = async (open) => {
@@ -403,53 +420,50 @@ const onOpenChange = async (open) => {
         await initTempConfig()
     } else {
         selectedFileName.value = null
-
+        tempConfig.timerConfig = {}
+        tempConfig.currentBackground = {}
+        tempConfig.backgroundConfigs = []
     }
 }
 
 const initTempConfig = async () => {
-    Object.assign(tempConfig, { ...config.value })
-    Object.assign(tempConfig, { ...currentBackground.value })
+    Object.assign(tempConfig.timerConfig, { ...config.value })
+    Object.assign(tempConfig.backgroundConfigs,  [...backgrounds.value])
+    updateTempCurrentConfig(currentBackground.value )
+}
+
+const updateTempCurrentConfig = (background) => {
+    Object.assign(tempConfig.currentBackground, { ...background })
     // console.log(tempConfig);
-    // currentBackgroundId.value = tempConfig.id
-    // console.log(tempConfig.sourcePath);
-    tabValue.value = tempConfig.sourceType
-    maskValue.value = [tempConfig.maskFrom, tempConfig.maskTo]
-    if (tempConfig.sourceType === 'url') {
-        urlValue.value = tempConfig.sourcePath
+    maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
+    if (tempConfig.currentBackground.sourceType === 'url') {
+        urlValue.value = tempConfig.currentBackground.sourcePath
     }
 }
 
 const onSubmit = async () => {
-    // console.trace(tempConfig);
-    // 如果url是编码过的，则解码
-    if (tabValue.value === 'url' && tempConfig.source.includes('%')) {
-        tempConfig.source = decodeURI(tempConfig.source)
+    updateTempBackgrounds()
+    // console.log(tempConfig);
+    const backgroundsData = []
+    for (const background of tempConfig.backgroundConfigs) {
+        backgroundsData.push({...background})
     }
-    tempConfig.sourceType = tabValue.value
-    const data = Object.keys(defaultData).reduce((acc, key) => {
-        acc[key] = tempConfig[key]
-        return acc
-    }, {})
-    // delete data.sourcePath
-    // delete data.timeDisplay
-    // delete data.naiveTheme
-    // delete data.language
-    // delete data.location
-    data.id = tempConfig.id
-    data.createTime = tempConfig.createTime
-    // console.log(data);
+    console.log(backgroundsData);
     // return
     try {
-        await updateBackground(data)
-        await updateTimeDisplay(config.value.id, tempConfig.timeDisplay)
+        await updateAllBackgrounds(backgroundsData)
+        // for (const background of backgroundsData) {
+        //     // console.log(background);
+        //     await updateBackground(background)
+        // }
+        await updateTimeDisplay(config.value.id, tempConfig.timerConfig.timeDisplay)
         toast.success('更新成功', {
             position: 'top-center'
         })
+        visibleModal.value = false
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
-            type: 'error',
             description: error.message,
             position: 'top-center'
         })
@@ -457,10 +471,11 @@ const onSubmit = async () => {
 }
 
 const onReset = () => {
-    // resetConfig()
-    Object.assign(tempConfig, { ...defaultData })
-    resetBackground()
-    visible.value = false
+    updateTempCurrentConfig(defaultData)
+    console.log(tempConfig.currentBackground)
+    updateTempBackgrounds()
+    // resetBackground()
+    // visibleModal.value = false
 }
 
 const handleFile = (e) => {
@@ -468,9 +483,9 @@ const handleFile = (e) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => {
-        tempConfig.filename = file.name
-        tempConfig.source = reader.result
-        tempConfig.sourcePath = reader.result
+        tempConfig.currentBackground.filename = file.name
+        tempConfig.currentBackground.source = reader.result
+        tempConfig.currentBackground.sourcePath = reader.result
     }
 }
 
@@ -478,9 +493,9 @@ const handleFilesystem = async (e) => {
     const { handle } = e.detail[0];
     // console.log(handle);
     selectedFileName.value = handle.name
-    tempConfig.filename = handle.name
-    tempConfig.source = handle;
-    tempConfig.sourcePath = await getFileURL(handle)
+    tempConfig.currentBackground.filename = handle.name
+    tempConfig.currentBackground.source = handle;
+    tempConfig.currentBackground.sourcePath = await getFileURL(handle)
     // console.log(tempConfig);
 
 }
@@ -488,28 +503,28 @@ const handleFilesystem = async (e) => {
 const handleUrl = (e) => {
     const value = e.target.value.split('?')[0]
     if (!value) return
-    tempConfig.filename = value.split('/').pop()
-    tempConfig.source = value
-    tempConfig.sourcePath = value
+    // 如果url是编码过的，则解码
+    if (value.includes('%')) {
+        value = decodeURI(value)
+    }
+    tempConfig.currentBackground.filename = value.split('/').pop()
+    tempConfig.currentBackground.source = value
+    tempConfig.currentBackground.sourcePath = value
     // console.log(tempConfig);
 }
 
 
 const handleMaskValue = (values) => {
     // console.log(values);
-    tempConfig.maskFrom = values[0]
-    tempConfig.maskTo = values[1]
+    tempConfig.currentBackground.maskFrom = values[0]
+    tempConfig.currentBackground.maskTo = values[1]
 }
 
 const handleNew = async () => {
     const successId = await addNewBackground()
     if (successId) {
-        // console.log(successId);
         currentBackgroundId.value = successId
-        // const data = backgrounds.value.find(item => item.id == successId)
-        // console.log(data);
         toast.success('添加新背景成功', {
-            type: 'success',
             position: 'top-center'
         })
         await initTempConfig()
@@ -517,11 +532,10 @@ const handleNew = async () => {
 }
 
 const handleDelete = async () => {
-    const success = await removeBackground(tempConfig.id)
+    const success = await removeBackground(tempConfig.currentBackground.id)
     if (success) {
         currentBackgroundId.value = backgrounds.value[0]?.id
         toast.success('删除当前背景成功', {
-            type: 'success',
             position: 'top-center'
         })
         await initTempConfig()
@@ -535,10 +549,8 @@ const handleClick = (item) => {
 
 
 const needPermission = async () => {
-    const background = backgrounds.value.find(item => item.id == currentBackgroundId.value)
-    if (!background) return
-    if (background.sourceType == 'url') return
-    const userPermission = await verifyPermission(background.source, false);
+    if (tempConfig.currentBackground.sourceType == 'url') return
+    const userPermission = await verifyPermission(tempConfig.currentBackground.source, false);
     if (userPermission) {
         toast.success('已授权成功，稍后将自动刷新页面', {
             position: 'top-center', onAutoClose: () => {
@@ -548,10 +560,20 @@ const needPermission = async () => {
     }
 }
 
+const updateTempBackgrounds = ()=>{
+    // 更新临时列表
+    const index = tempConfig.backgroundConfigs.findIndex(item => item.id == tempConfig.currentBackground.id)
+    tempConfig.backgroundConfigs[index] = tempConfig.currentBackground
+}
+
 const changeTempConfig = async (id) => {
+    // console.log(id);
+    if (!id || tempConfig.currentBackground.id == id) return
+    updateTempBackgrounds()
+    // 切换当前背景
     currentBackgroundId.value = id
-    if (!id || tempConfig.id == id) return
-    await initTempConfig()
+    // 读取新当前背景配置
+    updateTempCurrentConfig(currentBackground.value)
 }
 
 </script>

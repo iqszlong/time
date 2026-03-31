@@ -119,10 +119,10 @@ export const useBackgroundStore = defineStore('background', () => {
         const file = await source.getFile()
         return URL.createObjectURL(file)
       } catch (error) {
-        // console.error(error.message)
         if (error.message.includes('FileSystemFileHandle')) {
           toast.warning('获取背景文件URL失败', {
             description: '请检查背景文件是否存在或是否被授权访问',
+            descriptionClass: 'text-muted-foreground',
             position: 'top-center',
             duration: 999999,
             action: {
@@ -139,11 +139,14 @@ export const useBackgroundStore = defineStore('background', () => {
               }
             }
           })
+        }else{
+          console.error(error.message)
         }
       }
 
 
-    } else if (typeof source === 'string') {
+    }
+    if (typeof source === 'string') {
       if (source.includes('%')) {
         return decodeURI(source)
       }
@@ -234,6 +237,18 @@ export const useBackgroundStore = defineStore('background', () => {
     } catch (error) {
       console.error('更新背景失败:', error)
       return false
+    }
+  }
+
+  const updateAllBackgrounds = async (backgrounds) => {
+    try {
+      const updated = await backgroundService.saveAll(backgrounds)
+      console.log(updated)
+      if (updated) {
+        refresh()
+      }
+    } catch (error) {
+      console.error('更新所有背景失败:', error)
     }
   }
 
@@ -342,6 +357,7 @@ export const useBackgroundStore = defineStore('background', () => {
     addNewBackground,
     addBackground,
     updateBackground,
+    updateAllBackgrounds,
     removeBackground,
     refresh,
     clearAll,
