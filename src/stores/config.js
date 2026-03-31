@@ -1,10 +1,7 @@
-import { ref, reactive, computed } from "vue";
-import { defineStore } from "pinia";
 import configService from '@/services/config';
-import { dayjs } from '@/utils/day';
 
 export const useConfigStore = defineStore("config", () => {
-
+  const { dayjs } = utils
   const configs = ref([])
   const config = ref(null)
   const total = ref(0)

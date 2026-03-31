@@ -1,8 +1,3 @@
-import { ref, computed, getCurrentInstance } from "vue";
-import { defineStore } from "pinia";
-import { useRouter } from "vue-router";
-import utils from "@/utils";
-import api from "@/api";
 
 export const useUserStore = defineStore("user", () => {
   const { isNull, message } = utils;

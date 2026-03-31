@@ -1,11 +1,8 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import backgroundService from '@/services/background'
-import { dayjs } from '@/utils/day'
 import { toast } from 'vue-sonner'
+import backgroundService from '@/services/background'
 
 export const useBackgroundStore = defineStore('background', () => {
-
+  const { dayjs } = utils
   const backgrounds = ref([])
   const currentBackgroundId = ref(null)
   const total = ref(0)
