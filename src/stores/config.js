@@ -16,6 +16,7 @@ export const useConfigStore = defineStore("config", () => {
     country: "CN",
     language: "ZH_CN",
     location: null, // 地理位置
+    useFileSystem: false, // 是否使用新文件系统
   }
 
   const hasMore = computed(() => {

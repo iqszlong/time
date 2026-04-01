@@ -78,14 +78,26 @@ export const useBackgroundStore = defineStore('background', () => {
   const loadAllPath = async () => {
     for (const item of backgrounds.value) {
       // if (item.sourcePath) continue
-      if (item.sourceType === 'url') item.sourcePath = item.source
+      if (item.sourceType === 'url') {
+        if (item.source.includes('%')) {
+          item.sourcePath = decodeURI(item.source)
+        } else {
+          item.sourcePath = item.source
+        }
+      }
       else {
         // 释放旧的blob URL
-        if (item.sourcePath.startsWith('blob:')) URL.revokeObjectURL(item.sourcePath)
-        // 获取新的blob URL
-        item.sourcePath = await getFileURL(item.source)
-        // 更新数据库
-        await updateSourcePath(item.id, item.sourcePath)
+        if (item.sourcePath.startsWith('blob:')) {
+          URL.revokeObjectURL(item.sourcePath)
+          // 获取新的blob URL
+          item.sourcePath = await getFileURL(item.source)
+          // 更新数据库
+          await updateSourcePath(item.id, item.sourcePath)
+        }
+        if (item.sourcePath.startsWith('base64')) {
+          // 什么都不做直接用base64编码
+        }
+
       }
     }
   }
@@ -109,43 +121,34 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   const getFileURL = async (source) => {
-    if (source instanceof Object) {
-      try {
-        const file = await source.getFile()
-        return URL.createObjectURL(file)
-      } catch (error) {
-        if (error.message.includes('FileSystemFileHandle')) {
-          toast.warning('获取背景文件URL失败', {
-            description: '请检查背景文件是否存在或是否被授权访问',
-            position: 'top-center',
-            duration: 999999,
-            action: {
-              label: '授权',
-              onClick: async () => {
-                const userPermission = await verifyPermission(currentBackground.value.source, false)
-                if (userPermission) {
-                  toast.success('已授权成功，稍后将自动刷新页面', {
-                    position: 'top-center', onAutoClose: () => {
-                      location.reload()
-                    }
-                  })
-                }
+    try {
+      const file = await source.getFile()
+      return URL.createObjectURL(file)
+    } catch (error) {
+      if (error.message.includes('FileSystemFileHandle')) {
+        toast.warning('获取背景文件URL失败', {
+          description: '请检查背景文件是否存在或是否被授权访问',
+          position: 'top-center',
+          duration: 999999,
+          action: {
+            label: '授权',
+            onClick: async () => {
+              const userPermission = await verifyPermission(currentBackground.value.source, false)
+              if (userPermission) {
+                toast.success('已授权成功，稍后将自动刷新页面', {
+                  position: 'top-center', onAutoClose: () => {
+                    location.reload()
+                  }
+                })
               }
             }
-          })
-        }else{
-          console.error(error.message)
-        }
+          }
+        })
+      } else {
+        console.error(error.message)
       }
-
-
     }
-    if (typeof source === 'string') {
-      if (source.includes('%')) {
-        return decodeURI(source)
-      }
-      return source
-    }
+
     return ''
   }
 
