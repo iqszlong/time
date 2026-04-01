@@ -6,6 +6,7 @@
         <section class="wrapper">
             <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
+                <!-- <Button type="primary" @click="testClick">测试</Button> -->
             </div>
             <Timer class="timer" :display="config.timeDisplay"></Timer>
             <Footer></Footer>
@@ -52,6 +53,12 @@ const handleMouseleave = (e) => {
 const handleMouseMove = () => {
     isHidden.value = false // 鼠标一动就显示
     autoHide()// 重启倒计时
+}
+const testClick = () =>{
+    toast.success('测试成功',{
+        description: '这是一个测试消息',
+        position: 'top-center',
+    })
 }
 
 

@@ -8,7 +8,7 @@ export const useConfigStore = defineStore("config", () => {
   const loading = ref(false)
   const currentPage = ref(0)
   const pageSize = ref(10)
-  const videoPlay = ref(false)
+  const videoPlay = ref(true)
 
   const defaultData = {
     timeDisplay: '12',

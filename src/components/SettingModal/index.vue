@@ -270,6 +270,23 @@
                                                         </div>
 
                                                     </Field>
+
+                                                    <Field>
+                                                        <FieldLabel for="volume">音量</FieldLabel>
+                                                        <div class="flex items-center space-x-2">
+                                                            <Button variant="ghost" size="icon-sm" @click="toggleMute">
+                                                                <template v-if="tempConfig.currentBackground.muted">
+                                                                    <VolumeX />
+                                                                </template>
+                                                                <template v-else>
+                                                                    <Volume2 />
+                                                                </template>
+                                                            </Button>
+                                                            <Slider id="volume" v-model="volumeValue"
+                                                                :min="0" :max="1" :step="0.01" @update:modelValue="handleVolumeValue" />
+                                                            <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
+                                                        </div>
+                                                    </Field>
                                                 </FieldSet>
                                             </FieldGroup>
                                         </div>
@@ -353,14 +370,14 @@
 </template>
 
 <script setup>
-import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical } from 'lucide-vue-next';
+import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 
-const { dayjs } = utils
+const { dayjs, highPrecisionMul } = utils
 const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
 const { config, videoPlay } = storeToRefs(configStore)
@@ -377,7 +394,8 @@ const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
 const urlValue = ref('')
-const maskValue = ref([0])
+const maskValue = ref([0,1])
+const volumeValue = ref([0])
 const selectedFileName = ref(null)
 
 const fileTypeOpt = {
@@ -460,6 +478,7 @@ const updateTempCurrentConfig = (background) => {
     Object.assign(tempConfig.currentBackground, { ...background })
     // console.log(tempConfig);
     maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
+    volumeValue.value = [tempConfig.currentBackground.volume]
     if (tempConfig.currentBackground.sourceType === 'url') {
         urlValue.value = tempConfig.currentBackground.sourcePath
     }
@@ -485,7 +504,7 @@ const onSubmit = async () => {
             position: 'top-center'
         })
         visibleModal.value = false
-        if (!visiblePlay.value) videoPlay.value = true
+        if (!videoPlay.value) videoPlay.value = true
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
@@ -544,6 +563,16 @@ const handleMaskValue = (values) => {
     tempConfig.currentBackground.maskFrom = values[0]
     tempConfig.currentBackground.maskTo = values[1]
 }
+
+const handleVolumeValue = (value) => {
+    // console.log(value);
+    tempConfig.currentBackground.volume = value[0]
+}
+
+const toggleMute = () => {
+    tempConfig.currentBackground.muted = !tempConfig.currentBackground.muted
+}
+
 
 const handleNew = async () => {
     const successId = await addNewBackground()

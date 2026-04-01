@@ -24,6 +24,8 @@ export const useBackgroundStore = defineStore('background', () => {
     maskTo: 100,
     state: "idle", // pause || play
     autoPause: true, // 播放页离开自动暂停
+    volume: 0.1, // 音量
+    muted: true, // 静音
     order: 0, // 背景排序
   }
 
@@ -53,15 +55,11 @@ export const useBackgroundStore = defineStore('background', () => {
     await loadBackgrounds()
     if (total.value === 0) {
       await addBackground(defaultData)
+      await loadBackgrounds()
     }
     await loadAllPath()
     currentBackgroundId.value = backgrounds.value[0].id
   }
-
-
-
-
-
 
   async function loadBackgrounds() {
     loading.value = true
@@ -119,7 +117,6 @@ export const useBackgroundStore = defineStore('background', () => {
         if (error.message.includes('FileSystemFileHandle')) {
           toast.warning('获取背景文件URL失败', {
             description: '请检查背景文件是否存在或是否被授权访问',
-            descriptionClass: 'text-muted-foreground',
             position: 'top-center',
             duration: 999999,
             action: {

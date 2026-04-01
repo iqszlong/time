@@ -40,7 +40,7 @@ function pageState(e) {
 
 watch(() => props.videoPlay, (newVal) => {
     state.value = newVal ? 'play' : 'pause';    
-})
+},{immediate: true})
 
 </script>
 
