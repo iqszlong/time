@@ -12,7 +12,7 @@
         </section>
         <section class="media">
             <template v-for="item in backgrounds" :key="item.id">
-                <Background class="item" :source="item" :style="{ 'z-index': item.order }"></Background>
+                <Background class="item" :source="item" :videoPlay="videoPlay" :style="{ 'z-index': item.order }"></Background>
             </template>
         </section>
     </main>
@@ -23,7 +23,7 @@ import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const configStore = useConfigStore();
-const { config } = storeToRefs(configStore)
+const { config, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore();
 const { loadBackgrounds,verifyPermission} = backgroundStore
 const { loading: backgroundLoading,backgrounds, currentBackground } = storeToRefs(backgroundStore)

@@ -14,8 +14,8 @@
                     </DialogDescription>
                 </DialogHeader>
 
-                <SidebarProvider class="setting-side-bar items-start ![--sidebar-width:10rem]">
-                    <Sidebar collapsible="offcanvas" class="hidden md:flex">
+                <SidebarProvider defaultOpen class="setting-side-bar items-start ![--sidebar-width:10rem]">
+                    <Sidebar collapsible="offcanvas">
                         <SidebarHeader class="flex flex-row gap-2 items-center">
                             <Settings2 size="16" />
                             <h1 class="font-bold">设置</h1>
@@ -44,10 +44,8 @@
                                 <div class="flex px-4 flex-row items-center gap-2">
                                     <SidebarTrigger class="-ml-1" />
                                     <h2 class="font-bold shrink-0">{{ currentItem.title }}</h2>
-                                    <template v-if="currentMenu == 'time'">
-                                        <p class="text-sm text-muted-foreground invisible sm:visible">更改时间显示格式</p>
-                                    </template>
-                                    <template v-else>
+                                    
+                                    <template v-if="currentMenu == 'background'">
                                         <p class="text-sm text-muted-foreground invisible sm:visible">
                                             使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。</p>
                                     </template>
@@ -81,17 +79,17 @@
                                 </FieldSet>
                                 <FieldSet v-if="currentMenu == 'background'">
 
-                                    <div class="grid grid-cols-[1fr_280px] gap-4">
+                                    <div class="grid grid-cols-[400px_auto] gap-4">
                                         <div class="grid grid-flow-row gap-4">
                                             <div>
                                                 <div class="mb-2">当前背景</div>
-                                                <div class="flex items-center gap-2">
-
+                                                <div class="flex  items-center gap-2">
+                                             
                                                     <Select v-model="currentBackgroundId"
                                                         @update:modelValue="changeTempConfig">
-                                                        <SelectTrigger class="w-[calc(100%-36px-8px)]">
+                                                        <SelectTrigger class="w-[calc(400px-36px-8px)]">
                                                             <SelectValue placeholder="Select a background"
-                                                                class="max-w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
+                                                                class="w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <template v-for="item in tempConfig.backgroundConfigs"
@@ -138,16 +136,15 @@
                                                             <template v-if="isFilePicker">
                                                                 <Field>
                                                                     <div class="flex gap-2">
-                                                                        <div class="flex-1 w-[calc(100%-90px-8px)]">
+                                                                        <div class="flex-1 w-[calc(400px-90px-8px)]">
                                                                             <z-filesystem id="file"
                                                                                 @open="handleFilesystem"
-                                                                                :open-opt="JSON.stringify(fileTypeOpt)"
-                                                                                style="width: 100%;">
+                                                                                :openOpt="JSON.stringify(fileTypeOpt)"
+                                                                                style="width: 100%; overflow: hidden;">
 
-                                                                                <Button variant="outline"
-                                                                                    class="w-full">
+                                                                                <Button variant="outline" class="w-full">
                                                                                     <span
-                                                                                        class="block max-w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
+                                                                                        class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
                                                                                         {{ selectedFileName ?? '选择文件' }}
                                                                                     </span>
                                                                                 </Button>
@@ -353,10 +350,6 @@
             </DialogContent>
         </DialogOverlay>
     </Dialog>
-
-
-
-
 </template>
 
 <script setup>
@@ -370,7 +363,7 @@ import { toast } from 'vue-sonner'
 const { dayjs } = utils
 const configStore = useConfigStore();
 const { updateTimeDisplay } = configStore
-const { config } = storeToRefs(configStore)
+const { config, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
 const { updateBackground, updateAllBackgrounds, defaultData, verifyPermission, getFileURL, resetBackground, loadBackgroundById, addNewBackground, removeBackground } = backgroundStore
 const { currentBackgroundId, currentBackground, backgrounds, isFilePicker, isDefault, total } = storeToRefs(backgroundStore)
@@ -392,13 +385,20 @@ const fileTypeOpt = {
         {
             description: "Images",
             accept: {
-                "image/*": [".jpg", ".png", ".gif", ".jpeg", ".bmp", ".webp"],
+                "image/jpeg": [".jpg"],
+                "image/png": [".png"],
+                "image/gif": [".gif"],
+                "image/bmp": [".bmp"],
+                "image/webp": [".webp"],
             },
         },
         {
             description: "Videos",
             accept: {
-                "video/*": [".mp4", ".mkv", ".m4v", ".webm"],
+                "video/mp4": [".mp4"],
+                "video/x-matroska": [".mkv"],
+                "video/mp4v-es": [".m4v"],
+                "video/webm": [".webm"],
             },
         },
     ],
@@ -439,12 +439,14 @@ onMounted(async () => {
 
 const onOpenChange = async (open) => {
     if (open) {
+        videoPlay.value = false
         await initTempConfig()
     } else {
         selectedFileName.value = null
         tempConfig.timerConfig = {}
         tempConfig.currentBackground = {}
         tempConfig.backgroundConfigs = []
+        videoPlay.value = true
     }
 }
 
@@ -470,7 +472,7 @@ const onSubmit = async () => {
     for (const background of tempConfig.backgroundConfigs) {
         backgroundsData.push({ ...background })
     }
-    console.log(backgroundsData);
+    // console.log(backgroundsData);
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
@@ -483,6 +485,7 @@ const onSubmit = async () => {
             position: 'top-center'
         })
         visibleModal.value = false
+        if (!visiblePlay.value) videoPlay.value = true
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
