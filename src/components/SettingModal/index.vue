@@ -51,272 +51,266 @@
                             </div>
                         </header>
                         <section class="h-[calc(80vh-64px-48px)] overflow-y-auto p-4">
-                            <FieldSet v-if="currentMenu == 'time'">
+                            <template v-if="currentMenu == 'time'">
 
-                                <div class="grid grid-flow-row gap-12">
+
+                                <FieldSet>
                                     <FieldGroup>
-                                        <FieldSet>
-                                            <FieldLegend class="font-bold sr-only">时间设置</FieldLegend>
-                                            <Field>
-                                                <FieldLabel for="display">时间格式</FieldLabel>
-                                                <RadioGroup id="display" v-model="tempConfig.timerConfig.timeDisplay"
-                                                    class="flex items-center gap-4">
-                                                    <div class="flex items-center gap-2">
-                                                        <RadioGroupItem id="display12" value="12" />
-                                                        <Label for="display12">12小时</Label>
-                                                    </div>
-                                                    <div class="flex items-center gap-2">
-                                                        <RadioGroupItem id="display24" value="24" />
-                                                        <Label for="display24">24小时</Label>
-                                                    </div>
-                                                </RadioGroup>
-                                            </Field>
-                                        </FieldSet>
-                                    </FieldGroup>
-
-                                    <FieldGroup>
-                                        <FieldSet>
-                                            <FieldLegend class="font-bold sr-only">文件系统设置</FieldLegend>
-                                            <Field>
-                                                <FieldLabel for="useFileSystem">使用新文件系统（Beta）</FieldLabel>
+                                        <Field>
+                                            <FieldLabel for="display">时间格式</FieldLabel>
+                                            <RadioGroup id="display" v-model="tempConfig.timerConfig.timeDisplay"
+                                                class="flex items-center gap-4">
                                                 <div class="flex items-center gap-2">
-                                                    <Switch id="useFileSystem"
-                                                        v-model="tempConfig.timerConfig.useFileSystem" />
-
+                                                    <RadioGroupItem id="display12" value="12" />
+                                                    <Label for="display12">12小时</Label>
                                                 </div>
-                                                <FieldDescription>
-                                                    开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，如果未授权，将无法读取本地文件。
-                                                    如果授权后任然无法读取文件，请关闭该功能。
-                                                </FieldDescription>
-                                            </Field>
-                                        </FieldSet>
-
-                                        <FieldSet v-if="storageInfo">
-                                            <FieldLegend class="font-bold sr-only">文件用量</FieldLegend>
-                                            <Field>
-                                                <FieldLabel for="storageUsage">文件用量</FieldLabel>
                                                 <div class="flex items-center gap-2">
-
-                                                    <Progress :model-value="storageUsage" :min="0" :max="100"
-                                                        class="w-1/2" />
-                                                    <div>
-                                                        {{ storageUsage }}%
-                                                    </div>
+                                                    <RadioGroupItem id="display24" value="24" />
+                                                    <Label for="display24">24小时</Label>
                                                 </div>
-                                                <FieldDescription>
-                                                    已使用 {{ storageInfo.usage }} 字节，可使用 {{ storageInfo.quota }} 字节，
-                                                </FieldDescription>
-                                            </Field>
-                                        </FieldSet>
+                                            </RadioGroup>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel for="useFileSystem">使用新文件系统（Beta）</FieldLabel>
+                                            <div class="flex items-center gap-2">
+                                                <Switch id="useFileSystem"
+                                                    v-model="tempConfig.timerConfig.useFileSystem" />
+
+                                            </div>
+                                            <FieldDescription>
+                                                开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，如果未授权，将无法读取本地文件。
+                                                如果授权后任然无法读取文件，请关闭该功能。
+                                            </FieldDescription>
+                                        </Field>
+
+                                        <Field v-if="storageInfo">
+                                            <FieldLabel for="storageUsage">文件用量</FieldLabel>
+                                            <div class="flex items-center gap-2">
+
+                                                <Progress :model-value="storageUsage" :min="0" :max="100"
+                                                    class="w-1/2" />
+                                                <div>
+                                                    {{ storageUsage }}%
+                                                </div>
+                                            </div>
+                                            <FieldDescription>
+                                                已使用 {{ storageInfo.usage }} 字节，可使用 {{ storageInfo.quota }} 字节，
+                                            </FieldDescription>
+                                        </Field>
                                     </FieldGroup>
+                                </FieldSet>
 
-                                </div>
 
-                            </FieldSet>
-                            <FieldSet v-if="currentMenu == 'background'">
+                            </template>
+                            <template v-if="currentMenu == 'background'">
 
                                 <div class="flex flex-col-reverse sm:flex-row gap-4">
-                                    <div class="flex-1 flex flex-col  gap-4">
-                                        <FieldGroup>
-                                            <Field>
-                                                <FieldLabel for="currentBackgroundId">当前背景</FieldLabel>
-                                                <div class="flex  items-center gap-2">
-                                                    <Select v-model="currentBackgroundId"
-                                                        @update:modelValue="changeTempConfig">
-                                                        <SelectTrigger id="currentBackgroundId" class="w-[calc(100%-36px-8px)] ">
-                                                            <SelectValue placeholder="Select a background"
-                                                                class="w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <template v-for="item in tempConfig.backgroundConfigs"
-                                                                :key="item.id">
-                                                                <SelectItem :value="item.id">{{ item.filename }}
-                                                                </SelectItem>
-                                                            </template>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger as-child>
-                                                            <Button variant="outline" size="icon">
-                                                                <EllipsisVertical />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent>
-                                                            <DropdownMenuItem @click="handleNew">
-                                                                <Plus />添加新背景
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator />
-                                                            <DropdownMenuItem @click="() => deleteConfirm = true"
-                                                                :disabled="total <= 1">
-                                                                <Trash />删除当前背景
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                            </Field>
+                                    <div class="flex-1">
+                                        <FieldSet>
+                                            <FieldGroup>
+                                                <Field>
+                                                    <FieldLabel for="currentBackgroundId">当前背景</FieldLabel>
+                                                    <div class="flex  items-center gap-2">
+                                                        <Select v-model="currentBackgroundId"
+                                                            @update:modelValue="changeTempConfig">
+                                                            <SelectTrigger id="currentBackgroundId"
+                                                                class="w-[calc(100%-36px-8px)] ">
+                                                                <SelectValue placeholder="Select a background"
+                                                                    class="w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <template v-for="item in tempConfig.backgroundConfigs"
+                                                                    :key="item.id">
+                                                                    <SelectItem :value="item.id">{{ item.filename }}
+                                                                    </SelectItem>
+                                                                </template>
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger as-child>
+                                                                <Button variant="outline" size="icon">
+                                                                    <EllipsisVertical />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent>
+                                                                <DropdownMenuItem @click="handleNew">
+                                                                    <Plus />添加新背景
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem @click="() => deleteConfirm = true"
+                                                                    :disabled="total <= 1">
+                                                                    <Trash />删除当前背景
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </Field>
 
-                                            <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
-                                                <TabsList class="w-full">
-                                                    <TabsTrigger value="local">
-                                                        本地文件
-                                                    </TabsTrigger>
-                                                    <TabsTrigger value="url">
-                                                        远程链接
-                                                    </TabsTrigger>
-                                                </TabsList>
-                                                <TabsContent value="local">
-                                                    <template v-if="tempConfig.timerConfig.useFileSystem">
-                                                        <Field>
-                                                            <div class="flex gap-2">
-                                                                <div class="flex-1 w-[calc(100%-90px-8px)]">
-                                                                    <z-filesystem id="file" @open="handleFilesystem"
-                                                                        :openOpt="JSON.stringify(fileTypeOpt)"
-                                                                        style="width: 100%; overflow: hidden;">
+                                                <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
+                                                    <TabsList class="w-full">
+                                                        <TabsTrigger value="local">
+                                                            本地文件
+                                                        </TabsTrigger>
+                                                        <TabsTrigger value="url">
+                                                            远程链接
+                                                        </TabsTrigger>
+                                                    </TabsList>
+                                                    <TabsContent value="local">
+                                                        <template v-if="tempConfig.timerConfig.useFileSystem">
+                                                            <Field>
+                                                                <div class="flex gap-2">
+                                                                    <div class="flex-1 w-[calc(100%-90px-8px)]">
+                                                                        <z-filesystem id="file" @open="handleFilesystem"
+                                                                            :openOpt="JSON.stringify(fileTypeOpt)"
+                                                                            style="width: 100%; overflow: hidden;">
 
-                                                                        <Button variant="outline" class="w-full">
-                                                                            <span
-                                                                                class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
-                                                                                {{ selectedFileName ?? '选择文件' }}
-                                                                            </span>
-                                                                        </Button>
+                                                                            <Button variant="outline" class="w-full">
+                                                                                <span
+                                                                                    class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
+                                                                                    {{ selectedFileName ?? '选择文件' }}
+                                                                                </span>
+                                                                            </Button>
 
-                                                                    </z-filesystem>
+                                                                        </z-filesystem>
+                                                                    </div>
+                                                                    <TooltipProvider>
+                                                                        <Tooltip>
+                                                                            <TooltipTrigger as-child>
+                                                                                <Button variant="outline"
+                                                                                    @click="needPermission">授权访问</Button>
+                                                                            </TooltipTrigger>
+                                                                            <TooltipContent>
+                                                                                使用本地文件时，显示不正常请点击此按钮授权访问。<br />
+                                                                                授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
+                                                                                请确保您信任该程序，以避免潜在的安全风险。
+                                                                            </TooltipContent>
+                                                                        </Tooltip>
+                                                                    </TooltipProvider>
                                                                 </div>
-                                                                <TooltipProvider>
-                                                                    <Tooltip>
-                                                                        <TooltipTrigger as-child>
-                                                                            <Button variant="outline"
-                                                                                @click="needPermission">授权访问</Button>
-                                                                        </TooltipTrigger>
-                                                                        <TooltipContent>
-                                                                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
-                                                                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
-                                                                            请确保您信任该程序，以避免潜在的安全风险。
-                                                                        </TooltipContent>
-                                                                    </Tooltip>
-                                                                </TooltipProvider>
-                                                            </div>
+                                                                <FieldDescription class="text-xs">
+                                                                    文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                                                </FieldDescription>
+
+                                                            </Field>
+                                                        </template>
+                                                        <template v-else>
+                                                            <Field>
+                                                                <Input id="picture" type="file"
+                                                                    accept="image/jpeg,image/png,image/gif,image/bmp,image/webp"
+                                                                    @change="handleFile" />
+                                                                <FieldDescription class="text-xs">
+                                                                    文件格式：jpg、png、gif、jpeg、bmp、webp
+                                                                </FieldDescription>
+                                                            </Field>
+                                                        </template>
+                                                    </TabsContent>
+                                                    <TabsContent value="url">
+                                                        <Field>
+                                                            <Input id="url" type="text" placeholder="https://"
+                                                                @blur="handleUrl" @focus="(e) => e.target.select()"
+                                                                :modelValue="urlValue" />
                                                             <FieldDescription class="text-xs">
                                                                 文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
                                                             </FieldDescription>
+                                                        </Field>
+                                                    </TabsContent>
+                                                </Tabs>
 
-                                                        </Field>
-                                                    </template>
-                                                    <template v-else>
-                                                        <Field>
-                                                            <Input id="picture" type="file"
-                                                                accept="image/jpeg,image/png,image/gif,image/bmp,image/webp"
-                                                                @change="handleFile" />
-                                                            <FieldDescription class="text-xs">
-                                                                文件格式：jpg、png、gif、jpeg、bmp、webp
-                                                            </FieldDescription>
-                                                        </Field>
-                                                    </template>
-                                                </TabsContent>
-                                                <TabsContent value="url">
+
+                                                <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-4">
+
                                                     <Field>
-                                                        <Input id="url" type="text" placeholder="https://"
-                                                            @blur="handleUrl" @focus="(e) => e.target.select()"
-                                                            :modelValue="urlValue" />
+                                                        <FieldLabel for="order">显示层级</FieldLabel>
+                                                        <Input id="order" v-model="tempConfig.currentBackground.order"
+                                                            type="number" placeholder="显示层级" />
                                                         <FieldDescription class="text-xs">
-                                                            文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                                            层级越大，显示越靠前
                                                         </FieldDescription>
                                                     </Field>
-                                                </TabsContent>
-                                            </Tabs>
 
+                                                    <Field>
+                                                        <FieldLabel for="fit">填充方式</FieldLabel>
+                                                        <Select v-model="tempConfig.currentBackground.fit">
+                                                            <SelectTrigger id="fit">
+                                                                <SelectValue placeholder="" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem v-for="item in fitOptions" :key="item.value"
+                                                                    :value="item.value">
+                                                                    {{ item.label }} ({{ item.value }})
+                                                                </SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </Field>
 
-                                            <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-4">
-
-                                                <Field>
-                                                    <FieldLabel for="order">显示层级</FieldLabel>
-                                                    <Input id="order" v-model="tempConfig.currentBackground.order"
-                                                        type="number" placeholder="显示层级" />
-                                                    <FieldDescription class="text-xs">
-                                                        层级越大，显示越靠前
-                                                    </FieldDescription>
-                                                </Field>
-
-                                                <Field>
-                                                    <FieldLabel for="fit">填充方式</FieldLabel>
-                                                    <Select v-model="tempConfig.currentBackground.fit">
-                                                        <SelectTrigger id="fit">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem v-for="item in fitOptions" :key="item.value"
-                                                                :value="item.value">
-                                                                {{ item.label }} ({{ item.value }})
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </Field>
-
-                                                <Field>
-                                                    <FieldLabel for="position">水平位置</FieldLabel>
-                                                    <Select v-model="tempConfig.currentBackground.hposition">
-                                                        <SelectTrigger id="position">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem
-                                                                v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
-                                                                :key="item.value" :value="item.value">
-                                                                {{ item.label }}
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </Field>
-                                                <Field>
-                                                    <FieldLabel for="position">垂直位置</FieldLabel>
-                                                    <Select v-model="tempConfig.currentBackground.vposition">
-                                                        <SelectTrigger id="position">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem
-                                                                v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                                :key="item.value" :value="item.value">
-                                                                {{ item.label }}
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </Field>
-                                            </div>
-
-
-                                            <Field>
-                                                <FieldLabel for="mask">背景遮挡</FieldLabel>
-                                                <div class="flex items-center space-x-2">
-                                                    <Switch id="mask"
-                                                        v-model="tempConfig.currentBackground.maskEnabled" />
-                                                    <span>{{ maskValue[0] }}</span>
-                                                    <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
-                                                        :max="100" :step="1"
-                                                        :disabled="!tempConfig.currentBackground.maskEnabled"
-                                                        @update:modelValue="handleMaskValue" />
-                                                    <span>{{ maskValue[1] }}</span>
+                                                    <Field>
+                                                        <FieldLabel for="position">水平位置</FieldLabel>
+                                                        <Select v-model="tempConfig.currentBackground.hposition">
+                                                            <SelectTrigger id="position">
+                                                                <SelectValue placeholder="" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem
+                                                                    v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
+                                                                    :key="item.value" :value="item.value">
+                                                                    {{ item.label }}
+                                                                </SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </Field>
+                                                    <Field>
+                                                        <FieldLabel for="position">垂直位置</FieldLabel>
+                                                        <Select v-model="tempConfig.currentBackground.vposition">
+                                                            <SelectTrigger id="position">
+                                                                <SelectValue placeholder="" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem
+                                                                    v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
+                                                                    :key="item.value" :value="item.value">
+                                                                    {{ item.label }}
+                                                                </SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </Field>
                                                 </div>
 
-                                            </Field>
 
-                                            <Field>
-                                                <FieldLabel for="volume">音量</FieldLabel>
-                                                <div class="flex items-center space-x-2">
-                                                    <Button id="volume" variant="ghost" size="icon-sm" @click="toggleMute">
-                                                        <template v-if="tempConfig.currentBackground.muted">
-                                                            <VolumeX />
-                                                        </template>
-                                                        <template v-else>
-                                                            <Volume2 />
-                                                        </template>
-                                                    </Button>
-                                                    <Slider v-model="volumeValue" :min="0" :max="1"
-                                                        :step="0.01" @update:modelValue="handleVolumeValue" />
-                                                    <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
-                                                </div>
-                                            </Field>
-                                        </FieldGroup>
+                                                <Field>
+                                                    <FieldLabel for="mask">背景遮挡</FieldLabel>
+                                                    <div class="flex items-center space-x-2">
+                                                        <Switch id="mask"
+                                                            v-model="tempConfig.currentBackground.maskEnabled" />
+                                                        <span>{{ maskValue[0] }}</span>
+                                                        <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
+                                                            :max="100" :step="1"
+                                                            :disabled="!tempConfig.currentBackground.maskEnabled"
+                                                            @update:modelValue="handleMaskValue" />
+                                                        <span>{{ maskValue[1] }}</span>
+                                                    </div>
+
+                                                </Field>
+
+                                                <Field>
+                                                    <FieldLabel for="volume">音量</FieldLabel>
+                                                    <div class="flex items-center space-x-2">
+                                                        <Button id="volume" variant="ghost" size="icon-sm"
+                                                            @click="toggleMute">
+                                                            <template v-if="tempConfig.currentBackground.muted">
+                                                                <VolumeX />
+                                                            </template>
+                                                            <template v-else>
+                                                                <Volume2 />
+                                                            </template>
+                                                        </Button>
+                                                        <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
+                                                            @update:modelValue="handleVolumeValue" />
+                                                        <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
+                                                    </div>
+                                                </Field>
+                                            </FieldGroup>
+                                        </FieldSet>
                                     </div>
                                     <div class="flex-none sm:w-56">
                                         <div class="sm:sticky sm:top-0">
@@ -352,7 +346,7 @@
                                     </AlertDialogContent>
                                 </AlertDialog>
 
-                            </FieldSet>
+                            </template>
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
 
