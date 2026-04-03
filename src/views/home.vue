@@ -6,6 +6,12 @@
         <section class="wrapper">
             <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
+                
+                <z-screenfull>
+                    <Button variant="outline" size="icon" slot="exit"><Shrink/></Button>
+                    <Button variant="outline" size="icon" slot="full"><Expand/></Button>
+                </z-screenfull>
+                
                 <!-- <Button type="primary" @click="testClick">测试</Button> -->
             </div>
             <Timer class="timer" :display="config.timeDisplay"></Timer>
@@ -13,22 +19,23 @@
         </section>
         <section class="media">
             <template v-for="item in backgrounds" :key="item.id">
-                <Background class="item" :source="item" :videoPlay="videoPlay" :style="{ 'z-index': item.order }"></Background>
+                <Background class="item" :source="item" :videoPlay="videoPlay" :style="{ 'z-index': item.order }">
+                </Background>
             </template>
         </section>
     </main>
 </template>
 
 <script setup>
+import { Expand, Shrink } from 'lucide-vue-next';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const configStore = useConfigStore();
 const { config, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore();
-const { loadBackgrounds,verifyPermission} = backgroundStore
-const { loading: backgroundLoading,backgrounds, currentBackground } = storeToRefs(backgroundStore)
-const { throttle, debounce, isEmpty } = utils
+const { backgrounds, } = storeToRefs(backgroundStore)
+const { debounce, isEmpty } = utils
 const isHidden = ref(false)
 
 const { VITE_SITE_LOGO, VITE_TITLE } = import.meta.env
@@ -54,8 +61,8 @@ const handleMouseMove = () => {
     isHidden.value = false // 鼠标一动就显示
     autoHide()// 重启倒计时
 }
-const testClick = () =>{
-    toast.success('测试成功',{
+const testClick = () => {
+    toast.success('测试成功', {
         description: '这是一个测试消息',
         position: 'top-center',
     })
