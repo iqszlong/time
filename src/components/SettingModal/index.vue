@@ -485,6 +485,12 @@ const onOpenChange = async (open) => {
     }
 }
 
+const resetConfig = () =>{
+    tempConfig.timerConfig = {}
+    tempConfig.currentBackground = {}
+    tempConfig.backgroundConfigs = []
+}
+
 const initTempConfig = async () => {
     Object.assign(tempConfig.timerConfig, { ...config.value })
     Object.assign(tempConfig.backgroundConfigs, [...backgrounds.value])
@@ -521,7 +527,7 @@ const onSubmit = async () => {
     for (const background of tempConfig.backgroundConfigs) {
         backgroundsData.push({ ...background })
     }
-    // console.log(backgroundsData);
+    console.log(backgroundsData);
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
@@ -610,17 +616,21 @@ const handleNew = async () => {
         toast.success('添加新背景成功', {
             position: 'top-center'
         })
+        resetConfig()
         await initTempConfig()
     }
 }
 
 const handleDelete = async () => {
-    const success = await removeBackground(tempConfig.currentBackground.id)
+    const success = await removeBackground(currentBackgroundId.value)
     if (success) {
+        console.log(success,backgrounds.value);
         currentBackgroundId.value = backgrounds.value[0]?.id
+        
         toast.success('删除当前背景成功', {
             position: 'top-center'
         })
+        resetConfig()
         await initTempConfig()
     }
 }
@@ -652,7 +662,7 @@ const updateTempBackgrounds = () => {
 const changeTempConfig = async (id) => {
     // console.log(id);
     if (!id || tempConfig.currentBackground.id == id) return
-    updateTempBackgrounds()
+    // updateTempBackgrounds()
     // 切换当前背景
     currentBackgroundId.value = id
     // 读取新当前背景配置
