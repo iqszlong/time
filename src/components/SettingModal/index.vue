@@ -656,17 +656,18 @@ const needPermission = async () => {
 const updateTempBackgrounds = () => {
     // 更新临时列表
     const index = tempConfig.backgroundConfigs.findIndex(item => item.id == tempConfig.currentBackground.id)
-    tempConfig.backgroundConfigs[index] = tempConfig.currentBackground
+    tempConfig.backgroundConfigs[index] = {...tempConfig.currentBackground}
 }
 
 const changeTempConfig = async (id) => {
     // console.log(id);
     if (!id || tempConfig.currentBackground.id == id) return
-    // updateTempBackgrounds()
+    updateTempBackgrounds()
     // 切换当前背景
     currentBackgroundId.value = id
+    const item = tempConfig.backgroundConfigs.find(item => item.id == id)
     // 读取新当前背景配置
-    updateTempCurrentConfig(currentBackground.value)
+    updateTempCurrentConfig(item || currentBackground.value)
 }
 
 </script>
