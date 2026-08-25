@@ -5,7 +5,8 @@
                 <Settings2 />
             </Button>
         </DialogTrigger>
-        <DialogContent class="p-0 sm:max-w-4xl max-h-[80vh] overflow-hidden">
+        <DialogContent class="p-0 sm:max-w-5xl max-h-[86dvh] overflow-hidden"
+            @interact-outside="event => event.preventDefault()">
             <DialogHeader class="px-4 pt-4 sr-only">
                 <DialogTitle>设置</DialogTitle>
                 <DialogDescription>
@@ -50,7 +51,7 @@
                                 </template>
                             </div>
                         </header>
-                        <section class="h-[calc(80vh-64px-48px)] overflow-y-auto p-4">
+                        <section class="h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
                             <template v-if="currentMenu == 'time'">
 
 
@@ -104,48 +105,62 @@
 
                             </template>
                             <template v-if="currentMenu == 'background'">
+                                <div class="flex gap-2">
+                                    <div class="flex flex-col gap-2 w-40">
+                                        <div class="flex items-center gap-2">
+                                            <h2 class="flex-1">背景项</h2>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger as-child>
+                                                    <Button variant="outline" size="icon">
+                                                        <EllipsisVertical />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem @click="handleNew">
+                                                        <Plus />添加新背景
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem @click="() => resetConfirm = true">
+                                                        <RefreshCw />重置当前背景
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem @click="() => deleteConfirm = true"
+                                                        :disabled="total <= 1">
+                                                        <Trash />删除当前背景
+                                                    </DropdownMenuItem>
 
-                                <div class="flex flex-col-reverse sm:flex-row gap-4">
-                                    <div class="flex-1">
-                                        <FieldSet>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+
+                                        <ScrollArea class="flex-1 rounded-md border">
+                                            <ItemGroup>
+                                                <template v-for="(item, index) in tempConfig.backgroundConfigs"
+                                                    :key="item.id">
+                                                    <Item :value="item.id" :title="item.filename" size="sm" as-child>
+                                                        <a href="javascript:void(0)"
+                                                            @click="() => changeTempConfig(item.id)">
+                                                            <ItemContent class="truncate">
+
+                                                                <ItemTitle>{{ item.filename }}</ItemTitle>
+                                                            </ItemContent>
+                                                            <ItemActions>
+                                                                <ChevronRight class="size-4"
+                                                                    v-if="currentBackgroundId == item.id" />
+                                                            </ItemActions>
+                                                        </a>
+                                                    </Item>
+                                                    <ItemSeparator v-if="index !== item.length - 1" />
+                                                </template>
+                                            </ItemGroup>
+                                        </ScrollArea>
+
+                                    </div>
+                                    <div class="flex-1 flex flex-col-reverse sm:flex-row gap-2">
+
+                                        <div class="flex-1">
                                             <FieldGroup>
-                                                <Field>
-                                                    <FieldLabel for="currentBackgroundId">当前背景</FieldLabel>
-                                                    <div class="flex  items-center gap-2">
-                                                        <Select v-model="currentBackgroundId"
-                                                            @update:modelValue="changeTempConfig">
-                                                            <SelectTrigger id="currentBackgroundId"
-                                                                class="w-[calc(100%-36px-8px)] ">
-                                                                <SelectValue placeholder="Select a background"
-                                                                    class="w-[80%] text-ellipsis whitespace-nowrap overflow-hidden" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <template v-for="item in tempConfig.backgroundConfigs"
-                                                                    :key="item.id">
-                                                                    <SelectItem :value="item.id">{{ item.filename }}
-                                                                    </SelectItem>
-                                                                </template>
-                                                            </SelectContent>
-                                                        </Select>
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger as-child>
-                                                                <Button variant="outline" size="icon">
-                                                                    <EllipsisVertical />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent>
-                                                                <DropdownMenuItem @click="handleNew">
-                                                                    <Plus />添加新背景
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem @click="() => deleteConfirm = true"
-                                                                    :disabled="total <= 1">
-                                                                    <Trash />删除当前背景
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    </div>
-                                                </Field>
+
+
 
                                                 <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
                                                     <TabsList class="w-full">
@@ -168,7 +183,8 @@
                                                                             <Button variant="outline" class="w-full">
                                                                                 <span
                                                                                     class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
-                                                                                    {{ selectedFileName ?? '选择文件' }}
+                                                                                    {{ selectedFileName ??
+                                                                                        '选择文件' }}
                                                                                 </span>
                                                                             </Button>
 
@@ -217,17 +233,30 @@
                                                     </TabsContent>
                                                 </Tabs>
 
-
+                                                <FieldSeparator />
                                                 <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-4">
 
                                                     <Field>
-                                                        <FieldLabel for="order">显示层级</FieldLabel>
-                                                        <Input id="order" v-model="tempConfig.currentBackground.order"
-                                                            type="number" placeholder="显示层级" />
-                                                        <FieldDescription class="text-xs">
-                                                            层级越大，显示越靠前
-                                                        </FieldDescription>
+                                                        <FieldLabel for="visible" class="whitespace-nowrap">可见性
+                                                        </FieldLabel>
+                                                        <div>
+
+                                                            <Switch id="visible"
+                                                                v-model="tempConfig.currentBackground.visible" />
+                                                        </div>
                                                     </Field>
+
+
+
+                                                    <Field>
+                                                        <FieldLabel for="order">显示层级 <span
+                                                                class="text-xs text-muted-foreground">越大越靠前</span>
+                                                        </FieldLabel>
+                                                        <Input id="order" v-model="tempConfig.currentBackground.order"
+                                                            type="number" placeholder="显示层级越大越靠前" />
+                                                    </Field>
+
+
 
                                                     <Field>
                                                         <FieldLabel for="fit">填充方式</FieldLabel>
@@ -242,6 +271,30 @@
                                                                 </SelectItem>
                                                             </SelectContent>
                                                         </Select>
+                                                    </Field>
+
+                                                    <Field>
+                                                        <FieldLabel for="viewSize">
+
+                                                            <TooltipProvider>
+                                                                <Tooltip>
+                                                                    <TooltipTrigger as-child>
+                                                                        <FlaskConical class="size-3" />
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent align="center">
+                                                                        <p>实验功能，配合填充方式scale-down或contain,<br />参考css的object-view-box:inset(上
+                                                                            右 下
+                                                                            左)写法。0不缩放，正数放大，负数缩小(例：-60% 0 0)
+                                                                        </p>
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            </TooltipProvider>
+                                                            缩放
+                                                        </FieldLabel>
+                                                        <Input id="viewSize"
+                                                            v-model="tempConfig.currentBackground.viewSize" type="text"
+                                                            placeholder="缩放比例" />
+
                                                     </Field>
 
                                                     <Field>
@@ -274,58 +327,74 @@
                                                             </SelectContent>
                                                         </Select>
                                                     </Field>
+
+
                                                 </div>
 
 
-                                                <Field>
-                                                    <FieldLabel for="mask">背景遮挡</FieldLabel>
-                                                    <div class="flex items-center space-x-2">
-                                                        <Switch id="mask"
-                                                            v-model="tempConfig.currentBackground.maskEnabled" />
-                                                        <span>{{ maskValue[0] }}</span>
-                                                        <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
-                                                            :max="100" :step="1"
-                                                            :disabled="!tempConfig.currentBackground.maskEnabled"
-                                                            @update:modelValue="handleMaskValue" />
-                                                        <span>{{ maskValue[1] }}</span>
-                                                    </div>
+                                                <Field orientation="horizontal">
+                                                    <FieldLabel for="mask" class="whitespace-nowrap">背景遮挡</FieldLabel>
+
+                                                    <Switch id="mask"
+                                                        v-model="tempConfig.currentBackground.maskEnabled" />
+                                                    <span>{{ maskValue[0] }}</span>
+                                                    <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
+                                                        :max="100" :step="1"
+                                                        :disabled="!tempConfig.currentBackground.maskEnabled"
+                                                        @update:modelValue="handleMaskValue" />
+                                                    <span>{{ maskValue[1] }}</span>
+
 
                                                 </Field>
 
-                                                <Field>
-                                                    <FieldLabel for="volume">音量</FieldLabel>
-                                                    <div class="flex items-center space-x-2">
-                                                        <Button id="volume" variant="ghost" size="icon-sm"
-                                                            @click="toggleMute">
-                                                            <template v-if="tempConfig.currentBackground.muted">
-                                                                <VolumeX />
-                                                            </template>
-                                                            <template v-else>
-                                                                <Volume2 />
-                                                            </template>
-                                                        </Button>
-                                                        <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
-                                                            @update:modelValue="handleVolumeValue" />
-                                                        <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
-                                                    </div>
+                                                <Field orientation="horizontal">
+                                                    <FieldLabel for="volume" class="whitespace-nowrap">音量</FieldLabel>
+
+                                                    <Button id="volume" variant="ghost" size="icon-sm"
+                                                        @click="toggleMute">
+                                                        <template v-if="tempConfig.currentBackground.muted">
+                                                            <VolumeX />
+                                                        </template>
+                                                        <template v-else>
+                                                            <Volume2 />
+                                                        </template>
+                                                    </Button>
+                                                    <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
+                                                        @update:modelValue="handleVolumeValue" />
+                                                    <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
+
                                                 </Field>
+
                                             </FieldGroup>
-                                        </FieldSet>
-                                    </div>
-                                    <div class="flex-none sm:w-56">
-                                        <div class="sm:sticky sm:top-0">
 
-                                            <div class="mb-2">预览</div>
-                                            <div
-                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                                <Preview :source="tempConfig.currentBackground"></Preview>
-                                            </div>
-                                            <div v-if="tempConfig.currentBackground.updateTime"
-                                                class="text-xs mt-1 text-muted-foreground">
-                                                更新日期:
-                                                {{ zhDay(tempConfig.currentBackground.updateTime) }}
+
+                                            <Separator class="my-4" />
+                                            <div class="flex h-5 items-center gap-2">
+                                                <div class="text-xs text-muted-foreground">
+                                                    创建时间:
+                                                    {{ zhDayTime(tempConfig.currentBackground.createTime) }}
+                                                </div>
+                                                <Separator orientation="vertical" />
+                                                <div v-if="tempConfig.currentBackground.updateTime"
+                                                    class="text-xs  text-muted-foreground">
+                                                    更新时间:
+                                                    {{ zhDayTime(tempConfig.currentBackground.updateTime) }}
+                                                </div>
                                             </div>
 
+
+                                        </div>
+                                        <div class="flex-none sm:w-56">
+                                            <div class="sm:sticky sm:top-0">
+
+                                                <div class="mb-2">预览</div>
+                                                <div
+                                                    class="preview-wrapper border-border border rounded-md overflow-hidden">
+                                                    <Preview :source="tempConfig.currentBackground"></Preview>
+                                                </div>
+
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -346,6 +415,22 @@
                                     </AlertDialogContent>
                                 </AlertDialog>
 
+                                <AlertDialog v-model:open="resetConfirm">
+
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                恢复默认配置，会覆盖当前的设置
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>取消</AlertDialogCancel>
+                                            <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
                             </template>
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
@@ -353,26 +438,10 @@
                             <Button type="submit" @click="onSubmit">保存</Button>
 
                             <DialogClose as-child>
-                                <Button variant="outline">取消</Button>
+                                <Button variant="outline">关闭</Button>
                             </DialogClose>
 
-                            <AlertDialog v-model:open="resetConfirm">
-                                <AlertDialogTrigger as-child>
-                                    <Button type="reset" variant="outline">恢复默认</Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            恢复默认配置，会覆盖当前的设置
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>取消</AlertDialogCancel>
-                                        <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+
 
                         </DialogFooter>
                     </main>
@@ -384,14 +453,14 @@
 </template>
 
 <script setup>
-import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX } from 'lucide-vue-next';
+import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronRight, FlaskConical } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 
-const { dayjs, zhDay, highPrecisionMul, highPrecisionDiv } = utils
+const { dayjs, zhDay, zhDayTime, highPrecisionMul, highPrecisionDiv } = utils
 const configStore = useConfigStore();
 const { updateTimeDisplay, updateConfig } = configStore
 const { config, defaultData: defaultConfig, videoPlay } = storeToRefs(configStore)
@@ -485,7 +554,7 @@ const onOpenChange = async (open) => {
     }
 }
 
-const resetConfig = () =>{
+const resetConfig = () => {
     tempConfig.timerConfig = {}
     tempConfig.currentBackground = {}
     tempConfig.backgroundConfigs = []
@@ -521,13 +590,13 @@ const getStroageData = async () => {
 }
 
 const onSubmit = async () => {
-    updateTempBackgrounds()
+    updateTempBackgrounds(true)
     // console.log(tempConfig);
     const backgroundsData = []
     for (const background of tempConfig.backgroundConfigs) {
         backgroundsData.push({ ...background })
     }
-    console.log(backgroundsData);
+    // console.log(backgroundsData);
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
@@ -539,8 +608,8 @@ const onSubmit = async () => {
         toast.success('更新成功', {
             position: 'top-center'
         })
-        visibleModal.value = false
-        if (!videoPlay.value) videoPlay.value = true
+        // visibleModal.value = false
+        // if (!videoPlay.value) videoPlay.value = true
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
@@ -624,9 +693,9 @@ const handleNew = async () => {
 const handleDelete = async () => {
     const success = await removeBackground(currentBackgroundId.value)
     if (success) {
-        console.log(success,backgrounds.value);
+        console.log(success, backgrounds.value);
         currentBackgroundId.value = backgrounds.value[0]?.id
-        
+
         toast.success('删除当前背景成功', {
             position: 'top-center'
         })
@@ -653,14 +722,17 @@ const needPermission = async () => {
     }
 }
 
-const updateTempBackgrounds = () => {
+const updateTempBackgrounds = (needUpdate = false) => {
     // 更新临时列表
     const index = tempConfig.backgroundConfigs.findIndex(item => item.id == tempConfig.currentBackground.id)
-    tempConfig.backgroundConfigs[index] = {...tempConfig.currentBackground}
+    tempConfig.backgroundConfigs[index] = { ...tempConfig.currentBackground }
+    if (needUpdate) {
+        tempConfig.backgroundConfigs[index].updateTime = dayjs().toDate()
+    }
 }
 
 const changeTempConfig = async (id) => {
-    // console.log(id);
+    console.log(id);
     if (!id || tempConfig.currentBackground.id == id) return
     updateTempBackgrounds()
     // 切换当前背景

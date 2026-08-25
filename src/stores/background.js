@@ -27,6 +27,7 @@ export const useBackgroundStore = defineStore('background', () => {
     volume: 0.1, // 音量
     muted: true, // 静音
     order: 0, // 背景排序
+    viewSize: 0, // 视图大小,控制视图缩放
   }
 
   const currentBackground = computed(() => {

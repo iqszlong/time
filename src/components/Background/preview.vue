@@ -3,7 +3,7 @@
         :class="[{ 'mask-disabled': !source.maskEnabled }]" v-if="visible" :style="{
             '--mask-from': source.maskFrom + '%',
             '--mask-to': source.maskTo + '%',
-            '--content-fit': source.fit
+            '--content-fit': 'cover'
         }">
         <template v-if="isImg(source.filename)">
             <z-img :src="pathReplace(source.sourcePath)" class="img"></z-img>
@@ -134,6 +134,7 @@ watchEffect(() => {
     --img-h: 100%;
     z-index: -1;
     pointer-events: none;
+    --object-view-box: inset(v-bind('source.viewSize'));
 }
 
 .video {
@@ -143,5 +144,6 @@ watchEffect(() => {
     object-position: v-bind('source.hposition') v-bind('source.vposition');
     z-index: -1;
     pointer-events: none;
+    object-view-box: inset(v-bind('source.viewSize'));
 }
 </style>
