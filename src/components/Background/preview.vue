@@ -135,6 +135,7 @@ watchEffect(() => {
     z-index: -1;
     pointer-events: none;
     --object-view-box: inset(v-bind('source.viewSize'));
+    rotate: v-bind('source.rotate');
 }
 
 .video {
@@ -145,5 +146,6 @@ watchEffect(() => {
     z-index: -1;
     pointer-events: none;
     object-view-box: inset(v-bind('source.viewSize'));
+    rotate: v-bind('source.rotate');
 }
 </style>

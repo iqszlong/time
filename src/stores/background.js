@@ -28,6 +28,7 @@ export const useBackgroundStore = defineStore('background', () => {
     muted: true, // 静音
     order: 0, // 背景排序
     viewSize: 0, // 视图大小,控制视图缩放
+    rotate: "0deg", // 旋转角度deg
   }
 
   const currentBackground = computed(() => {

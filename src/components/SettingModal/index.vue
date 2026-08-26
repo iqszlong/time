@@ -105,63 +105,87 @@
 
                             </template>
                             <template v-if="currentMenu == 'background'">
-                                <div class="flex gap-2">
-                                    <div class="flex flex-col gap-2 w-40">
-                                        <div class="flex items-center gap-2">
-                                            <h2 class="flex-1">背景项</h2>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger as-child>
-                                                    <Button variant="outline" size="icon">
-                                                        <EllipsisVertical />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent>
-                                                    <DropdownMenuItem @click="handleNew">
-                                                        <Plus />添加新背景
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem @click="() => resetConfirm = true">
-                                                        <RefreshCw />重置当前背景
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem @click="() => deleteConfirm = true"
-                                                        :disabled="total <= 1">
-                                                        <Trash />删除当前背景
-                                                    </DropdownMenuItem>
-
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
-
-                                        <ScrollArea class="flex-1 rounded-md border">
-                                            <ItemGroup>
-                                                <template v-for="(item, index) in tempConfig.backgroundConfigs"
-                                                    :key="item.id">
-                                                    <Item :value="item.id" :title="item.filename" size="sm" as-child>
-                                                        <a href="javascript:void(0)"
-                                                            @click="() => changeTempConfig(item.id)">
-                                                            <ItemContent class="truncate">
-
-                                                                <ItemTitle>{{ item.filename }}</ItemTitle>
-                                                            </ItemContent>
-                                                            <ItemActions>
-                                                                <ChevronRight class="size-4"
-                                                                    v-if="currentBackgroundId == item.id" />
-                                                            </ItemActions>
-                                                        </a>
-                                                    </Item>
-                                                    <ItemSeparator v-if="index !== item.length - 1" />
-                                                </template>
-                                            </ItemGroup>
-                                        </ScrollArea>
-
-                                    </div>
-                                    <div class="flex-1 flex flex-col-reverse sm:flex-row gap-2">
-
-                                        <div class="flex-1">
-                                            <FieldGroup>
 
 
+                                <div class="flex flex-col-reverse sm:flex-row gap-2">
 
+                                    <div class="flex-1">
+                                        <FieldGroup>
+                                            <Field>
+                                                <div class="flex items-center gap-2">
+                                                    <FieldLabel for="currentBackgroundId">背景项</FieldLabel>
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger as-child>
+                                                                <Button variant="outline" size="icon-sm"
+                                                                    @click="handleNew">
+                                                                    <Plus />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>新增背景</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                    <div class="ml-auto flex items-center gap-2">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger as-child>
+                                                                    <Toggle variant="outline" aria-label="Toggle see"
+                                                                        name="visible" size="sm"
+                                                                        v-model="tempConfig.currentBackground.visible"
+                                                                        :defaultValue="tempConfig.currentBackground.visible">
+                                                                        <Eye class="size-4"
+                                                                            v-if="tempConfig.currentBackground.visible" />
+                                                                        <EyeOff class="size-4 opacity-50" v-else />
+                                                                    </Toggle>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <p>可见性</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+
+
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger as-child>
+                                                                <Button variant="outline" size="icon-sm">
+                                                                    <EllipsisVertical />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent>
+
+                                                                <DropdownMenuItem @click="() => resetConfirm = true">
+                                                                    <RefreshCw />重置当前背景
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem @click="() => deleteConfirm = true"
+                                                                    :disabled="total <= 1">
+                                                                    <Trash />删除当前背景
+                                                                </DropdownMenuItem>
+
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </div>
+
+                                                <Select v-model="currentBackgroundId"
+                                                    @update:modelValue="changeTempConfig">
+                                                    <SelectTrigger id="currentBackgroundId" class="w-full">
+                                                        <SelectValue placeholder="Select a background"
+                                                            class="w-[80%] truncate" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <template v-for="item in tempConfig.backgroundConfigs"
+                                                            :key="item.id">
+                                                            <SelectItem :value="item.id">{{ item.filename }}
+                                                            </SelectItem>
+                                                        </template>
+                                                    </SelectContent>
+                                                </Select>
+                                            </Field>
+                                            <Field>
+                                                <FieldLabel for="file">文件</FieldLabel>
                                                 <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
                                                     <TabsList class="w-full">
                                                         <TabsTrigger value="local">
@@ -232,172 +256,259 @@
                                                         </Field>
                                                     </TabsContent>
                                                 </Tabs>
+                                            </Field>
 
-                                                <FieldSeparator />
-                                                <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-4">
+                                            <Field>
+                                                <FieldLabel for="order">
+                                                    显示层级
+                                                    <span class="text-xs text-muted-foreground">越大越靠前</span>
+                                                </FieldLabel>
+                                                <Input id="order" v-model="tempConfig.currentBackground.order"
+                                                    @focus="($event) => $event.currentTarget.select()" type="number"
+                                                    placeholder="显示层级越大越靠前" />
+                                            </Field>
 
-                                                    <Field>
-                                                        <FieldLabel for="visible" class="whitespace-nowrap">可见性
-                                                        </FieldLabel>
-                                                        <div>
-
-                                                            <Switch id="visible"
-                                                                v-model="tempConfig.currentBackground.visible" />
-                                                        </div>
-                                                    </Field>
-
-
-
-                                                    <Field>
-                                                        <FieldLabel for="order">显示层级 <span
-                                                                class="text-xs text-muted-foreground">越大越靠前</span>
-                                                        </FieldLabel>
-                                                        <Input id="order" v-model="tempConfig.currentBackground.order"
-                                                            type="number" placeholder="显示层级越大越靠前" />
-                                                    </Field>
+                                            <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-7">
 
 
+                                                <Field>
+                                                    <FieldLabel for="fit">填充方式</FieldLabel>
+                                                    <Select v-model="tempConfig.currentBackground.fit">
+                                                        <SelectTrigger id="fit">
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem v-for="item in fitOptions" :key="item.value"
+                                                                :value="item.value">
+                                                                {{ item.label }} ({{ item.value }})
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
 
-                                                    <Field>
-                                                        <FieldLabel for="fit">填充方式</FieldLabel>
-                                                        <Select v-model="tempConfig.currentBackground.fit">
-                                                            <SelectTrigger id="fit">
-                                                                <SelectValue placeholder="" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem v-for="item in fitOptions" :key="item.value"
-                                                                    :value="item.value">
-                                                                    {{ item.label }} ({{ item.value }})
-                                                                </SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </Field>
-
-                                                    <Field>
-                                                        <FieldLabel for="viewSize">
-
-                                                            <TooltipProvider>
-                                                                <Tooltip>
-                                                                    <TooltipTrigger as-child>
-                                                                        <FlaskConical class="size-3" />
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent align="center">
-                                                                        <p>实验功能，配合填充方式scale-down或contain,<br />参考css的object-view-box:inset(上
-                                                                            右 下
-                                                                            左)写法。0不缩放，正数放大，负数缩小(例：-60% 0 0)
-                                                                        </p>
-                                                                    </TooltipContent>
-                                                                </Tooltip>
-                                                            </TooltipProvider>
-                                                            缩放
-                                                        </FieldLabel>
-                                                        <Input id="viewSize"
-                                                            v-model="tempConfig.currentBackground.viewSize" type="text"
-                                                            placeholder="缩放比例" />
-
-                                                    </Field>
-
-                                                    <Field>
-                                                        <FieldLabel for="position">水平位置</FieldLabel>
-                                                        <Select v-model="tempConfig.currentBackground.hposition">
-                                                            <SelectTrigger id="position">
-                                                                <SelectValue placeholder="" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem
-                                                                    v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
-                                                                    :key="item.value" :value="item.value">
-                                                                    {{ item.label }}
-                                                                </SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </Field>
-                                                    <Field>
-                                                        <FieldLabel for="position">垂直位置</FieldLabel>
-                                                        <Select v-model="tempConfig.currentBackground.vposition">
-                                                            <SelectTrigger id="position">
-                                                                <SelectValue placeholder="" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem
-                                                                    v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                                    :key="item.value" :value="item.value">
-                                                                    {{ item.label }}
-                                                                </SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </Field>
-
-
-                                                </div>
-
-
-                                                <Field orientation="horizontal">
-                                                    <FieldLabel for="mask" class="whitespace-nowrap">背景遮挡</FieldLabel>
-
-                                                    <Switch id="mask"
-                                                        v-model="tempConfig.currentBackground.maskEnabled" />
-                                                    <span>{{ maskValue[0] }}</span>
-                                                    <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
-                                                        :max="100" :step="1"
-                                                        :disabled="!tempConfig.currentBackground.maskEnabled"
-                                                        @update:modelValue="handleMaskValue" />
-                                                    <span>{{ maskValue[1] }}</span>
-
+                                                <Field>
+                                                    <FieldLabel for="viewSize">
+                                                        缩放
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger as-child>
+                                                                    <FlaskConical class="size-3" />
+                                                                </TooltipTrigger>
+                                                                <TooltipContent align="center">
+                                                                    <p>实验功能，配合填充方式scale-down或contain,<br />参考css的object-view-box:inset(上
+                                                                        右 下
+                                                                        左)写法。0不缩放，正数放大，负数缩小(例：-60% 0 0)
+                                                                    </p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
+                                                    </FieldLabel>
+                                                    <Input id="viewSize" v-model="tempConfig.currentBackground.viewSize"
+                                                        @focus="($event) => $event.currentTarget.select()" type="text"
+                                                        placeholder="缩放比例" />
 
                                                 </Field>
 
-                                                <Field orientation="horizontal">
-                                                    <FieldLabel for="volume" class="whitespace-nowrap">音量</FieldLabel>
+                                                <Field>
+                                                    <FieldLabel for="hposition">
+                                                        水平位置
+                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
+                                                    </FieldLabel>
 
-                                                    <Button id="volume" variant="ghost" size="icon-sm"
-                                                        @click="toggleMute">
-                                                        <template v-if="tempConfig.currentBackground.muted">
-                                                            <VolumeX />
-                                                        </template>
-                                                        <template v-else>
-                                                            <Volume2 />
-                                                        </template>
-                                                    </Button>
-                                                    <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
-                                                        @update:modelValue="handleVolumeValue" />
-                                                    <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
-
+                                                    <InputGroup>
+                                                        <InputGroupInput id="hposition"
+                                                            v-model="tempConfig.currentBackground.hposition"
+                                                            placeholder=""
+                                                            @focus="($event) => $event.currentTarget.select()" />
+                                                        <InputGroupAddon align="inline-end">
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger as-child>
+                                                                    <InputGroupButton variant="ghost" aria-label="More"
+                                                                        size="icon-xs">
+                                                                        <ChevronDown />
+                                                                    </InputGroupButton>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem
+                                                                        v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
+                                                                        :key="item.value"
+                                                                        @click="tempConfig.currentBackground.hposition = item.value">
+                                                                        {{ item.label }} ({{ item.value }})
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </InputGroupAddon>
+                                                    </InputGroup>
+                                                    <!-- <Select v-model="tempConfig.currentBackground.hposition">
+                                                        <SelectTrigger id="hposition">
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem
+                                                                v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
+                                                                :key="item.value" :value="item.value">
+                                                                {{ item.label }}
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select> -->
+                                                </Field>
+                                                <Field>
+                                                    <FieldLabel for="vposition">
+                                                        垂直位置
+                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
+                                                    </FieldLabel>
+                                                    <InputGroup>
+                                                        <InputGroupInput id="vposition" v-model="tempConfig.currentBackground.vposition" placeholder=""
+                                                        @focus="($event) => $event.currentTarget.select()" />
+                                                        <InputGroupAddon align="inline-end">
+                                                            <DropdownMenu>
+                                                            <DropdownMenuTrigger as-child>
+                                                                <InputGroupButton
+                                                                variant="ghost"
+                                                                aria-label="More"
+                                                                size="icon-xs"
+                                                                >
+                                                                <ChevronDown />
+                                                                </InputGroupButton>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuItem v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
+                                                                :key="item.value"
+                                                                @click="tempConfig.currentBackground.vposition = item.value">
+                                                                {{ item.label }} ({{ item.value }})
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </InputGroupAddon>
+                                                        </InputGroup>
+                                                    <!-- <Select v-model="tempConfig.currentBackground.vposition">
+                                                        <SelectTrigger id="vposition">
+                                                            <SelectValue placeholder="" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem
+                                                                v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
+                                                                :key="item.value" :value="item.value">
+                                                                {{ item.label }}
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select> -->
                                                 </Field>
 
-                                            </FieldGroup>
+
+                                                <Field>
+                                                    <FieldLabel for="rotateX">
+                                                        旋转
+                                                        <span class="text-xs text-muted-foreground">单位 deg、turn 或
+                                                            rad</span>
+                                                    </FieldLabel>
+                                                    <InputGroup>
+                                                        <InputGroupInput id="rotate"
+                                                            v-model="tempConfig.currentBackground.rotate" type="text"
+                                                            @focus="($event) => $event.currentTarget.select()"
+                                                            placeholder="" />
+                                                        <InputGroupAddon align="inline-end">
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger as-child>
+                                                                    <InputGroupButton variant="ghost" aria-label="More"
+                                                                        size="icon-xs">
+                                                                        <ChevronDown />
+                                                                    </InputGroupButton>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem
+                                                                        @click="tempConfig.currentBackground.rotate = 'x 180deg'">
+                                                                        上下翻转
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                        @click="tempConfig.currentBackground.rotate = 'y 180deg'">
+                                                                        左右翻转
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                        @click="tempConfig.currentBackground.rotate = '0deg'">
+                                                                        重置
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </InputGroupAddon>
+                                                    </InputGroup>
+                                                </Field>
 
 
-                                            <Separator class="my-4" />
-                                            <div class="flex h-5 items-center gap-2">
-                                                <div class="text-xs text-muted-foreground">
-                                                    创建时间:
-                                                    {{ zhDayTime(tempConfig.currentBackground.createTime) }}
-                                                </div>
-                                                <Separator orientation="vertical" />
-                                                <div v-if="tempConfig.currentBackground.updateTime"
-                                                    class="text-xs  text-muted-foreground">
-                                                    更新时间:
-                                                    {{ zhDayTime(tempConfig.currentBackground.updateTime) }}
-                                                </div>
+
+
                                             </div>
 
+                                            <FieldSeparator />
 
+
+                                            <Field orientation="horizontal">
+                                                <FieldLabel for="mask" class="whitespace-nowrap">背景遮挡</FieldLabel>
+
+                                                <Switch id="mask" v-model="tempConfig.currentBackground.maskEnabled" />
+                                                <span>{{ maskValue[0] }}</span>
+                                                <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
+                                                    :max="100" :step="1"
+                                                    :disabled="!tempConfig.currentBackground.maskEnabled"
+                                                    @update:modelValue="handleMaskValue" />
+                                                <span>{{ maskValue[1] }}</span>
+
+
+                                            </Field>
+
+                                            <FieldSeparator />
+
+                                            <Field orientation="horizontal">
+                                                <FieldLabel for="volume" class="whitespace-nowrap">音量</FieldLabel>
+
+                                                <Button id="volume" variant="ghost" size="icon-sm" @click="toggleMute">
+                                                    <template v-if="tempConfig.currentBackground.muted">
+                                                        <VolumeX />
+                                                    </template>
+                                                    <template v-else>
+                                                        <Volume2 />
+                                                    </template>
+                                                </Button>
+                                                <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
+                                                    @update:modelValue="handleVolumeValue" />
+                                                <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
+
+                                            </Field>
+
+                                        </FieldGroup>
+
+
+                                        <Separator class="my-4" />
+
+                                        <div class="flex h-5 items-center gap-2">
+                                            <div class="text-xs text-muted-foreground">
+                                                创建时间:
+                                                {{ zhDayTime(tempConfig.currentBackground.createTime) }}
+                                            </div>
+                                            <div v-if="tempConfig.currentBackground.updateTime"
+                                                class="text-xs  text-muted-foreground">
+                                                更新时间:
+                                                {{ zhDayTime(tempConfig.currentBackground.updateTime) }}
+                                            </div>
                                         </div>
-                                        <div class="flex-none sm:w-56">
-                                            <div class="sm:sticky sm:top-0">
-
-                                                <div class="mb-2">预览</div>
-                                                <div
-                                                    class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                                    <Preview :source="tempConfig.currentBackground"></Preview>
-                                                </div>
 
 
+                                    </div>
+                                    <div class="flex-none sm:w-56">
+                                        <div class="sm:sticky sm:top-0">
+
+                                            <div class="mb-2">预览</div>
+                                            <div
+                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
+                                                <Preview :source="tempConfig.currentBackground"></Preview>
                                             </div>
+
+
                                         </div>
                                     </div>
                                 </div>
+
                                 <AlertDialog v-model:open="deleteConfirm">
 
                                     <AlertDialogContent>
@@ -453,7 +564,7 @@
 </template>
 
 <script setup>
-import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronRight, FlaskConical } from 'lucide-vue-next';
+import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronDown, ChevronRight, FlaskConical, Eye, EyeOff } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { fit, position } from '@/services/mapping/config'
@@ -729,6 +840,8 @@ const updateTempBackgrounds = (needUpdate = false) => {
     if (needUpdate) {
         tempConfig.backgroundConfigs[index].updateTime = dayjs().toDate()
     }
+    console.log(index,tempConfig.backgroundConfigs[index]);
+    
 }
 
 const changeTempConfig = async (id) => {
