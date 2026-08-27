@@ -14,7 +14,7 @@
                 </DialogDescription>
             </DialogHeader>
 
-            <SidebarProvider defaultOpen class="setting-side-bar items-start ![--sidebar-width:10rem]">
+            <SidebarProvider defaultOpen class="setting-side-bar items-start [--sidebar-width:10rem]!">
                 <Sidebar collapsible="offcanvas">
                     <SidebarHeader class="flex flex-row gap-2 items-center">
                         <Settings2 size="16" />
@@ -28,7 +28,7 @@
                                         <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu"
                                             @click="handleClick(item)">
                                             <span class="flex items-center gap-2 ">
-                                                <!-- <component :is="item.icon" /> -->
+                                                <component v-if="item.icon" :is="item.icon" class="size-4" />
                                                 <span>{{ item.title }}</span>
                                             </span>
                                         </SidebarMenuButton>
@@ -288,26 +288,72 @@
 
                                                 <Field>
                                                     <FieldLabel for="viewSize">
-                                                        缩放
+                                                        视图缩放
                                                         <TooltipProvider>
                                                             <Tooltip>
                                                                 <TooltipTrigger as-child>
                                                                     <FlaskConical class="size-3" />
                                                                 </TooltipTrigger>
                                                                 <TooltipContent align="center">
-                                                                    <p>实验功能，配合填充方式scale-down或contain,<br />参考css的object-view-box:inset(上
-                                                                        右 下
-                                                                        左)写法。0不缩放，正数放大，负数缩小(例：-60% 0 0)
+                                                                    <p>实验功能，配合填充方式scale-down或contain,<br />
+                                                                        参考css的object-view-box:inset(上 右 下 左)写法。
                                                                     </p>
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         </TooltipProvider>
                                                         <span class="text-xs text-muted-foreground">单位 % 或 px </span>
                                                     </FieldLabel>
-                                                    <Input id="viewSize" v-model="tempConfig.currentBackground.viewSize"
-                                                        @focus="($event) => $event.currentTarget.select()" type="text"
-                                                        placeholder="缩放比例" />
 
+                                                    <InputGroup>
+                                                        <InputGroupInput id="viewSize"
+                                                            v-model="tempConfig.currentBackground.viewSize"
+                                                            @focus="($event) => $event.currentTarget.select()"
+                                                            type="text" placeholder="" />
+                                                        <InputGroupAddon align="inline-end">
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger as-child>
+                                                                    <InputGroupButton variant="ghost" aria-label="More"
+                                                                        size="icon-xs">
+                                                                        <ChevronDown />
+                                                                    </InputGroupButton>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuLabel>常用</DropdownMenuLabel>
+                                                                     <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '0'">
+                                                                    不缩放</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '-50% 0 0'">
+                                                                    贴底缩小50%</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '20% 0 0'">
+                                                                    贴底放大20%(contain)</DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuLabel>Windows</DropdownMenuLabel>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '0 0 -40px'">
+                                                                    空出底部栏</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '0 0 -30px'">
+                                                                    空出底部栏(小)</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '-40px 0 0 '">
+                                                                    空出顶部栏</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '-30px 0 0'">
+                                                                    空出顶部栏(小)</DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuLabel>Mac</DropdownMenuLabel>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '-48px 0 0 '">
+                                                                    空出顶部栏</DropdownMenuItem>
+                                                                    <DropdownMenuItem
+                                                                    @click="tempConfig.currentBackground.viewSize = '-74px 0 0 '">
+                                                                    空出顶部栏(刘海)</DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </InputGroupAddon>
+                                                    </InputGroup>
                                                 </Field>
 
                                                 <Field>
@@ -340,18 +386,7 @@
                                                             </DropdownMenu>
                                                         </InputGroupAddon>
                                                     </InputGroup>
-                                                    <!-- <Select v-model="tempConfig.currentBackground.hposition">
-                                                        <SelectTrigger id="hposition">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem
-                                                                v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
-                                                                :key="item.value" :value="item.value">
-                                                                {{ item.label }}
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select> -->
+
                                                 </Field>
                                                 <Field>
                                                     <FieldLabel for="vposition">
@@ -359,41 +394,30 @@
                                                         <span class="text-xs text-muted-foreground">单位 % 或 px </span>
                                                     </FieldLabel>
                                                     <InputGroup>
-                                                        <InputGroupInput id="vposition" v-model="tempConfig.currentBackground.vposition" placeholder=""
-                                                        @focus="($event) => $event.currentTarget.select()" />
+                                                        <InputGroupInput id="vposition"
+                                                            v-model="tempConfig.currentBackground.vposition"
+                                                            placeholder=""
+                                                            @focus="($event) => $event.currentTarget.select()" />
                                                         <InputGroupAddon align="inline-end">
                                                             <DropdownMenu>
-                                                            <DropdownMenuTrigger as-child>
-                                                                <InputGroupButton
-                                                                variant="ghost"
-                                                                aria-label="More"
-                                                                size="icon-xs"
-                                                                >
-                                                                <ChevronDown />
-                                                                </InputGroupButton>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                <DropdownMenuItem v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                                :key="item.value"
-                                                                @click="tempConfig.currentBackground.vposition = item.value">
-                                                                {{ item.label }} ({{ item.value }})
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
+                                                                <DropdownMenuTrigger as-child>
+                                                                    <InputGroupButton variant="ghost" aria-label="More"
+                                                                        size="icon-xs">
+                                                                        <ChevronDown />
+                                                                    </InputGroupButton>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem
+                                                                        v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
+                                                                        :key="item.value"
+                                                                        @click="tempConfig.currentBackground.vposition = item.value">
+                                                                        {{ item.label }} ({{ item.value }})
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         </InputGroupAddon>
-                                                        </InputGroup>
-                                                    <!-- <Select v-model="tempConfig.currentBackground.vposition">
-                                                        <SelectTrigger id="vposition">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem
-                                                                v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                                :key="item.value" :value="item.value">
-                                                                {{ item.label }}
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select> -->
+                                                    </InputGroup>
+
                                                 </Field>
 
 
@@ -840,8 +864,8 @@ const updateTempBackgrounds = (needUpdate = false) => {
     if (needUpdate) {
         tempConfig.backgroundConfigs[index].updateTime = dayjs().toDate()
     }
-    console.log(index,tempConfig.backgroundConfigs[index]);
-    
+    console.log(index, tempConfig.backgroundConfigs[index]);
+
 }
 
 const changeTempConfig = async (id) => {

@@ -1,7 +1,6 @@
-
+import { Images,Cog } from 'lucide-vue-next';
 export const useMenuStore = defineStore("menus", () => {
   const { proxy } = getCurrentInstance();
-  const { iHome, iLink, iEdit } = proxy;
   const { getPost, serialize } = utils;
   const staticList = [
     {
@@ -10,14 +9,16 @@ export const useMenuStore = defineStore("menus", () => {
       title: "背景",
       parent: "root",
       visible: "true",
-    },{
+      icon: Images
+    }, {
       name: "time",
       id: 1,
       title: "通用",
       parent: "root",
       visible: "true",
+      icon: Cog
     },
-    
+
   ];
   const currentMenu = ref(staticList[0].name);
   const menuList = ref([...staticList]);
