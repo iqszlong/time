@@ -26,7 +26,7 @@
                                 <SidebarMenu>
                                     <SidebarMenuItem v-for="item in menuList" :key="item.name">
                                         <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu"
-                                            @click="handleClick(item)">
+                                            @click="handleClickMenu(item)">
                                             <span class="flex items-center gap-2 ">
                                                 <component v-if="item.icon" :is="item.icon" class="size-4" />
                                                 <span>{{ item.title }}</span>
@@ -53,485 +53,10 @@
                         </header>
                         <section class="h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
                             <template v-if="currentMenu == 'time'">
-
-
-                                <FieldSet>
-                                    <FieldGroup>
-                                        <Field>
-                                            <FieldLabel for="display">时间格式</FieldLabel>
-                                            <RadioGroup id="display" v-model="tempConfig.timerConfig.timeDisplay"
-                                                class="flex items-center gap-4">
-                                                <div class="flex items-center gap-2">
-                                                    <RadioGroupItem id="display12" value="12" />
-                                                    <Label for="display12">12小时</Label>
-                                                </div>
-                                                <div class="flex items-center gap-2">
-                                                    <RadioGroupItem id="display24" value="24" />
-                                                    <Label for="display24">24小时</Label>
-                                                </div>
-                                            </RadioGroup>
-                                        </Field>
-
-                                        <Field>
-                                            <FieldLabel for="useFileSystem">使用新文件系统（Beta）</FieldLabel>
-                                            <div class="flex items-center gap-2">
-                                                <Switch id="useFileSystem"
-                                                    v-model="tempConfig.timerConfig.useFileSystem" />
-
-                                            </div>
-                                            <FieldDescription>
-                                                开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，如果未授权，将无法读取本地文件。
-                                                如果授权后任然无法读取文件，请关闭该功能。
-                                            </FieldDescription>
-                                        </Field>
-
-                                        <Field v-if="storageInfo">
-                                            <FieldLabel for="storageUsage">文件用量</FieldLabel>
-                                            <div class="flex items-center gap-2">
-
-                                                <Progress :model-value="storageUsage" :min="0" :max="100"
-                                                    class="w-1/2" />
-                                                <div>
-                                                    {{ storageUsage }}%
-                                                </div>
-                                            </div>
-                                            <FieldDescription>
-                                                已使用 {{ storageInfo.usage }} 字节，可使用 {{ storageInfo.quota }} 字节，
-                                            </FieldDescription>
-                                        </Field>
-                                    </FieldGroup>
-                                </FieldSet>
-
-
+                                <TimeSettings :tempConfig="tempConfig" />
                             </template>
                             <template v-if="currentMenu == 'background'">
-
-
-                                <div class="flex flex-col-reverse sm:flex-row gap-2">
-
-                                    <div class="flex-1">
-                                        <FieldGroup>
-                                            <Field>
-                                                <div class="flex items-center gap-2">
-                                                    <FieldLabel for="currentBackgroundId">背景项</FieldLabel>
-                                                    <TooltipProvider>
-                                                        <Tooltip>
-                                                            <TooltipTrigger as-child>
-                                                                <Button variant="outline" size="icon-sm"
-                                                                    @click="handleNew">
-                                                                    <Plus />
-                                                                </Button>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>
-                                                                <p>新增背景</p>
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                    <div class="ml-auto flex items-center gap-2">
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger as-child>
-                                                                    <Toggle variant="outline" aria-label="Toggle see"
-                                                                        name="visible" size="sm"
-                                                                        v-model="tempConfig.currentBackground.visible"
-                                                                        :defaultValue="tempConfig.currentBackground.visible">
-                                                                        <Eye class="size-4"
-                                                                            v-if="tempConfig.currentBackground.visible" />
-                                                                        <EyeOff class="size-4 opacity-50" v-else />
-                                                                    </Toggle>
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>
-                                                                    <p>可见性</p>
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-
-
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger as-child>
-                                                                <Button variant="outline" size="icon-sm">
-                                                                    <EllipsisVertical />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent>
-
-                                                                <DropdownMenuItem @click="() => resetConfirm = true">
-                                                                    <RefreshCw />重置当前背景
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem @click="() => deleteConfirm = true"
-                                                                    :disabled="total <= 1">
-                                                                    <Trash />删除当前背景
-                                                                </DropdownMenuItem>
-
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    </div>
-                                                </div>
-
-                                                <Select v-model="currentBackgroundId"
-                                                    @update:modelValue="changeTempConfig">
-                                                    <SelectTrigger id="currentBackgroundId" class="w-full">
-                                                        <SelectValue placeholder="Select a background"
-                                                            class="w-[80%] truncate" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <template v-for="item in tempConfig.backgroundConfigs"
-                                                            :key="item.id">
-                                                            <SelectItem :value="item.id">{{ item.filename }}
-                                                            </SelectItem>
-                                                        </template>
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-                                            <Field>
-                                                <FieldLabel for="file">文件</FieldLabel>
-                                                <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
-                                                    <TabsList class="w-full">
-                                                        <TabsTrigger value="local">
-                                                            本地文件
-                                                        </TabsTrigger>
-                                                        <TabsTrigger value="url">
-                                                            远程链接
-                                                        </TabsTrigger>
-                                                    </TabsList>
-                                                    <TabsContent value="local">
-                                                        <template v-if="tempConfig.timerConfig.useFileSystem">
-                                                            <Field>
-                                                                <div class="flex gap-2">
-                                                                    <div class="flex-1 w-[calc(100%-90px-8px)]">
-                                                                        <z-filesystem id="file" @open="handleFilesystem"
-                                                                            :openOpt="JSON.stringify(fileTypeOpt)"
-                                                                            style="width: 100%; overflow: hidden;">
-
-                                                                            <Button variant="outline" class="w-full">
-                                                                                <span
-                                                                                    class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
-                                                                                    {{ selectedFileName ??
-                                                                                        '选择文件' }}
-                                                                                </span>
-                                                                            </Button>
-
-                                                                        </z-filesystem>
-                                                                    </div>
-                                                                    <TooltipProvider>
-                                                                        <Tooltip>
-                                                                            <TooltipTrigger as-child>
-                                                                                <Button variant="outline"
-                                                                                    @click="needPermission">授权访问</Button>
-                                                                            </TooltipTrigger>
-                                                                            <TooltipContent>
-                                                                                使用本地文件时，显示不正常请点击此按钮授权访问。<br />
-                                                                                授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
-                                                                                请确保您信任该程序，以避免潜在的安全风险。
-                                                                            </TooltipContent>
-                                                                        </Tooltip>
-                                                                    </TooltipProvider>
-                                                                </div>
-                                                                <FieldDescription class="text-xs">
-                                                                    文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
-                                                                </FieldDescription>
-
-                                                            </Field>
-                                                        </template>
-                                                        <template v-else>
-                                                            <Field>
-                                                                <Input id="picture" type="file"
-                                                                    accept="image/jpeg,image/png,image/gif,image/bmp,image/webp"
-                                                                    @change="handleFile" />
-                                                                <FieldDescription class="text-xs">
-                                                                    文件格式：jpg、png、gif、jpeg、bmp、webp
-                                                                </FieldDescription>
-                                                            </Field>
-                                                        </template>
-                                                    </TabsContent>
-                                                    <TabsContent value="url">
-                                                        <Field>
-                                                            <Input id="url" type="text" placeholder="https://"
-                                                                @blur="handleUrl" @focus="(e) => e.target.select()"
-                                                                :modelValue="urlValue" />
-                                                            <FieldDescription class="text-xs">
-                                                                文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
-                                                            </FieldDescription>
-                                                        </Field>
-                                                    </TabsContent>
-                                                </Tabs>
-                                            </Field>
-
-                                            <Field>
-                                                <FieldLabel for="order">
-                                                    显示层级
-                                                    <span class="text-xs text-muted-foreground">越大越靠前</span>
-                                                </FieldLabel>
-                                                <Input id="order" v-model="tempConfig.currentBackground.order"
-                                                    @focus="($event) => $event.currentTarget.select()" type="number"
-                                                    placeholder="显示层级越大越靠前" />
-                                            </Field>
-
-                                            <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-7">
-
-
-                                                <Field>
-                                                    <FieldLabel for="fit">填充方式</FieldLabel>
-                                                    <Select v-model="tempConfig.currentBackground.fit">
-                                                        <SelectTrigger id="fit">
-                                                            <SelectValue placeholder="" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem v-for="item in fitOptions" :key="item.value"
-                                                                :value="item.value">
-                                                                {{ item.label }} ({{ item.value }})
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </Field>
-
-                                                <Field>
-                                                    <FieldLabel for="viewSize">
-                                                        视图缩放
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger as-child>
-                                                                    <FlaskConical class="size-3" />
-                                                                </TooltipTrigger>
-                                                                <TooltipContent align="center">
-                                                                    <p>实验功能，配合填充方式scale-down或contain,<br />
-                                                                        参考css的object-view-box:inset(上 右 下 左)写法。
-                                                                    </p>
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
-                                                    </FieldLabel>
-
-                                                    <InputGroup>
-                                                        <InputGroupInput id="viewSize"
-                                                            v-model="tempConfig.currentBackground.viewSize"
-                                                            @focus="($event) => $event.currentTarget.select()"
-                                                            type="text" placeholder="" />
-                                                        <InputGroupAddon align="inline-end">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger as-child>
-                                                                    <InputGroupButton variant="ghost" aria-label="More"
-                                                                        size="icon-xs">
-                                                                        <ChevronDown />
-                                                                    </InputGroupButton>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuLabel>常用</DropdownMenuLabel>
-                                                                     <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '0'">
-                                                                    不缩放</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '-50% 0 0'">
-                                                                    贴底缩小50%</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '20% 0 0'">
-                                                                    贴底放大20%(contain)</DropdownMenuItem>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuLabel>Windows</DropdownMenuLabel>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '0 0 -40px'">
-                                                                    空出底部栏</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '0 0 -30px'">
-                                                                    空出底部栏(小)</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '-40px 0 0 '">
-                                                                    空出顶部栏</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '-30px 0 0'">
-                                                                    空出顶部栏(小)</DropdownMenuItem>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuLabel>Mac</DropdownMenuLabel>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '-48px 0 0 '">
-                                                                    空出顶部栏</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                    @click="tempConfig.currentBackground.viewSize = '-74px 0 0 '">
-                                                                    空出顶部栏(刘海)</DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </InputGroupAddon>
-                                                    </InputGroup>
-                                                </Field>
-
-                                                <Field>
-                                                    <FieldLabel for="hposition">
-                                                        水平位置
-                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
-                                                    </FieldLabel>
-
-                                                    <InputGroup>
-                                                        <InputGroupInput id="hposition"
-                                                            v-model="tempConfig.currentBackground.hposition"
-                                                            placeholder=""
-                                                            @focus="($event) => $event.currentTarget.select()" />
-                                                        <InputGroupAddon align="inline-end">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger as-child>
-                                                                    <InputGroupButton variant="ghost" aria-label="More"
-                                                                        size="icon-xs">
-                                                                        <ChevronDown />
-                                                                    </InputGroupButton>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem
-                                                                        v-for="item in postionOptions.filter(item => item.type.includes('horizontal'))"
-                                                                        :key="item.value"
-                                                                        @click="tempConfig.currentBackground.hposition = item.value">
-                                                                        {{ item.label }} ({{ item.value }})
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </InputGroupAddon>
-                                                    </InputGroup>
-
-                                                </Field>
-                                                <Field>
-                                                    <FieldLabel for="vposition">
-                                                        垂直位置
-                                                        <span class="text-xs text-muted-foreground">单位 % 或 px </span>
-                                                    </FieldLabel>
-                                                    <InputGroup>
-                                                        <InputGroupInput id="vposition"
-                                                            v-model="tempConfig.currentBackground.vposition"
-                                                            placeholder=""
-                                                            @focus="($event) => $event.currentTarget.select()" />
-                                                        <InputGroupAddon align="inline-end">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger as-child>
-                                                                    <InputGroupButton variant="ghost" aria-label="More"
-                                                                        size="icon-xs">
-                                                                        <ChevronDown />
-                                                                    </InputGroupButton>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem
-                                                                        v-for="item in postionOptions.filter(item => item.type.includes('vertical'))"
-                                                                        :key="item.value"
-                                                                        @click="tempConfig.currentBackground.vposition = item.value">
-                                                                        {{ item.label }} ({{ item.value }})
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </InputGroupAddon>
-                                                    </InputGroup>
-
-                                                </Field>
-
-
-                                                <Field>
-                                                    <FieldLabel for="rotateX">
-                                                        旋转
-                                                        <span class="text-xs text-muted-foreground">单位 deg、turn 或
-                                                            rad</span>
-                                                    </FieldLabel>
-                                                    <InputGroup>
-                                                        <InputGroupInput id="rotate"
-                                                            v-model="tempConfig.currentBackground.rotate" type="text"
-                                                            @focus="($event) => $event.currentTarget.select()"
-                                                            placeholder="" />
-                                                        <InputGroupAddon align="inline-end">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger as-child>
-                                                                    <InputGroupButton variant="ghost" aria-label="More"
-                                                                        size="icon-xs">
-                                                                        <ChevronDown />
-                                                                    </InputGroupButton>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem
-                                                                        @click="tempConfig.currentBackground.rotate = 'x 180deg'">
-                                                                        上下翻转
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                        @click="tempConfig.currentBackground.rotate = 'y 180deg'">
-                                                                        左右翻转
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                        @click="tempConfig.currentBackground.rotate = '0deg'">
-                                                                        重置
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </InputGroupAddon>
-                                                    </InputGroup>
-                                                </Field>
-
-
-
-
-                                            </div>
-
-                                            <FieldSeparator />
-
-
-                                            <Field orientation="horizontal">
-                                                <FieldLabel for="mask" class="whitespace-nowrap">背景遮挡</FieldLabel>
-
-                                                <Switch id="mask" v-model="tempConfig.currentBackground.maskEnabled" />
-                                                <span>{{ maskValue[0] }}</span>
-                                                <Slider :default-value="[0, 100]" v-model="maskValue" :min="0"
-                                                    :max="100" :step="1"
-                                                    :disabled="!tempConfig.currentBackground.maskEnabled"
-                                                    @update:modelValue="handleMaskValue" />
-                                                <span>{{ maskValue[1] }}</span>
-
-
-                                            </Field>
-
-                                            <FieldSeparator />
-
-                                            <Field orientation="horizontal">
-                                                <FieldLabel for="volume" class="whitespace-nowrap">音量</FieldLabel>
-
-                                                <Button id="volume" variant="ghost" size="icon-sm" @click="toggleMute">
-                                                    <template v-if="tempConfig.currentBackground.muted">
-                                                        <VolumeX />
-                                                    </template>
-                                                    <template v-else>
-                                                        <Volume2 />
-                                                    </template>
-                                                </Button>
-                                                <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
-                                                    @update:modelValue="handleVolumeValue" />
-                                                <span>{{ highPrecisionMul(volumeValue, 100) }}</span>
-
-                                            </Field>
-
-                                        </FieldGroup>
-
-
-                                        <Separator class="my-4" />
-
-                                        <div class="flex h-5 items-center gap-2">
-                                            <div class="text-xs text-muted-foreground">
-                                                创建时间:
-                                                {{ zhDayTime(tempConfig.currentBackground.createTime) }}
-                                            </div>
-                                            <div v-if="tempConfig.currentBackground.updateTime"
-                                                class="text-xs  text-muted-foreground">
-                                                更新时间:
-                                                {{ zhDayTime(tempConfig.currentBackground.updateTime) }}
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                    <div class="flex-none sm:w-56">
-                                        <div class="sm:sticky sm:top-0">
-
-                                            <div class="mb-2">预览</div>
-                                            <div
-                                                class="preview-wrapper border-border border rounded-md overflow-hidden">
-                                                <Preview :source="tempConfig.currentBackground"></Preview>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>
+                                <BackgroundSettings :tempConfig="tempConfig" v-on="backgroundEventHandlers" />
 
                                 <AlertDialog v-model:open="deleteConfirm">
 
@@ -544,7 +69,7 @@
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>取消</AlertDialogCancel>
-                                            <AlertDialogAction @click="handleDelete">确定删除
+                                            <AlertDialogAction @click="onDelete">确定删除
                                             </AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
@@ -567,6 +92,10 @@
                                 </AlertDialog>
 
                             </template>
+
+                            <template v-if="currentMenu == 'setting'">
+                                <GeneralSettings :tempConfig="tempConfig" />
+                            </template>
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
 
@@ -588,19 +117,19 @@
 </template>
 
 <script setup>
-import { FileImage, Link, Settings2, Plus, Trash, Edit, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronDown, ChevronRight, FlaskConical, Eye, EyeOff } from 'lucide-vue-next';
+import { Settings2 } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
-import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 
-const { dayjs, zhDay, zhDayTime, highPrecisionMul, highPrecisionDiv } = utils
+
+const { dayjs } = utils
 const configStore = useConfigStore();
 const { updateTimeDisplay, updateConfig } = configStore
 const { config, defaultData: defaultConfig, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
-const { updateAllBackgrounds, defaultData, verifyPermission, getFileURL, addNewBackground, removeBackground } = backgroundStore
+const { updateAllBackgrounds, defaultData, getFileURL, addNewBackground, removeBackground } = backgroundStore
 const { currentBackgroundId, currentBackground, backgrounds, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
@@ -611,61 +140,10 @@ let tempConfig = reactive({ timerConfig: {}, backgroundConfigs: [], currentBackg
 const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
-const urlValue = ref('')
-const maskValue = ref([0, 1])
-const volumeValue = ref([0])
-const selectedFileName = ref(null)
-const storageInfo = ref(null)
-const storageUsage = ref(0)
-
-const fileTypeOpt = {
-    types: [
-        {
-            description: "Images",
-            accept: {
-                "image/jpeg": [".jpg"],
-                "image/png": [".png"],
-                "image/gif": [".gif"],
-                "image/bmp": [".bmp"],
-                "image/webp": [".webp"],
-            },
-        },
-        {
-            description: "Videos",
-            accept: {
-                "video/mp4": [".mp4"],
-                "video/x-matroska": [".mkv"],
-                "video/mp4v-es": [".m4v"],
-                "video/webm": [".webm"],
-            },
-        },
-    ],
-    excludeAcceptAllOption: true,
-    multiple: false,
-}
-
-
-
-const fitOptions = computed(() => {
-    return Object.keys(fit).map(key => {
-        return {
-            label: fit[key]['zh-CN'],
-            value: fit[key].value
-        }
-    })
-})
-const postionOptions = computed(() => {
-    return Object.keys(position).map(key => {
-        return {
-            label: position[key]['zh-CN'],
-            value: position[key].value,
-            type: position[key].type
-        }
-    })
-})
-
-
-
+// const urlValue = ref('')
+// const maskValue = ref([0, 1])
+// const volumeValue = ref([0])
+// const selectedFileName = ref(null)
 
 onBeforeMount(async () => {
 
@@ -679,12 +157,10 @@ const onOpenChange = async (open) => {
     if (open) {
         videoPlay.value = false
         await initTempConfig()
-        await getStroageData()
+
     } else {
-        selectedFileName.value = null
-        tempConfig.timerConfig = {}
-        tempConfig.currentBackground = {}
-        tempConfig.backgroundConfigs = []
+        // selectedFileName.value = null
+        resetConfig()
         videoPlay.value = true
     }
 }
@@ -704,25 +180,13 @@ const initTempConfig = async () => {
 const updateTempCurrentConfig = (background) => {
     Object.assign(tempConfig.currentBackground, { ...background })
     // console.log(tempConfig);
-    maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
-    volumeValue.value = [tempConfig.currentBackground.volume]
-    if (tempConfig.currentBackground.sourceType === 'url') {
-        urlValue.value = tempConfig.currentBackground.sourcePath
-    }
+    // maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
+    // volumeValue.value = [tempConfig.currentBackground.volume]
+    // if (tempConfig.currentBackground.sourceType === 'url') {
+    //     urlValue.value = tempConfig.currentBackground.sourcePath
+    // }
 }
 
-const getStroageData = async () => {
-    try {
-        storageInfo.value = await navigator.storage.estimate()
-        storageUsage.value = Math.round(highPrecisionMul(highPrecisionDiv(storageInfo.value.usage, storageInfo.value.quota), 100))
-    } catch (error) {
-        // console.error('获取存储信息失败:', error)
-        toast.error('获取存储信息失败', {
-            description: error.message,
-            position: 'top-center'
-        })
-    }
-}
 
 const onSubmit = async () => {
     updateTempBackgrounds(true)
@@ -735,16 +199,10 @@ const onSubmit = async () => {
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
-        // for (const background of backgroundsData) {
-        //     // console.log(background);
-        //     await updateBackground(background)
-        // }
         await updateConfig({ ...tempConfig.timerConfig })
         toast.success('更新成功', {
             position: 'top-center'
         })
-        // visibleModal.value = false
-        // if (!videoPlay.value) videoPlay.value = true
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
@@ -758,7 +216,6 @@ const onReset = () => {
     tempConfig.timerConfig = { ...defaultConfig }
     updateTempCurrentConfig(defaultData)
     updateTempBackgrounds()
-    // visibleModal.value = false
 }
 
 const handleFile = (e) => {
@@ -775,7 +232,7 @@ const handleFile = (e) => {
 const handleFilesystem = async (e) => {
     const { handle } = e.detail[0];
     // console.log(handle);
-    selectedFileName.value = handle.name
+    // selectedFileName.value = handle.name
     tempConfig.currentBackground.filename = handle.name
     tempConfig.currentBackground.source = handle;
     tempConfig.currentBackground.sourcePath = await getFileURL(handle)
@@ -825,7 +282,7 @@ const handleNew = async () => {
     }
 }
 
-const handleDelete = async () => {
+const onDelete = async () => {
     const success = await removeBackground(currentBackgroundId.value)
     if (success) {
         console.log(success, backgrounds.value);
@@ -839,23 +296,10 @@ const handleDelete = async () => {
     }
 }
 
-const handleClick = (item) => {
+const handleClickMenu = (item) => {
     setMenu(item.name)
 }
 
-
-
-const needPermission = async () => {
-    if (tempConfig.currentBackground.sourceType == 'url') return
-    const userPermission = await verifyPermission(tempConfig.currentBackground.source, false);
-    if (userPermission) {
-        toast.success('已授权成功，稍后将自动刷新页面', {
-            position: 'top-center', onAutoClose: () => {
-                location.reload();
-            }
-        })
-    }
-}
 
 const updateTempBackgrounds = (needUpdate = false) => {
     // 更新临时列表
@@ -864,12 +308,12 @@ const updateTempBackgrounds = (needUpdate = false) => {
     if (needUpdate) {
         tempConfig.backgroundConfigs[index].updateTime = dayjs().toDate()
     }
-    console.log(index, tempConfig.backgroundConfigs[index]);
-
+    // console.log(index, tempConfig.backgroundConfigs[index]);
 }
 
+
 const changeTempConfig = async (id) => {
-    console.log(id);
+    // console.log(id);
     if (!id || tempConfig.currentBackground.id == id) return
     updateTempBackgrounds()
     // 切换当前背景
@@ -879,10 +323,22 @@ const changeTempConfig = async (id) => {
     updateTempCurrentConfig(item || currentBackground.value)
 }
 
+const backgroundEventHandlers = {
+    changeTempConfig,
+    handleNew,
+    handleFile,
+    handleFilesystem,
+    handleUrl,
+    handleMaskValue,
+    handleVolumeValue,
+    toggleMute,
+    handleReset: () => resetConfirm.value = true,
+    handleDelete: () => deleteConfirm.value = true,
+
+}
+
 </script>
 
 <style scoped>
-.preview-wrapper {
-    aspect-ratio: 16 / 9;
-}
+
 </style>

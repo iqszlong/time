@@ -1,4 +1,4 @@
-import { Images,Cog } from 'lucide-vue-next';
+import { Images,Cog,Clock4 } from 'lucide-vue-next';
 export const useMenuStore = defineStore("menus", () => {
   const { proxy } = getCurrentInstance();
   const { getPost, serialize } = utils;
@@ -13,11 +13,18 @@ export const useMenuStore = defineStore("menus", () => {
     }, {
       name: "time",
       id: 1,
+      title: "时间",
+      parent: "root",
+      visible: "true",
+      icon: Clock4
+    }, {
+      name: "setting",
+      id: 2,
       title: "通用",
       parent: "root",
       visible: "true",
       icon: Cog
-    },
+    }
 
   ];
   const currentMenu = ref(staticList[0].name);
