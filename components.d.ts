@@ -119,7 +119,6 @@ declare module 'vue' {
     SelectTrigger: typeof import('./src/components/ui/select/SelectTrigger.vue')['default']
     SelectValue: typeof import('./src/components/ui/select/SelectValue.vue')['default']
     Separator: typeof import('./src/components/ui/separator/Separator.vue')['default']
-    Setting: typeof import('./src/components/SettingModal/setting.vue')['default']
     SettingModal: typeof import('./src/components/SettingModal/index.vue')['default']
     Sheet: typeof import('./src/components/ui/sheet/Sheet.vue')['default']
     SheetClose: typeof import('./src/components/ui/sheet/SheetClose.vue')['default']
