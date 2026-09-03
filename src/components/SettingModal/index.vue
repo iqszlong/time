@@ -94,7 +94,7 @@
                             </template>
 
                             <template v-if="currentMenu == 'setting'">
-                                <GeneralSettings :tempConfig="tempConfig" v-on="generalSettingEventHandlers"/>
+                                <GeneralSettings :tempConfig="tempConfig" v-on="generalSettingEventHandlers" />
                             </template>
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
@@ -150,13 +150,21 @@ onMounted(async () => {
 
 const onOpenChange = async (open) => {
     if (open) {
-        videoPlay.value = false
-        await initTempConfig()
+        await startInitConfig()
 
     } else {
-        resetConfig()
-        videoPlay.value = true
+        endInitConfig()
     }
+}
+
+const startInitConfig = async () => {
+    videoPlay.value = false
+    await initTempConfig()
+}
+
+const endInitConfig = () => {
+    resetConfig()
+    videoPlay.value = true
 }
 
 const resetConfig = () => {
@@ -226,7 +234,6 @@ const handleFilesystem = async (e) => {
     tempConfig.currentBackground.source = handle;
     tempConfig.currentBackground.sourcePath = await getFileURL(handle)
     // console.log(tempConfig);
-
 }
 
 const handleUrl = (e) => {
@@ -302,8 +309,9 @@ const updateTempBackgrounds = (needUpdate = false) => {
 
 
 const changeTempConfig = async (id) => {
-    // console.log(id);
+    // console.log(id,tempConfig.currentBackground.id);
     if (!id || tempConfig.currentBackground.id == id) return
+    // 暂存临时数据，修改后的数据会存储在tempConfig中，如果不保存将作废
     updateTempBackgrounds()
     // 切换当前背景
     currentBackgroundId.value = id
@@ -327,10 +335,8 @@ const backgroundEventHandlers = {
 
 
 const generalSettingEventHandlers = {
-    reloadTempConfig:async ()=> {resetConfig();await initTempConfig()},
+    reloadTempConfig: async () => { resetConfig(); await startInitConfig() },
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

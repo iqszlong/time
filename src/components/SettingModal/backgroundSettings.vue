@@ -398,7 +398,7 @@ import { fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore()
-const { updateAllBackgrounds, defaultData, verifyPermission, getFileURL, addNewBackground, removeBackground } = backgroundStore
+const { verifyPermission } = backgroundStore
 const { currentBackgroundId, total } = storeToRefs(backgroundStore)
 const { zhDayTime, highPrecisionMul } = utils
 const props = defineProps({
