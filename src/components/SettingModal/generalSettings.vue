@@ -117,6 +117,8 @@ const { dayjs, highPrecisionMul, highPrecisionDiv } = utils
 const props = defineProps({
     tempConfig: { type: Object, required: true },
 })
+const emits = defineEmits(['reloadTempConfig'])
+
 const storageInfo = ref(null)
 const storageUsage = ref(0)
 const clearConfirm = ref(false)
@@ -156,6 +158,9 @@ const getBackupData = async () => {
     //获取配置和背景数据
     const confd = await configService.getAll({ page: 0, size: 100 })
     const backgd = await backgroundService.getAll({ page: 0, size: 100 })
+    for (const item of backgd) {
+        item.source = JSON5.stringify(item.source)
+    }
     const data = {
         config: confd,
         background: backgd
@@ -200,6 +205,7 @@ const onRestore = async (e) => {
             await backgroundService.saveAll(data.background ?? [])
             await refreshConfig()
             await refreshBackground()
+            emits('reloadTempConfig')
             toast.success('恢复成功', {
                 position: 'top-center'
             })

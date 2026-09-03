@@ -94,7 +94,7 @@
                             </template>
 
                             <template v-if="currentMenu == 'setting'">
-                                <GeneralSettings :tempConfig="tempConfig" />
+                                <GeneralSettings :tempConfig="tempConfig" v-on="generalSettingEventHandlers"/>
                             </template>
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
@@ -122,7 +122,6 @@ import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
-
 
 const { dayjs } = utils
 const configStore = useConfigStore();
@@ -185,7 +184,7 @@ const onSubmit = async () => {
     for (const background of tempConfig.backgroundConfigs) {
         backgroundsData.push({ ...background })
     }
-    // console.log(backgroundsData);
+    console.log(backgroundsData);
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
@@ -324,9 +323,12 @@ const backgroundEventHandlers = {
     toggleMute,
     handleReset: () => resetConfirm.value = true,
     handleDelete: () => deleteConfirm.value = true,
-
 }
 
+
+const generalSettingEventHandlers = {
+    reloadTempConfig:async ()=> {resetConfig();await initTempConfig()},
+}
 </script>
 
 <style scoped>
