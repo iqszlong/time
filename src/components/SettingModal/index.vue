@@ -140,10 +140,6 @@ let tempConfig = reactive({ timerConfig: {}, backgroundConfigs: [], currentBackg
 const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
-// const urlValue = ref('')
-// const maskValue = ref([0, 1])
-// const volumeValue = ref([0])
-// const selectedFileName = ref(null)
 
 onBeforeMount(async () => {
 
@@ -159,7 +155,6 @@ const onOpenChange = async (open) => {
         await initTempConfig()
 
     } else {
-        // selectedFileName.value = null
         resetConfig()
         videoPlay.value = true
     }
@@ -180,11 +175,6 @@ const initTempConfig = async () => {
 const updateTempCurrentConfig = (background) => {
     Object.assign(tempConfig.currentBackground, { ...background })
     // console.log(tempConfig);
-    // maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
-    // volumeValue.value = [tempConfig.currentBackground.volume]
-    // if (tempConfig.currentBackground.sourceType === 'url') {
-    //     urlValue.value = tempConfig.currentBackground.sourcePath
-    // }
 }
 
 

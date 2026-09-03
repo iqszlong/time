@@ -280,8 +280,6 @@ export const useBackgroundStore = defineStore('background', () => {
   async function clearAll() {
     try {
       await backgroundService.clear()
-      backgrounds.value = []
-      currentBackground.value = null
       total.value = 0
     } catch (error) {
       console.error('清空背景失败:', error)

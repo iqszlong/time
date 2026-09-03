@@ -38,7 +38,7 @@ export const useConfigStore = defineStore("config", () => {
     try {
       currentPage.value = page;
       pageSize.value = size;
-      const data = await configService.getAll("config", "createTime", page, size)
+      const data = await configService.getAll({page, size})
       configs.value = data
       total.value = await configService.getTotal()
     } catch (error) {
@@ -155,6 +155,13 @@ export const useConfigStore = defineStore("config", () => {
     await loadConfigs()
   }
 
+  const clearAll = async () => {
+    await configService.clear()
+    total.value = 0
+    currentPage.value = 0
+    pageSize.value = 10
+  }
+
   return {
     configs,
     config,
@@ -174,11 +181,7 @@ export const useConfigStore = defineStore("config", () => {
     loadingConfigById,
     loadMore,
     refresh,
-    resetConfig,
-    loadingConfigById,
-    loadMore,
-    refresh,
-    resetConfig,
     updateTimeDisplay,
+    clearAll,
   }
 });

@@ -1,4 +1,4 @@
-import db, { get, getALL, put, puts, del, getCount } from '@/utils/dexie';
+import { get, getALL, put, puts, del, getCount,clear } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const backgroundService = {
@@ -71,7 +71,7 @@ export const backgroundService = {
   },
 
   async clear() {
-    return await db.background.clear();
+    return await clear('background');
   },
 
   async search(query) {

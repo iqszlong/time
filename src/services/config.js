@@ -1,4 +1,4 @@
-import db, { get, getALL, put, puts, del, getCount } from '@/utils/dexie';
+import { get, getALL, put, puts, del, getCount,clear } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const configService = {
@@ -78,7 +78,7 @@ export const configService = {
   },
 
   async clear() {
-    return await db.config.clear();
+    return await clear('config');
   },
 };
 

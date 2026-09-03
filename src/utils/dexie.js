@@ -43,6 +43,10 @@ export async function getCount(table) {
     return await db[table].count();
 }
 
+export async function clear(table) {
+    return await db[table].clear();
+}
+
 export default {
     get,
     getALL,
@@ -50,4 +54,5 @@ export default {
     puts,
     del,
     getCount,
+    clear,
 }
