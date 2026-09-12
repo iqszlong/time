@@ -86,7 +86,7 @@
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>取消</AlertDialogCancel>
-                            <AlertDialogAction ref="clearBtn">长按清空</AlertDialogAction>
+                            <Button ref="clearBtn" variant="destructive">长按清空</Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
@@ -149,6 +149,7 @@ onLongPress(clearBtn, async () => {
     await clearBackground()
     await initConfig()
     await initBackground()
+    emits('reloadTempConfig')
     toast.success('清空成功', {
         position: 'top-center'
     })
@@ -159,13 +160,12 @@ const getBackupData = async () => {
     const confd = await configService.getAll({ page: 0, size: 100 })
     const backgd = await backgroundService.getAll({ page: 0, size: 100 })
     for (const item of backgd) {
-        item.source = JSON5.stringify(item.source)
+        if (item.sourceType == 'local') item.source = JSON5.stringify(item.source)
     }
-    const data = {
-        config: confd,
-        background: backgd
+    return {
+        configs: confd,
+        backgrounds: backgd
     }
-    return data
 }
 
 const onBackup = async () => {
@@ -200,9 +200,11 @@ const onRestore = async (e) => {
         const reader = new FileReader()
         reader.readAsText(file)
         reader.onload = async (e) => {
-            const data = JSON5.parse(e.target.result)
-            await configService.saveAll(data.config ?? [])
-            await backgroundService.saveAll(data.background ?? [])
+            const data = transformData(e.target.result)
+            await clearConfig()
+            await clearBackground()
+            await configService.saveAll(data.configs ?? [])
+            await backgroundService.saveAll(data.backgrounds ?? [])
             await refreshConfig()
             await refreshBackground()
             emits('reloadTempConfig')
@@ -210,6 +212,17 @@ const onRestore = async (e) => {
                 position: 'top-center'
             })
         }
+    } catch (error) {
+        toast.error('恢复失败', {
+            description: error.message,
+            position: 'top-center'
+        })
+    }
+}
+
+const transformData = (result) => {
+    try {
+        return JSON5.parse(result)
     } catch (error) {
         toast.error('恢复失败', {
             description: error.message,

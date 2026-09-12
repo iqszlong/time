@@ -153,6 +153,7 @@ export const useConfigStore = defineStore("config", () => {
 
   const refresh = async () => {
     await loadConfigs()
+    await setConfig(configs.value[0])
   }
 
   const clearAll = async () => {

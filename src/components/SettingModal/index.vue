@@ -150,16 +150,16 @@ onMounted(async () => {
 
 const onOpenChange = async (open) => {
     if (open) {
-        await startInitConfig()
+        startInitConfig()
 
     } else {
         endInitConfig()
     }
 }
 
-const startInitConfig = async () => {
+const startInitConfig = () => {
     videoPlay.value = false
-    await initTempConfig()
+    initTempConfig()
 }
 
 const endInitConfig = () => {
@@ -173,7 +173,8 @@ const resetConfig = () => {
     tempConfig.backgroundConfigs = []
 }
 
-const initTempConfig = async () => {
+const initTempConfig = () => {
+console.trace(config.value);
     Object.assign(tempConfig.timerConfig, { ...config.value })
     Object.assign(tempConfig.backgroundConfigs, [...backgrounds.value])
     updateTempCurrentConfig(currentBackground.value)
@@ -274,7 +275,7 @@ const handleNew = async () => {
             position: 'top-center'
         })
         resetConfig()
-        await initTempConfig()
+        initTempConfig()
     }
 }
 
@@ -288,7 +289,7 @@ const onDelete = async () => {
             position: 'top-center'
         })
         resetConfig()
-        await initTempConfig()
+        initTempConfig()
     }
 }
 
@@ -335,7 +336,7 @@ const backgroundEventHandlers = {
 
 
 const generalSettingEventHandlers = {
-    reloadTempConfig: async () => { resetConfig(); await startInitConfig() },
+    reloadTempConfig: async () => { resetConfig(); startInitConfig() },
 }
 </script>
 
