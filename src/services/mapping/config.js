@@ -48,3 +48,16 @@ export const position = {
         type: ['horizontal']
     },
 }
+
+export const fontStyles = {
+    default:{
+        label: 'default',
+        'zh-CN': '默认',
+        value: 'inherit',
+    },
+    'JetBrains Mono':{
+        label: 'JetBrains Mono',
+        'zh-CN': 'JetBrains字体',
+        value: "'JetBrains Mono', monospace",
+    }
+}

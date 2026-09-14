@@ -1,7 +1,7 @@
 <template>
     <div class="timer-wrapper">
         <div class="text-sm">{{ date }}</div>
-        <div class="text-6xl">{{ time }}</div>
+        <div class="clock">{{ time }}</div>
         <Separator class="my-2 line" />
         <div class="text-muted-foreground text-xs">{{ unix }}</div>
     </div>
@@ -12,6 +12,10 @@ const props = defineProps({
     display: {
         type: String,
         default: '12'
+    },
+    fontStyle:{
+        type: String,
+        default: 'inherit'
     }
 })
 
@@ -103,6 +107,13 @@ watch(()=>props.display, () => {
     .line {
         width: 80px;
         --border: rgba(255, 255, 255, 0.2);
+    }
+
+    .clock{
+        font-size: 60px;
+        font-variant-numeric: tabular-nums;
+        letter-spacing:.02em;
+        font-family: v-bind('props.fontStyle');
     }
 }
 </style>

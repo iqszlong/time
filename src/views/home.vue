@@ -6,15 +6,19 @@
         <section class="wrapper">
             <div class="ctrl-bar" :class="[{ 'is-hidden': isHidden }]">
                 <SettingModal></SettingModal>
-                
+
                 <z-screenfull>
-                    <Button variant="outline" size="icon" slot="exit"><Shrink/></Button>
-                    <Button variant="outline" size="icon" slot="full"><Expand/></Button>
+                    <Button variant="outline" size="icon" slot="exit">
+                        <Shrink />
+                    </Button>
+                    <Button variant="outline" size="icon" slot="full">
+                        <Expand />
+                    </Button>
                 </z-screenfull>
-                
-                <!-- <Button type="primary" @click="testClick">测试</Button> -->
+
+                <!-- <Button variant="outline" @click="testClick">测试</Button> -->
             </div>
-            <Timer class="timer" :display="config.timeDisplay"></Timer>
+            <Timer class="timer" v-bind="timerAttrs"></Timer>
             <Footer></Footer>
         </section>
         <section class="media">
@@ -31,16 +35,23 @@ import { Expand, Shrink } from 'lucide-vue-next';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
+import { fontStyles } from '@/services/mapping/config'
 const configStore = useConfigStore();
 const { config, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore();
-const { backgrounds, } = storeToRefs(backgroundStore)
+const { backgrounds } = storeToRefs(backgroundStore)
 const { debounce, isEmpty } = utils
 const isHidden = ref(false)
 
 const { VITE_SITE_LOGO, VITE_TITLE } = import.meta.env
 
 
+
+
+const timerAttrs = computed(() => ({
+    display: config.value.timeDisplay,
+    fontStyle: fontStyles[config.value.timeFontStyle].value,
+}))
 
 
 // 超时隐藏
@@ -76,6 +87,9 @@ onMounted(async () => {
     }, 800)
     document.addEventListener('mousemove', handleMouseMove, { passive: true })
     document.addEventListener('mouseleave', handleMouseleave)
+    // console.log(fontStyles)
+    // console.log(config.value.timeFontStyle)
+    // console.log(fontStyles[config.value.timeFontStyle])
 })
 
 onBeforeUnmount(() => {
@@ -83,6 +97,8 @@ onBeforeUnmount(() => {
     document.removeEventListener('mouseleave', handleMouseleave)
     autoHide.cancel()
 })
+
+
 </script>
 
 <style scoped></style>

@@ -15,12 +15,27 @@
                 </RadioGroup>
             </Field>
 
+            <Field>
+                <FieldLabel for="fontStyle">时间字体样式</FieldLabel>
+                <Select id="fontStyle" v-model="tempConfig.timerConfig.timeFontStyle">
+                    <SelectTrigger id="currentBackgroundId" class="w-full">
+                        <SelectValue placeholder="Select a style" class="w-[80%] truncate" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <template v-for="font of fontStyles" :key="font.label">
+                            <SelectItem :value="font.label">{{ font['zh-CN'] }}
+                            </SelectItem>
+                        </template>
+                    </SelectContent>
+                </Select>
+            </Field>
 
         </FieldGroup>
     </FieldSet>
 </template>
 
 <script setup>
+import { fontStyles } from '@/services/mapping/config'
 const props = defineProps({
     tempConfig: {
         type: Object,

@@ -12,6 +12,7 @@ export const useConfigStore = defineStore("config", () => {
 
   const defaultData = {
     timeDisplay: '12',
+    timeFontStyle: 'default',
     naiveTheme: "dark", // 主题
     country: "CN",
     language: "ZH_CN",
@@ -27,8 +28,8 @@ export const useConfigStore = defineStore("config", () => {
 
   const initConfig = async () => {
     await loadConfigs()
-    if(total.value === 0) {
-       await addConfig(defaultData)
+    if (total.value === 0) {
+      await addConfig(defaultData)
     }
     await setConfig(configs.value[0])
   }
@@ -38,7 +39,7 @@ export const useConfigStore = defineStore("config", () => {
     try {
       currentPage.value = page;
       pageSize.value = size;
-      const data = await configService.getAll({page, size})
+      const data = await configService.getAll({ page, size })
       configs.value = data
       total.value = await configService.getTotal()
     } catch (error) {
@@ -50,7 +51,7 @@ export const useConfigStore = defineStore("config", () => {
 
   const addConfig = async (data) => {
     try {
-      await configService.save({...data, createTime: dayjs().toDate()})
+      await configService.save({ ...data, createTime: dayjs().toDate() })
       await loadConfigs()
     } catch (error) {
       console.error("添加配置失败:", error)
@@ -59,12 +60,12 @@ export const useConfigStore = defineStore("config", () => {
 
   const updateConfig = async (data) => {
     try {
-      await configService.save({...data, updateTime: dayjs().toDate()})
+      await configService.save({ ...data, updateTime: dayjs().toDate() })
       const index = configs.value.findIndex(item => item.id === data.id)
-      if(index !== -1) {
+      if (index !== -1) {
         configs.value[index] = data
       }
-      if(config.value.id === data.id) {
+      if (config.value.id === data.id) {
         await setConfig(data)
       }
       return true
@@ -75,11 +76,11 @@ export const useConfigStore = defineStore("config", () => {
   }
 
 
-  const updateTimeDisplay = async (id,display) => {
+  const updateTimeDisplay = async (id, display) => {
     try {
       const updateId = await configService.updateTimeDisplay(id, display)
-      if(updateId){
-        if(config.value.id === updateId) {
+      if (updateId) {
+        if (config.value.id === updateId) {
           const item = await configService.getById(updateId)
           await setConfig(item)
         }
@@ -96,7 +97,7 @@ export const useConfigStore = defineStore("config", () => {
     try {
       await configService.remove(id)
       configs.value = configs.value.filter(item => item.id !== id)
-      if(config.value.id === id) {
+      if (config.value.id === id) {
         config.value = null
       }
       total.value = await configService.getTotal()
@@ -111,7 +112,7 @@ export const useConfigStore = defineStore("config", () => {
     loading.value = true
     try {
       const data = await configService.getById(id)
-      if(data) {
+      if (data) {
         await setConfig(data)
       }
     } catch (error) {
@@ -122,7 +123,7 @@ export const useConfigStore = defineStore("config", () => {
   }
 
   const loadMore = async () => {
-    if(hasMore.value && !loading.value) {
+    if (hasMore.value && !loading.value) {
       await loadConfigs(currentPage.value + 1, pageSize.value)
     }
   }
@@ -130,7 +131,7 @@ export const useConfigStore = defineStore("config", () => {
 
   const setConfig = async (data) => {
     try {
-      config.value = {...data}
+      config.value = { ...data }
     } catch (error) {
       console.error("Error setting config:", error)
     }
