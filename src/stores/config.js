@@ -12,7 +12,7 @@ export const useConfigStore = defineStore("config", () => {
 
   const defaultData = {
     timeDisplay: '12',
-    timeFontStyle: 'default',
+    timeFontFamily: 'default',
     naiveTheme: "dark", // 主题
     country: "CN",
     language: "ZH_CN",

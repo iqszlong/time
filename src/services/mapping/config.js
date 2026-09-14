@@ -49,7 +49,7 @@ export const position = {
     },
 }
 
-export const fontStyles = {
+export const fontFamilys = {
     default:{
         label: 'default',
         'zh-CN': '默认',
@@ -59,5 +59,25 @@ export const fontStyles = {
         label: 'JetBrains Mono',
         'zh-CN': 'JetBrains字体',
         value: "'JetBrains Mono', monospace",
+    },
+    'Inter':{
+        label: 'Inter',
+        'zh-CN': 'Inter字体',
+        value: "'Inter', system-ui, sans-serif",
+    },
+    'Roboto':{
+        label: 'Roboto',
+        'zh-CN': 'Roboto字体',
+        value: "'Roboto', system-ui, sans-serif",
+    },
+    'Comfortaa':{
+        label: 'Comfortaa',
+        'zh-CN': 'Comfortaa字体',
+        value: "'Comfortaa', display",
+    },
+    'Nunito':{
+        label: 'Nunito',
+        'zh-CN': 'Nunito字体',
+        value: "'Nunito', sans-serif",
     }
 }

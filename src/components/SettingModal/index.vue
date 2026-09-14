@@ -1,7 +1,7 @@
 <template>
     <Dialog v-model:open="visibleModal" @update:open="onOpenChange" class="setting-modal">
         <DialogTrigger as-child>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" class="rounded-full">
                 <Settings2 />
             </Button>
         </DialogTrigger>

@@ -13,7 +13,7 @@ const props = defineProps({
         type: String,
         default: '12'
     },
-    fontStyle:{
+    fontFamily:{
         type: String,
         default: 'inherit'
     }
@@ -113,7 +113,7 @@ watch(()=>props.display, () => {
         font-size: 60px;
         font-variant-numeric: tabular-nums;
         letter-spacing:.02em;
-        font-family: v-bind('props.fontStyle');
+        font-family: v-bind('props.fontFamily');
     }
 }
 </style>

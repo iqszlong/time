@@ -8,10 +8,10 @@
                 <SettingModal></SettingModal>
 
                 <z-screenfull>
-                    <Button variant="outline" size="icon" slot="exit">
+                    <Button variant="outline" size="icon" slot="exit" class="rounded-full">
                         <Shrink />
                     </Button>
-                    <Button variant="outline" size="icon" slot="full">
+                    <Button variant="outline" size="icon" slot="full" class="rounded-full">
                         <Expand />
                     </Button>
                 </z-screenfull>
@@ -35,7 +35,7 @@ import { Expand, Shrink } from 'lucide-vue-next';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
-import { fontStyles } from '@/services/mapping/config'
+import { fontFamilys } from '@/services/mapping/config'
 const configStore = useConfigStore();
 const { config, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore();
@@ -50,7 +50,7 @@ const { VITE_SITE_LOGO, VITE_TITLE } = import.meta.env
 
 const timerAttrs = computed(() => ({
     display: config.value.timeDisplay,
-    fontStyle: fontStyles[config.value.timeFontStyle].value,
+    fontFamily: fontFamilys[config.value.timeFontFamily].value,
 }))
 
 
