@@ -16,7 +16,7 @@
             </Field>
 
             <Field>
-                <FieldLabel for="fontStyle">时间字体样式</FieldLabel>
+                <FieldLabel for="fontStyle">时间字体</FieldLabel>
                 <Select id="fontStyle" v-model="tempConfig.timerConfig.timeFontFamily">
                     <SelectTrigger id="currentBackgroundId" class="w-full">
                         <SelectValue placeholder="Select a style" class="w-[80%] truncate" />

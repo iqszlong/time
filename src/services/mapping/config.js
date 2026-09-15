@@ -79,5 +79,31 @@ export const fontFamilys = {
         label: 'Nunito',
         'zh-CN': 'Nunito字体',
         value: "'Nunito', sans-serif",
-    }
+    },
+    'Audiowide':{
+        label: 'Audiowide',
+        'zh-CN': 'Audiowide字体',
+        value: "'Audiowide', display",
+    },
+    'Noto Sans SC':{
+        label: 'Noto Sans SC',
+        'zh-CN': '思源黑体',
+        value: "'Noto Sans SC', sans-serif",
+    },
+    'Noto Serif SC':{
+        label: 'Noto Serif SC',
+        'zh-CN': '思源宋体',
+        value: "'Noto Serif SC', serif",
+    },
+    'ZCOOL QingKe':{
+        label: 'ZCOOL QingKe',
+        'zh-CN': '站酷青柯体',
+        value: "'ZCOOL QingKe HuangYou', sans-serif",
+    },
+    'Dela Gothic One':{
+        label: 'Dela Gothic One',
+        'zh-CN': 'Dela Gothic One字体',
+        value: "'Dela Gothic One', display",
+    },
+    
 }
