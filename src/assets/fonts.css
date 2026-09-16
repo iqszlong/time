@@ -57,3 +57,25 @@
     font-style: normal;
     font-display: swap;
 }
+/* AgibotDisplay ============================ */
+@font-face {
+    font-family: 'AgibotDisplay';
+    src: url('/fonts/agibot-display/AgibotDisplay-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'AgibotDisplay';
+    src: url('/fonts/agibot-display/AgibotDisplay-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'AgibotDisplay';
+    src: url('/fonts/agibot-display/AgibotDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

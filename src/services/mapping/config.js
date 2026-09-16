@@ -90,6 +90,11 @@ export const fontFamilys = {
         'zh-CN': 'Gilda Display',
         value: "'Gilda Display', serif",
     },
+    'AgibotDisplay':{
+        label: 'AgibotDisplay',
+        'zh-CN': 'AgibotDisplay',
+        value: "'AgibotDisplay', display",
+    },
     'Eunomia':{
         label: 'Eunomia',
         'zh-CN': 'Eunomia',
