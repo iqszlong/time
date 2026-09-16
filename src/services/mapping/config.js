@@ -85,6 +85,11 @@ export const fontFamilys = {
         'zh-CN': 'Audiowide',
         value: "'Audiowide', display",
     },
+    'Gilda Display':{
+        label: 'Gilda Display',
+        'zh-CN': 'Gilda Display',
+        value: "'Gilda Display', serif",
+    },
     'Eunomia':{
         label: 'Eunomia',
         'zh-CN': 'Eunomia',
