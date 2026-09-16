@@ -103,6 +103,7 @@ watch(()=>props.display, () => {
     place-items: center;
     place-content: center;
     text-shadow: 0 0 8px #000;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 
     .line {
         width: 80px;
@@ -110,7 +111,7 @@ watch(()=>props.display, () => {
     }
 
     .clock{
-        font-size: 60px;
+        font-size: 3.75rem;
         font-variant-numeric: tabular-nums;
         letter-spacing:.02em;
         font-family: v-bind('props.fontFamily');

@@ -23,7 +23,8 @@
                     </SelectTrigger>
                     <SelectContent>
                         <template v-for="font of fontFamilys" :key="font.label">
-                            <SelectItem :value="font.label">{{ font['zh-CN'] }}
+                            <SelectItem :value="font.label" >
+                                <span :style="{fontFamily:font.value}">{{ font['zh-CN'] }}</span>
                             </SelectItem>
                         </template>
                     </SelectContent>

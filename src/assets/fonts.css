@@ -1,1 +1,59 @@
 @import url('https://fonts.bunny.net/css?family=jetbrains-mono:100,200,300,400,500,600,700,800|inter:100,200,300,400,500,600,700,800,900|roboto:100,200,300,400,500,600,700,800,900|comfortaa:300,400,500,600,700|nunito:200,300,400,500,600,700,800,900|noto-sans-sc:100,200,300,400,500,600,700,800,900|noto-serif-sc:200,300,400,500,600,700,800,900|zcool-qingke-huangyou:400|dela-gothic-one:400|audiowide:400&display=swap');
+/* Eunomia ============================ */
+@font-face {
+    font-family: 'Eunomia';
+    src: url('/fonts/eunomia_0200/Eunomia-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Eunomia';
+    src: url('/fonts/eunomia_0200/Eunomia-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Eunomia';
+    src: url('/fonts/eunomia_0200/Eunomia-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+/* Ferrum ============================ */
+@font-face {
+    font-family: 'Ferrum';
+    src: url('/fonts/ferrum_0200/ferrum.otf') format('opentype');
+    font-style: normal;
+    font-display: swap;
+}
+/* Melete ============================ */
+@font-face {
+    font-family: 'Melete';
+    src: url('/fonts/melete_0200/Melete-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Melete';
+    src: url('/fonts/melete_0200/Melete-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Melete';
+    src: url('/fonts/melete_0200/Melete-UltraLight.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Melete';
+    src: url('/fonts/melete_0200/Melete-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

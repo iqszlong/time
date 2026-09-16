@@ -57,33 +57,48 @@ export const fontFamilys = {
     },
     'JetBrains Mono':{
         label: 'JetBrains Mono',
-        'zh-CN': 'JetBrains字体',
+        'zh-CN': 'JetBrains',
         value: "'JetBrains Mono', monospace",
     },
     'Inter':{
         label: 'Inter',
-        'zh-CN': 'Inter字体',
+        'zh-CN': 'Inter',
         value: "'Inter', system-ui, sans-serif",
     },
     'Roboto':{
         label: 'Roboto',
-        'zh-CN': 'Roboto字体',
+        'zh-CN': 'Roboto',
         value: "'Roboto', system-ui, sans-serif",
     },
     'Comfortaa':{
         label: 'Comfortaa',
-        'zh-CN': 'Comfortaa字体',
+        'zh-CN': 'Comfortaa',
         value: "'Comfortaa', display",
     },
     'Nunito':{
         label: 'Nunito',
-        'zh-CN': 'Nunito字体',
+        'zh-CN': 'Nunito',
         value: "'Nunito', sans-serif",
     },
     'Audiowide':{
         label: 'Audiowide',
-        'zh-CN': 'Audiowide字体',
+        'zh-CN': 'Audiowide',
         value: "'Audiowide', display",
+    },
+    'Eunomia':{
+        label: 'Eunomia',
+        'zh-CN': 'Eunomia',
+        value: "'Eunomia', sans-serif",
+    },
+    'Ferrum':{
+        label: 'Ferrum',
+        'zh-CN': 'Ferrum',
+        value: "'Ferrum', serif",
+    },
+    'Melete':{
+        label: 'Melete',
+        'zh-CN': 'Melete',
+        value: "'Melete', sans-serif",
     },
     'Noto Sans SC':{
         label: 'Noto Sans SC',
@@ -102,7 +117,7 @@ export const fontFamilys = {
     },
     'Dela Gothic One':{
         label: 'Dela Gothic One',
-        'zh-CN': 'Dela Gothic One字体',
+        'zh-CN': 'Dela Gothic One',
         value: "'Dela Gothic One', display",
     },
     
