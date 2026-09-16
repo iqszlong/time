@@ -113,7 +113,7 @@ watch(()=>props.display, () => {
     .clock{
         font-size: 3.75rem;
         font-variant-numeric: tabular-nums;
-        letter-spacing:.02em;
+        /* letter-spacing:.02em; */
         font-family: v-bind('props.fontFamily');
     }
 }

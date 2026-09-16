@@ -130,5 +130,9 @@ export const fontFamilys = {
         'zh-CN': 'Dela Gothic One',
         value: "'Dela Gothic One', display",
     },
-    
+    'LXGW WenKai Mono TC':{
+        label: 'LXGW WenKai Mono TC',
+        'zh-CN': '霞鹜文楷 等宽繁体',
+        value: "'LXGW WenKai Mono TC', monospace",
+    },
 }
