@@ -185,4 +185,9 @@ export const fontFamilys = {
         'zh-CN': '阿里巴巴普惠体',
         value: "'AlibabaPuHuiTi', sans-serif",
     },
+    'MiSans':{
+        label: 'MiSans',
+        'zh-CN': '小米黑体',
+        value: "'MiSans', sans-serif",
+    }
 }
