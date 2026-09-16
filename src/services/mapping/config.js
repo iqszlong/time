@@ -57,7 +57,7 @@ export const fontFamilys = {
     },
     'JetBrains Mono':{
         label: 'JetBrains Mono',
-        'zh-CN': 'JetBrains',
+        'zh-CN': 'JetBrains Mono',
         value: "'JetBrains Mono', monospace",
     },
     'Inter':{
@@ -65,10 +65,10 @@ export const fontFamilys = {
         'zh-CN': 'Inter',
         value: "'Inter', system-ui, sans-serif",
     },
-    'Roboto':{
-        label: 'Roboto',
-        'zh-CN': 'Roboto',
-        value: "'Roboto', system-ui, sans-serif",
+    'Roboto Mono':{
+        label: 'Roboto Mono',
+        'zh-CN': 'Roboto Mono',
+        value: "'Roboto Mono', monospace",
     },
     'Comfortaa':{
         label: 'Comfortaa',
@@ -110,6 +110,41 @@ export const fontFamilys = {
         'zh-CN': 'Melete',
         value: "'Melete', sans-serif",
     },
+    'Monoton':{
+        label: 'Monoton',
+        'zh-CN': 'Monoton',
+        value: "'Monoton', display",
+    },
+    'VT323':{
+        label: 'VT323',
+        'zh-CN': 'VT323',
+        value: "'VT323', monospace",
+    },
+    'Doto':{
+        label: 'Doto',
+        'zh-CN': 'Doto',
+        value: "'Doto', sans-serif",
+    },
+    'Sixtyfour':{
+        label: 'Sixtyfour',
+        'zh-CN': 'Sixtyfour',
+        value: "'Sixtyfour', monospace",
+    },
+    'Bytesized':{
+        label: 'Bytesized',
+        'zh-CN': 'Bytesized',
+        value: "'Bytesized', sans-serif",
+    },
+    'Lobster Two':{
+        label: 'Lobster Two',
+        'zh-CN': 'Lobster Two',
+        value: "'Lobster Two', display",
+    },
+    'Train One':{
+        label: 'Train One',
+        'zh-CN': 'Train One',
+        value: "'Train One', display",
+    },
     'Noto Sans SC':{
         label: 'Noto Sans SC',
         'zh-CN': '思源黑体',
@@ -122,7 +157,7 @@ export const fontFamilys = {
     },
     'ZCOOL QingKe':{
         label: 'ZCOOL QingKe',
-        'zh-CN': '站酷青柯体',
+        'zh-CN': '站酷庆科黄油体',
         value: "'ZCOOL QingKe HuangYou', sans-serif",
     },
     'Dela Gothic One':{
@@ -134,5 +169,20 @@ export const fontFamilys = {
         label: 'LXGW WenKai Mono TC',
         'zh-CN': '霞鹜文楷 等宽繁体',
         value: "'LXGW WenKai Mono TC', monospace",
+    },
+    'M PLUS U':{
+        label: 'M PLUS U',
+        'zh-CN': 'M PLUS U',
+        value: "'M PLUS U', sans-serif",
+    },
+    'SmileySans':{
+        label: 'SmileySans',
+        'zh-CN': '得意黑',
+        value: "'SmileySans', sans-serif",
+    },
+    'AlibabaPuHuiTi':{
+        label: 'AlibabaPuHuiTi',
+        'zh-CN': '阿里巴巴普惠体',
+        value: "'AlibabaPuHuiTi', sans-serif",
     },
 }
