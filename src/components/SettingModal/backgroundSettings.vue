@@ -6,6 +6,7 @@
                 <Field>
                     <div class="flex items-center gap-2">
                         <FieldLabel for="currentBackgroundId">背景项</FieldLabel>
+                        <div class="flex-1">
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger as-child>
@@ -18,7 +19,8 @@
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
-                        <div class="ml-auto flex items-center gap-2">
+                        </div>
+                        <div class="flex items-center gap-2">
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger as-child>
@@ -70,7 +72,7 @@
                     </Select>
                 </Field>
                 <Field>
-                    <FieldLabel for="file">文件</FieldLabel>
+                    <FieldLabel for="file" class="sr-only">文件</FieldLabel>
                     <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
                         <TabsList class="w-full">
                             <TabsTrigger value="local">

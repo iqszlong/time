@@ -3,17 +3,33 @@
         <FieldGroup>
 
             <Field>
-                <FieldLabel for="backup">备份/还原</FieldLabel>
+                <FieldLabel for="backup">数据备份/还原</FieldLabel>
+                <FieldDescription>
+                    备份当前数据，或从备份文件中恢复数据。部分实验功能可能会恢复失败，请注意。
+                </FieldDescription>
                 <div class="flex items-center gap-2">
                     <Button @click="onBackup" variant="outline">备份</Button>
                     <div class="flex-none">
-                        <InputGroup>
-                            <InputGroupInput id="restore" type="file" class="hidden"
-                                accept="application/json,application/json5" @change="onRestore" />
-                            <InputGroupAddon>
-                                <Label for="restore" class="text-foreground pr-3">还原</Label>
-                            </InputGroupAddon>
-                        </InputGroup>
+
+                        <input ref="restoreInput" type="file" hidden accept="application/json,application/json5"
+                            @change="onRestore" />
+
+                        <Button @click="handleRestore" variant="outline">还原</Button>
+
+                        <AlertDialog v-model:open="restoreConfirm">
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>还原警告</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        还原数据将会覆盖现有数据，是否继续？
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>取消</AlertDialogCancel>
+                                    <Button @click="restoreInput.click(); restoreConfirm = false;">确认继续</Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
 
                 </div>
@@ -22,9 +38,21 @@
             <FieldSeparator />
 
             <Field>
-                <FieldLabel for="useFileSystem">使用新文件系统（Beta）</FieldLabel>
+                <FieldLabel for="useFileSystem">
+                    使用新文件系统
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger as-child>
+                                <FlaskConical class="size-3" />
+                            </TooltipTrigger>
+                            <TooltipContent align="center">
+                                <p>实验功能，部分浏览器不支持。</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </FieldLabel>
                 <div class="flex items-center gap-2">
-                    <Switch id="useFileSystem" v-model="tempConfig.timerConfig.useFileSystem" />
+                    <Switch id="useFileSystem" v-model="tempConfig.timerConfig.useFileSystem" @update:modelValue="onUseFileSystemChange" />
                 </div>
                 <FieldDescription>
                     开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，如果未授权，将无法读取本地文件。
@@ -81,7 +109,7 @@
                         <AlertDialogHeader>
                             <AlertDialogTitle>确定清空吗?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                清空数据将无法恢复。是否继续？
+                                清空数据将无法恢复，是否继续？
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -99,6 +127,7 @@
 
 <script setup>
 import JSON5 from 'json5'
+import { FlaskConical } from 'lucide-vue-next';
 import { toast } from 'vue-sonner'
 import { onLongPress } from '@vueuse/core'
 import { useBrowser } from '@/composables/useBrowser'
@@ -111,6 +140,7 @@ const configStore = useConfigStore();
 const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStore
 const backgroundStore = useBackgroundStore()
 const { refresh: refreshBackground, clearAll: clearBackground, initBackground } = backgroundStore
+const { isFilePicker } = storeToRefs(backgroundStore)
 const { browser, os, isLoading: browserLoading } = useBrowser()
 const { dayjs, highPrecisionMul, highPrecisionDiv } = utils
 
@@ -123,6 +153,8 @@ const storageInfo = ref(null)
 const storageUsage = ref(0)
 const clearConfirm = ref(false)
 const clearBtn = useTemplateRef('clearBtn')
+const restoreConfirm = ref(false)
+const restoreInput = ref(null)
 
 const getStroageData = async () => {
     try {
@@ -142,6 +174,7 @@ onMounted(async () => {
 })
 
 const handleClear = () => clearConfirm.value = true
+const handleRestore = () => restoreConfirm.value = true
 
 onLongPress(clearBtn, async () => {
     clearConfirm.value = false
@@ -155,6 +188,17 @@ onLongPress(clearBtn, async () => {
     })
 }, { distanceThreshold: false, modifiers: { prevent: true } })
 
+const onUseFileSystemChange = (value) => {
+    if (value && !isFilePicker.value){
+        toast.warning('您的浏览器不支持文件系统API',{
+            position: 'top-center'
+        })
+        setTimeout(() => {
+            props.tempConfig.timerConfig.useFileSystem = false
+        },500)
+    }
+}
+
 const getBackupData = async () => {
     //获取配置和背景数据
     const confd = await configService.getAll({ page: 0, size: 100 })
@@ -167,6 +211,8 @@ const getBackupData = async () => {
         backgrounds: backgd
     }
 }
+
+
 
 const onBackup = async () => {
     try {
@@ -191,11 +237,19 @@ const onBackup = async () => {
 }
 
 
-const onRestore = async (e) => {
-    const file = e.target.files[0]
+const onRestore = async () => {
+    const file = restoreInput.value.files[0]
     if (!file) {
         return
+    }//判断文件名是否time-backup开头
+    else if (!file.name.startsWith('time-backup')) {
+        toast.error('文件名错误', {
+            description: '文件名必须以time-backup开头',
+            position: 'top-center'
+        })
+        return
     }
+
     try {
         const reader = new FileReader()
         reader.readAsText(file)
@@ -224,7 +278,7 @@ const transformData = (result) => {
     try {
         return JSON5.parse(result)
     } catch (error) {
-        toast.error('恢复失败', {
+        toast.error('恢复失败，文件内容错误', {
             description: error.message,
             position: 'top-center'
         })
