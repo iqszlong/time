@@ -358,10 +358,12 @@
 
                 </Field>
 
+                <FieldSeparator />
+
             </FieldGroup>
 
 
-            <Separator class="my-4" />
+          
 
             <div class="flex h-5 items-center gap-2">
                 <div class="text-xs text-muted-foreground">
@@ -377,9 +379,9 @@
 
         </div>
         <div class="flex-none sm:w-56">
-            <div class="sm:sticky sm:top-0">
+            <div class="sm:sticky sm:top-0 flex flex-col gap-3">
 
-                <div class="mb-2">预览</div>
+                <div class="text-sm">预览</div>
                 <div class="preview-wrapper border-border border rounded-md overflow-hidden">
                     <Preview :source="tempConfig.currentBackground"></Preview>
                 </div>

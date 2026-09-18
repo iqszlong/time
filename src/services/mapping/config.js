@@ -53,7 +53,7 @@ export const fontFamilys = {
     default:{
         label: 'default',
         'zh-CN': '默认',
-        value: 'inherit',
+        value: 'system-ui',
     },
     'JetBrains Mono':{
         label: 'JetBrains Mono',

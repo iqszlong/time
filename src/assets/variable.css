@@ -2,6 +2,7 @@
     color-scheme: light dark;
     --scroll-gutter: auto; /* 滚动条 stable可以固定滚动条*/
     --basic-font-size: 16px;
+    /* --basic-font-family: var(--font-sans); */
     
     --primary-rgb: 14, 165, 233;
     --primary-rgb-light: 58, 191, 248;
