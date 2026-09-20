@@ -191,3 +191,17 @@ export const fontFamilys = {
         value: "'MiSans', sans-serif",
     }
 }
+
+
+export const fontEffects = {
+    default:{
+        label: 'default',
+        'zh-CN': '默认',
+        value: '',
+    },
+    blurGlass: { 
+        label: 'Frosted glass', 
+        'zh-CN': '磨砂玻璃', 
+        value: 'blur-glass',
+    },
+}

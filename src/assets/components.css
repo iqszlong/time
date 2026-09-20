@@ -124,3 +124,23 @@
     }
 
 }
+
+
+/* 液态玻璃动画 */
+@keyframes liquidFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes liquidBreath {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.15))
+                drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+    50% {
+        transform: scale(1.005);
+        filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.25))
+                drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+}

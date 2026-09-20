@@ -22,6 +22,7 @@ declare module 'vue' {
     AspectRatio: typeof import('./src/components/ui/aspect-ratio/AspectRatio.vue')['default']
     Background: typeof import('./src/components/Background/index.vue')['default']
     BackgroundSettings: typeof import('./src/components/SettingModal/backgroundSettings.vue')['default']
+    BlurGlass: typeof import('./src/components/Timer/blurGlass.vue')['default']
     Button: typeof import('./src/components/ui/button/Button.vue')['default']
     ButtonGroup: typeof import('./src/components/ui/button-group/ButtonGroup.vue')['default']
     ButtonGroupSeparator: typeof import('./src/components/ui/button-group/ButtonGroupSeparator.vue')['default']
