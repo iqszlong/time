@@ -1,3 +1,26 @@
+export const acceptFile = {
+    image: {
+        description: "Images",
+        accept: {
+            "image/jpeg": [".jpg", ".jpeg"],
+            "image/png": [".png"],
+            "image/gif": [".gif"],
+            "image/bmp": [".bmp"],
+            "image/webp": [".webp"],
+            "image/avif": [".avif"],
+        },
+    },
+    video: {
+        description: "Videos",
+        accept: {
+            "video/mp4": [".mp4"],
+            "video/x-matroska": [".mkv"],
+            "video/mp4v-es": [".m4v"],
+            "video/webm": [".webm"],
+        },
+    }
+}
+
 export const fit = {
     contain: {
         value: 'contain',
@@ -50,142 +73,142 @@ export const position = {
 }
 
 export const fontFamilys = {
-    default:{
+    default: {
         label: 'default',
         'zh-CN': '默认',
         value: 'system-ui',
     },
-    'JetBrains Mono':{
+    'JetBrains Mono': {
         label: 'JetBrains Mono',
         'zh-CN': 'JetBrains Mono',
         value: "'JetBrains Mono', monospace",
     },
-    'Inter':{
+    'Inter': {
         label: 'Inter',
         'zh-CN': 'Inter',
         value: "'Inter', system-ui, sans-serif",
     },
-    'Roboto Mono':{
+    'Roboto Mono': {
         label: 'Roboto Mono',
         'zh-CN': 'Roboto Mono',
         value: "'Roboto Mono', monospace",
     },
-    'Comfortaa':{
+    'Comfortaa': {
         label: 'Comfortaa',
         'zh-CN': 'Comfortaa',
         value: "'Comfortaa', display",
     },
-    'Nunito':{
+    'Nunito': {
         label: 'Nunito',
         'zh-CN': 'Nunito',
         value: "'Nunito', sans-serif",
     },
-    'Audiowide':{
+    'Audiowide': {
         label: 'Audiowide',
         'zh-CN': 'Audiowide',
         value: "'Audiowide', display",
     },
-    'Gilda Display':{
+    'Gilda Display': {
         label: 'Gilda Display',
         'zh-CN': 'Gilda Display',
         value: "'Gilda Display', serif",
     },
-    'AgibotDisplay':{
+    'AgibotDisplay': {
         label: 'AgibotDisplay',
         'zh-CN': 'AgibotDisplay',
         value: "'AgibotDisplay', display",
     },
-    'Eunomia':{
+    'Eunomia': {
         label: 'Eunomia',
         'zh-CN': 'Eunomia',
         value: "'Eunomia', sans-serif",
     },
-    'Ferrum':{
+    'Ferrum': {
         label: 'Ferrum',
         'zh-CN': 'Ferrum',
         value: "'Ferrum', serif",
     },
-    'Melete':{
+    'Melete': {
         label: 'Melete',
         'zh-CN': 'Melete',
         value: "'Melete', sans-serif",
     },
-    'Monoton':{
+    'Monoton': {
         label: 'Monoton',
         'zh-CN': 'Monoton',
         value: "'Monoton', display",
     },
-    'VT323':{
+    'VT323': {
         label: 'VT323',
         'zh-CN': 'VT323',
         value: "'VT323', monospace",
     },
-    'Doto':{
+    'Doto': {
         label: 'Doto',
         'zh-CN': 'Doto',
         value: "'Doto', sans-serif",
     },
-    'Sixtyfour':{
+    'Sixtyfour': {
         label: 'Sixtyfour',
         'zh-CN': 'Sixtyfour',
         value: "'Sixtyfour', monospace",
     },
-    'Bytesized':{
+    'Bytesized': {
         label: 'Bytesized',
         'zh-CN': 'Bytesized',
         value: "'Bytesized', sans-serif",
     },
-    'Lobster Two':{
+    'Lobster Two': {
         label: 'Lobster Two',
         'zh-CN': 'Lobster Two',
         value: "'Lobster Two', display",
     },
-    'Train One':{
+    'Train One': {
         label: 'Train One',
         'zh-CN': 'Train One',
         value: "'Train One', display",
     },
-    'Noto Sans SC':{
+    'Noto Sans SC': {
         label: 'Noto Sans SC',
         'zh-CN': '思源黑体',
         value: "'Noto Sans SC', sans-serif",
     },
-    'Noto Serif SC':{
+    'Noto Serif SC': {
         label: 'Noto Serif SC',
         'zh-CN': '思源宋体',
         value: "'Noto Serif SC', serif",
     },
-    'ZCOOL QingKe':{
+    'ZCOOL QingKe': {
         label: 'ZCOOL QingKe',
         'zh-CN': '站酷庆科黄油体',
         value: "'ZCOOL QingKe HuangYou', sans-serif",
     },
-    'Dela Gothic One':{
+    'Dela Gothic One': {
         label: 'Dela Gothic One',
         'zh-CN': 'Dela Gothic One',
         value: "'Dela Gothic One', display",
     },
-    'LXGW WenKai Mono TC':{
+    'LXGW WenKai Mono TC': {
         label: 'LXGW WenKai Mono TC',
         'zh-CN': '霞鹜文楷 等宽繁体',
         value: "'LXGW WenKai Mono TC', monospace",
     },
-    'M PLUS U':{
+    'M PLUS U': {
         label: 'M PLUS U',
         'zh-CN': 'M PLUS U',
         value: "'M PLUS U', sans-serif",
     },
-    'SmileySans':{
+    'SmileySans': {
         label: 'SmileySans',
         'zh-CN': '得意黑',
         value: "'SmileySans', sans-serif",
     },
-    'AlibabaPuHuiTi':{
+    'AlibabaPuHuiTi': {
         label: 'AlibabaPuHuiTi',
         'zh-CN': '阿里巴巴普惠体',
         value: "'AlibabaPuHuiTi', sans-serif",
     },
-    'MiSans':{
+    'MiSans': {
         label: 'MiSans',
         'zh-CN': '小米黑体',
         value: "'MiSans', sans-serif",
@@ -194,14 +217,14 @@ export const fontFamilys = {
 
 
 export const fontEffects = {
-    default:{
+    default: {
         label: 'default',
         'zh-CN': '默认',
         value: '',
     },
-    blurGlass: { 
-        label: 'Frosted glass', 
-        'zh-CN': '磨砂玻璃', 
+    blurGlass: {
+        label: 'Frosted glass',
+        'zh-CN': '磨砂玻璃',
         value: 'blur-glass',
     },
 }

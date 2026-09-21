@@ -115,7 +115,8 @@
                                         </TooltipProvider>
                                     </div>
                                     <FieldDescription class="text-xs">
-                                        文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                        文件格式：{{Object.values(acceptFile.image.accept).join('、')}}、
+                                        {{ Object.values(acceptFile.video.accept).join('、') }}
                                     </FieldDescription>
 
                                 </Field>
@@ -123,10 +124,10 @@
                             <template v-else>
                                 <Field>
                                     <Input id="picture" type="file"
-                                        accept="image/jpeg,image/png,image/gif,image/bmp,image/webp"
+                                        :accept="Object.keys(acceptFile.image.accept).join(',')"
                                         @change="handleFile" />
                                     <FieldDescription class="text-xs">
-                                        文件格式：jpg、png、gif、jpeg、bmp、webp
+                                        文件格式：{{Object.values(acceptFile.image.accept).join('、')}}
                                     </FieldDescription>
                                 </Field>
                             </template>
@@ -136,7 +137,8 @@
                                 <Input id="url" type="text" placeholder="https://" @blur="handleUrl"
                                     @focus="(e) => e.target.select()" :modelValue="urlValue" />
                                 <FieldDescription class="text-xs">
-                                    文件格式：jpg、png、gif、jpeg、bmp、webp、mp4、webm、m4v
+                                    文件格式：{{Object.values(acceptFile.image.accept).join('、')}}、
+                                        {{ Object.values(acceptFile.video.accept).join('、') }}
                                 </FieldDescription>
                             </Field>
                         </TabsContent>
@@ -398,7 +400,7 @@
 
 <script setup>
 import { Plus, Trash, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronDown, FlaskConical, Eye, EyeOff } from 'lucide-vue-next';
-import { fit, position } from '@/services/mapping/config'
+import { acceptFile,fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore()
@@ -418,25 +420,8 @@ const selectedFileName = ref(null)
 
 const fileTypeOpt = {
     types: [
-        {
-            description: "Images",
-            accept: {
-                "image/jpeg": [".jpg"],
-                "image/png": [".png"],
-                "image/gif": [".gif"],
-                "image/bmp": [".bmp"],
-                "image/webp": [".webp"],
-            },
-        },
-        {
-            description: "Videos",
-            accept: {
-                "video/mp4": [".mp4"],
-                "video/x-matroska": [".mkv"],
-                "video/mp4v-es": [".m4v"],
-                "video/webm": [".webm"],
-            },
-        },
+        acceptFile.image,
+        acceptFile.video,
     ],
     excludeAcceptAllOption: true,
     multiple: false,
