@@ -7,18 +7,18 @@
                     <div class="flex items-center gap-2">
                         <FieldLabel for="currentBackgroundId">背景项</FieldLabel>
                         <div class="flex-1">
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger as-child>
-                                    <Button variant="outline" size="icon-sm" @click="handleNew">
-                                        <Plus />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>新增背景</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <Button variant="outline" size="icon-sm" @click="handleNew">
+                                            <Plus />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>新增背景</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                         <div class="flex items-center gap-2">
                             <TooltipProvider>
@@ -61,7 +61,7 @@
 
                     <Select v-model="currentBackgroundId" @update:modelValue="changeTempConfig">
                         <SelectTrigger id="currentBackgroundId" class="w-full">
-                            <SelectValue placeholder="Select a background" class="w-[80%] truncate" />
+                            <SelectValue placeholder="Select a background" class="w-[90%] truncate" />
                         </SelectTrigger>
                         <SelectContent>
                             <template v-for="item in tempConfig.backgroundConfigs" :key="item.id">
@@ -71,6 +71,7 @@
                         </SelectContent>
                     </Select>
                 </Field>
+
                 <Field>
                     <FieldLabel for="file" class="sr-only">文件</FieldLabel>
                     <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
@@ -83,67 +84,107 @@
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="local">
-                            <template v-if="tempConfig.timerConfig.useFileSystem">
-                                <Field>
-                                    <div class="flex gap-2">
-                                        <div class="flex-1">
-                                            <z-filesystem id="file" @open="handleFilesystem"
-                                                :openOpt="JSON.stringify(fileTypeOpt)"
-                                                style="width: 100%; overflow: hidden;">
+                            <Card class="py-3">
+                                <CardContent class="px-3">
+                                <FieldGroup>
+                                    <template v-if="tempConfig.currentBackground.useFileSystem">
+                                        <Field>
+                                            <div class="flex gap-2">
+                                                <div class="flex-1">
+                                                    <z-filesystem id="file" @open="handleFilesystem"
+                                                        :openOpt="JSON.stringify(fileTypeOpt)"
+                                                        style="width: 100%; overflow: hidden;">
 
-                                                <Button variant="outline" class="w-full">
-                                                    <span
-                                                        class="block w-[90%] text-ellipsis whitespace-nowrap overflow-hidden">
-                                                        {{ selectedFileName ??
-                                                            '选择文件' }}
-                                                    </span>
-                                                </Button>
+                                                        <Button variant="outline" class="w-full">
+                                                            <span
+                                                                class="block w-[95%] text-ellipsis whitespace-nowrap overflow-hidden">
+                                                                {{ selectedFileName ??
+                                                                    '选择文件' }}
+                                                            </span>
+                                                        </Button>
 
-                                            </z-filesystem>
-                                        </div>
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger as-child>
-                                                    <Button variant="outline" @click="needPermission" class="flex-none">授权访问</Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    使用本地文件时，显示不正常请点击此按钮授权访问。<br />
-                                                    授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
-                                                    请确保您信任该程序，以避免潜在的安全风险。
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    </div>
-                                    <FieldDescription class="text-xs">
-                                        文件格式：{{Object.values(acceptFile.image.accept).join('、')}}、
-                                        {{ Object.values(acceptFile.video.accept).join('、') }}
-                                    </FieldDescription>
+                                                    </z-filesystem>
+                                                </div>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger as-child>
+                                                            <Button variant="outline" @click="needPermission"
+                                                                class="flex-none">授权访问</Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
+                                                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
+                                                            请确保您信任该程序，以避免潜在的安全风险。
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </div>
+                                            <FieldDescription class="text-xs">
+                                                文件格式：{{ Object.values(acceptFile.image.accept).join('、') }}、
+                                                {{ Object.values(acceptFile.video.accept).join('、') }}
+                                            </FieldDescription>
 
-                                </Field>
-                            </template>
-                            <template v-else>
-                                <Field>
-                                    <Input id="picture" type="file"
-                                        :accept="Object.keys(acceptFile.image.accept).join(',')"
-                                        @change="handleFile" />
-                                    <FieldDescription class="text-xs">
-                                        文件格式：{{Object.values(acceptFile.image.accept).join('、')}}
-                                    </FieldDescription>
-                                </Field>
-                            </template>
+                                        </Field>
+                                    </template>
+                                    <template v-else>
+                                        <Field>
+                                            <Input id="picture" type="file"
+                                                :accept="Object.keys(acceptFile.image.accept).join(',')"
+                                                @change="handleFile" />
+                                            <FieldDescription class="text-xs">
+                                                文件格式：{{ Object.values(acceptFile.image.accept).join('、') }}
+                                            </FieldDescription>
+                                        </Field>
+                                    </template>
+
+                                    <Field orientation="horizontal">
+                                        <Switch id="useFileSystem" v-model="tempConfig.currentBackground.useFileSystem"
+                                            @update:modelValue="onUseFileSystemChange" />
+                                        <FieldContent>
+                                            <FieldLabel for="useFileSystem">
+                                                使用新文件系统
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger as-child>
+                                                            <FlaskConical class="size-3" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent align="center">
+                                                            <p>实验功能，部分浏览器不支持。</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </FieldLabel>
+                                            <FieldDescription>
+                                                开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，<b>如果未授权，将无法读取本地文件</b>。
+                                                如果授权后任然无法读取文件，请关闭该功能。
+                                            </FieldDescription>
+                                        </FieldContent>
+                                    </Field>
+                                </FieldGroup>
+                                </CardContent>
+                            </Card>
                         </TabsContent>
                         <TabsContent value="url">
-                            <Field>
-                                <Input id="url" type="text" placeholder="https://" @blur="handleUrl"
-                                    @focus="(e) => e.target.select()" :modelValue="urlValue" />
-                                <FieldDescription class="text-xs">
-                                    文件格式：{{Object.values(acceptFile.image.accept).join('、')}}、
+                            <Card class="py-3">
+                                <CardContent class="px-3">
+                                <Field>
+                                    <Input id="url" type="text" placeholder="https://" @blur="handleUrl"
+                                        @focus="(e) => e.target.select()" :modelValue="urlValue" />
+                                    <FieldDescription class="text-xs">
+                                        文件格式：{{ Object.values(acceptFile.image.accept).join('、') }}、
                                         {{ Object.values(acceptFile.video.accept).join('、') }}
-                                </FieldDescription>
-                            </Field>
+                                    </FieldDescription>
+                                </Field>
+                                </CardContent>
+                            </Card>
                         </TabsContent>
                     </Tabs>
                 </Field>
+
+
+
+
+
 
                 <Field>
                     <FieldLabel for="order">
@@ -332,10 +373,14 @@
                     <FieldLabel for="mask" class="whitespace-nowrap">背景遮挡</FieldLabel>
 
                     <Switch id="mask" v-model="tempConfig.currentBackground.maskEnabled" />
-                    <span :class="[{'text-muted-foreground':!tempConfig.currentBackground.maskEnabled}]">{{ maskValue[0] }}</span>
+                    <span :class="[{ 'text-muted-foreground': !tempConfig.currentBackground.maskEnabled }]">{{
+                        maskValue[0]
+                    }}</span>
                     <Slider :default-value="[0, 100]" v-model="maskValue" :min="0" :max="100" :step="1"
                         :disabled="!tempConfig.currentBackground.maskEnabled" @update:modelValue="handleMaskValue" />
-                    <span :class="[{'text-muted-foreground':!tempConfig.currentBackground.maskEnabled}]">{{ maskValue[1] }}</span>
+                    <span :class="[{ 'text-muted-foreground': !tempConfig.currentBackground.maskEnabled }]">{{
+                        maskValue[1]
+                    }}</span>
 
 
                 </Field>
@@ -354,9 +399,10 @@
                         </template>
                     </Button>
                     <Slider v-model="volumeValue" :min="0" :max="1" :step="0.01"
-                    :disabled="tempConfig.currentBackground.muted"
-                        @update:modelValue="handleVolumeValue" />
-                    <span :class="[{'text-muted-foreground': tempConfig.currentBackground.muted}]">{{ highPrecisionMul(volumeValue, 100) }}</span>
+                        :disabled="tempConfig.currentBackground.muted" @update:modelValue="handleVolumeValue" />
+                    <span :class="[{ 'text-muted-foreground': tempConfig.currentBackground.muted }]">{{
+                        highPrecisionMul(volumeValue, 100)
+                    }}</span>
 
                 </Field>
 
@@ -365,7 +411,7 @@
             </FieldGroup>
 
 
-          
+
 
             <div class="flex h-5 items-center gap-2">
                 <div class="text-xs text-muted-foreground">
@@ -400,17 +446,17 @@
 
 <script setup>
 import { Plus, Trash, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronDown, FlaskConical, Eye, EyeOff } from 'lucide-vue-next';
-import { acceptFile,fit, position } from '@/services/mapping/config'
+import { acceptFile, fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore()
 const { verifyPermission } = backgroundStore
-const { currentBackgroundId, total } = storeToRefs(backgroundStore)
+const { currentBackgroundId, total, isFilePicker } = storeToRefs(backgroundStore)
 const { zhDayTime, highPrecisionMul } = utils
 const props = defineProps({
     tempConfig: { type: Object, required: true },
 })
-const emits = defineEmits(['changeTempConfig', 'handleNew', 'handleFile', 'handleFilesystem', 'handleUrl', 'handleMaskValue', 'handleVolumeValue','toggleMute', 'handleReset', 'handleDelete'])
+const emits = defineEmits(['changeTempConfig', 'handleNew', 'handleFile', 'handleFilesystem', 'handleUrl', 'handleMaskValue', 'handleVolumeValue', 'toggleMute', 'handleReset', 'handleDelete'])
 
 const urlValue = ref('')
 const maskValue = ref([0, 1])
@@ -456,7 +502,7 @@ onUnmounted(() => {
 
 
 const init = () => {
-    const{ tempConfig } = props
+    const { tempConfig } = props
     maskValue.value = [tempConfig.currentBackground.maskFrom, tempConfig.currentBackground.maskTo]
     volumeValue.value = [tempConfig.currentBackground.volume]
     if (tempConfig.currentBackground.sourceType === 'url') {
@@ -515,6 +561,17 @@ const needPermission = async () => {
                 location.reload();
             }
         })
+    }
+}
+
+const onUseFileSystemChange = (value) => {
+    if (value && !isFilePicker.value) {
+        toast.warning('您的浏览器不支持新文件系统API', {
+            position: 'top-center'
+        })
+        setTimeout(() => {
+            props.tempConfig.currentBackground.useFileSystem = false
+        }, 500)
     }
 }
 

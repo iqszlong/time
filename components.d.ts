@@ -73,6 +73,7 @@ declare module 'vue' {
     FieldTitle: typeof import('./src/components/ui/field/FieldTitle.vue')['default']
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     GeneralSettings: typeof import('./src/components/SettingModal/generalSettings.vue')['default']
+    GlassSurface: typeof import('./src/components/GlassSurface/GlassSurface.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     InputGroup: typeof import('./src/components/ui/input-group/InputGroup.vue')['default']
     InputGroupAddon: typeof import('./src/components/ui/input-group/InputGroupAddon.vue')['default']

@@ -1,13 +1,17 @@
 <template>
+    <!-- <GlassSurface :displace="2" :height="'fit-content'"> -->
     <div class="timer-wrapper">
         <div class="date-text">{{ date }}</div>
+
         <div v-if="clockEffectValue == ''" class="clock">
             {{ time }}
         </div>
-        <BlurGlass v-else-if="clockEffectValue == 'blur-glass'" :time="time" :font-family="fontFamily"/>
+        <BlurGlass v-else-if="clockEffectValue == 'blur-glass'" :time="time" :font-family="fontFamily" />
+
         <Separator class="line" />
         <div class="text-muted-foreground unix-text">{{ unix }}</div>
     </div>
+    <!-- </GlassSurface> -->
 </template>
 
 <script setup>
@@ -29,7 +33,7 @@ const props = defineProps({
 })
 
 const { dayjs } = utils
-const currentEffect = computed(() => 
+const currentEffect = computed(() =>
     Object.values(fontEffects).find(e => e.value === props.effect) || fontEffects.default
 )
 const clockEffectValue = computed(() => currentEffect.value.value || '')
@@ -80,18 +84,18 @@ const startTimer = () => {
 
 // 精準版：使用 requestAnimationFrame 做每秒更新，並校正到整秒
 const preciseTick = () => {
-  const now = dayjs()
-  const ms = now.millisecond()
+    const now = dayjs()
+    const ms = now.millisecond()
 
-  updateTime()
+    updateTime()
 
-  // 計算距離下一個整秒還有多少毫秒
-  const delayToNextSecond = 1000 - ms
+    // 計算距離下一個整秒還有多少毫秒
+    const delayToNextSecond = 1000 - ms
 
-  // 下次更新時間點盡量靠近整秒
-  animationFrameId = setTimeout(() => {
-    requestAnimationFrame(preciseTick)
-  }, delayToNextSecond)
+    // 下次更新時間點盡量靠近整秒
+    animationFrameId = setTimeout(() => {
+        requestAnimationFrame(preciseTick)
+    }, delayToNextSecond)
 }
 
 onMounted(() => {
@@ -129,23 +133,26 @@ watch(() => props.display, () => {
     .clock {
         font-size: 3.75rem;
         line-height: 1.1em;
-        font-variant-numeric: tabular-nums;/* 让数字等宽对齐 */
+        font-variant-numeric: tabular-nums;
+        /* 让数字等宽对齐 */
         font-family: v-bind('props.fontFamily');
         text-shadow: 0 0 8px #000;
     }
 
-    .date-text,.unix-text{
-        text-shadow: 0 1px 3px #000;
+    .date-text,
+    .unix-text {
+        text-shadow: 0 1px 1px #000;
     }
 
-    .date-text{
+    .date-text {
         font-size: 0.875rem;
         line-height: 1.25rem;
     }
-    .unix-text{
+
+    .unix-text {
         font-size: 0.75rem;
         line-height: 1rem;
     }
-    
+
 }
 </style>

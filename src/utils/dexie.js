@@ -5,8 +5,8 @@ const databaseVersion = import.meta.env.VITE_DB_VERSION;
 
 // 数据库表结构
 const tabelStores = {
-    config: "++id,timeDisplay,timeFontFamily,naiveTheme,country,language,location,useFileSystem,createTime,updateTime",
-    background: "++id,filename,source,sourcePath,sourceType,order,fit,hposition,vposition,viewSize,visible,rotate,state,autoPause,volume,muted,maskEnabled,maskFrom,maskTo,createTime,updateTime",
+    config: "++id,timeDisplay,timeFontFamily,naiveTheme,country,language,location,createTime,updateTime",
+    background: "++id,filename,source,sourcePath,sourceType,useFileSystem,order,fit,hposition,vposition,viewSize,visible,rotate,state,autoPause,volume,muted,maskEnabled,maskFrom,maskTo,createTime,updateTime",
 };
 
 export const db = new Dexie(databaseName);

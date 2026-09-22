@@ -5,7 +5,7 @@
             <Field>
                 <FieldLabel for="backup">数据备份/还原</FieldLabel>
                 <FieldDescription>
-                    备份当前数据，或从备份文件中恢复数据。部分实验功能可能会恢复失败，请注意。
+                    备份当前数据，或从备份文件中恢复数据。<b>部分实验功能可能会恢复失败，请注意。</b>
                 </FieldDescription>
                 <div class="flex items-center gap-2">
                     <Button @click="onBackup" variant="outline">备份</Button>
@@ -35,30 +35,8 @@
                 </div>
             </Field>
 
-            <FieldSeparator />
 
-            <Field>
-                <FieldLabel for="useFileSystem">
-                    使用新文件系统
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger as-child>
-                                <FlaskConical class="size-3" />
-                            </TooltipTrigger>
-                            <TooltipContent align="center">
-                                <p>实验功能，部分浏览器不支持。</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </FieldLabel>
-                <div class="flex items-center gap-2">
-                    <Switch id="useFileSystem" v-model="tempConfig.timerConfig.useFileSystem" @update:modelValue="onUseFileSystemChange" />
-                </div>
-                <FieldDescription>
-                    开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，如果未授权，将无法读取本地文件。
-                    如果授权后任然无法读取文件，请关闭该功能。
-                </FieldDescription>
-            </Field>
+            
 
             <template v-if="storageInfo">
                 <FieldSeparator />
@@ -100,7 +78,7 @@
 
 
             <Field>
-                <FieldLabel for="clearCache">清空数据</FieldLabel>
+                <FieldLabel for="clearCache">数据清空</FieldLabel>
                 <div class="flex items-center gap-2">
                     <Button @click="handleClear" variant="destructive">清空</Button>
                 </div>
@@ -127,7 +105,6 @@
 
 <script setup>
 import JSON5 from 'json5'
-import { FlaskConical } from 'lucide-vue-next';
 import { toast } from 'vue-sonner'
 import { onLongPress } from '@vueuse/core'
 import { useBrowser } from '@/composables/useBrowser'
@@ -140,7 +117,6 @@ const configStore = useConfigStore();
 const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStore
 const backgroundStore = useBackgroundStore()
 const { refresh: refreshBackground, clearAll: clearBackground, initBackground } = backgroundStore
-const { isFilePicker } = storeToRefs(backgroundStore)
 const { browser, os, isLoading: browserLoading } = useBrowser()
 const { dayjs, highPrecisionMul, highPrecisionDiv } = utils
 
@@ -188,16 +164,6 @@ onLongPress(clearBtn, async () => {
     })
 }, { distanceThreshold: false, modifiers: { prevent: true } })
 
-const onUseFileSystemChange = (value) => {
-    if (value && !isFilePicker.value){
-        toast.warning('您的浏览器不支持文件系统API',{
-            position: 'top-center'
-        })
-        setTimeout(() => {
-            props.tempConfig.timerConfig.useFileSystem = false
-        },500)
-    }
-}
 
 const getBackupData = async () => {
     //获取配置和背景数据

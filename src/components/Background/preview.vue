@@ -79,7 +79,7 @@ function setVolumeSmoothly(video, targetVolume, duration = 1000) {
 }
 
 watchEffect(() => {
-    // console.log(props.source);
+    console.log(props.source);
     if (!videoDom.value) return;
     const { volume, muted = true } = props.source;
     const state = props.state
@@ -90,23 +90,24 @@ watchEffect(() => {
     if (state == 'play') {
         if (videoState.value == 'idle' || videoState.value == 'pause') {
             // 只有在静音状态下才尝试自动播放，避免浏览器自动播放限制
-         
-                videoDom.value.play().catch(err => {
-                    // console.warn('自动播放失败，需要用户交互:', err);
-                    toast.warning('自动播放视频失败，请手动播放', {
-                        description: `${props.source.filename}`,
-                        position: 'top-center',
-                        duration: 99999,
-                        action: {
-                            label: '手动播放',
-                            onClick: () => {
-                                videoDom.value.play();
+                // console.log(videoDom.value);
+                setTimeout(() => {
+                    videoDom.value.play().catch(err => {
+                        // console.warn('自动播放失败，需要用户交互:', err);
+                        toast.warning('自动播放视频失败，请手动播放', {
+                            description: `${props.source.filename}`,
+                            position: 'top-center',
+                            duration: 99999,
+                            closeButton:true,
+                            action: {
+                                label: '手动播放',
+                                onClick: () => {
+                                    videoDom.value.play();
+                                }
                             }
-                        }
-                    })
-                });
-                
-            
+                        })
+                    });
+                },10)
         }
     }
     videoDom.value.muted = muted;
@@ -139,6 +140,7 @@ watchEffect(() => {
 }
 
 .video {
+    position: relative;
     width: 100%;
     height: 100%;
     object-fit: v-bind('source.fit');

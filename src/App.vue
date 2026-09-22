@@ -6,7 +6,7 @@
                  <component :is="Component"/>
             </Transition>
         </RouterView>
-        <Toaster theme="system"/>
+        <Toaster theme="system" richColors/>
     </NaiveDom>
 </template>
 <script setup>

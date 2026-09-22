@@ -15,6 +15,7 @@ export const useBackgroundStore = defineStore('background', () => {
     source: "//api.paugram.com/bing",
     sourcePath: "//api.paugram.com/bing",
     sourceType: "url",
+    useFileSystem: false, // 是否使用新文件系统
     fit: "cover", // 背景填充方式
     hposition: "center", // 背景填充水平位置
     vposition: "center", // 背景填充垂直位置
@@ -29,6 +30,14 @@ export const useBackgroundStore = defineStore('background', () => {
     order: 0, // 背景排序
     viewSize: 0, // 视图大小,控制视图缩放
     rotate: "0deg", // 旋转角度deg
+  }
+
+  const emptyData = {
+    filename: "(空)",
+    source: "empty",
+    sourcePath: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    sourceType: "local",
+    maskEnabled: false,
   }
 
   const currentBackground = computed(() => {
@@ -87,16 +96,17 @@ export const useBackgroundStore = defineStore('background', () => {
           item.sourcePath = item.source
         }
       }
-      else {
-        // 释放旧的blob URL
-        if (item.sourcePath.startsWith('blob:')) {
+      else if(item.sourceType === 'local') {
+        // 如果是使用的文件系统，则重新获取文件URL
+        if (item.useFileSystem) {
+          // 释放旧的blob URL
           URL.revokeObjectURL(item.sourcePath)
           // 获取新的blob URL
           item.sourcePath = await getFileURL(item.source)
           // 更新数据库
           await updateSourcePath(item.id, item.sourcePath)
         }
-        if (item.sourcePath.startsWith('base64')) {
+        else {
           // 什么都不做直接用base64编码
         }
 
@@ -178,7 +188,7 @@ export const useBackgroundStore = defineStore('background', () => {
 
   const addNewBackground = async () => {
     try {
-      const updatedId = await addBackground({ ...defaultData, order: total.value + 1 })
+      const updatedId = await addBackground({ ...defaultData,...emptyData, order: total.value + 1 })
       console.log(updatedId)
       const newData = await loadBackgroundById(updatedId)
       if (newData) {

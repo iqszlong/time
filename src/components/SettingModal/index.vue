@@ -51,7 +51,7 @@
                                 </template>
                             </div>
                         </header>
-                        <section class="h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
+                        <section class="scroll-fade scrollbar-none h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
                             <template v-if="currentMenu == 'time'">
                                 <TimeSettings :tempConfig="tempConfig" />
                             </template>
