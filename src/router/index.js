@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 import { setupRouterGuard } from './guard'
 
 export const basicRoutes = [
@@ -10,7 +10,7 @@ export const basicRoutes = [
     meta: {
       title: "错误页",
     },
-  },  
+  },
   {
     path: "/:pathMatch(.*)",
     redirect: "/404",
@@ -18,7 +18,7 @@ export const basicRoutes = [
 ];
 
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: import.meta.env.VITE_BUILD_NAME == 'WE' ? createWebHashHistory() : createWebHistory(import.meta.env.BASE_URL),
   routes: basicRoutes,
 });
 
@@ -33,9 +33,9 @@ Object.keys(routeModules).forEach((key) => {
 // const vueModules = import.meta.glob('@/views/modules/**/index.vue')
 
 const getRouter = async () => {
-    return new Promise((resolve,reject)=>{
-      resolve(asyncRoutes)
-    })
+  return new Promise((resolve, reject) => {
+    resolve(asyncRoutes)
+  })
 }
 
 // 动态加载路由
@@ -44,7 +44,7 @@ const addDynamicRoutes = async () => {
   const requestRouter = await getRouter()
   //添加
   requestRouter.forEach(route => router.addRoute(route))
-  
+
 };
 
 export async function setupRouter(app) {

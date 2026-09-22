@@ -12,7 +12,9 @@
     "preview": "vite preview",
     "dev:opixer": "vite --mode opixer",
     "build:opixer": "vite build --mode opixer",
-    "preview:opixer": "vite preview --mode opixer",
+    "preview:opixer": "vite preview --outDir opixer",
+    "build:we": "vite build --mode we",
+    "preview:we": "vite preview --outDir dist/we",
     "ui:js": "mkdist --src src/components/ui --dist src/components/ui-javascript --ext js"
   },
   "dependencies": {
