@@ -36,7 +36,7 @@
             </Field>
 
 
-            
+
 
             <template v-if="storageInfo">
                 <FieldSeparator />
@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <FieldDescription>
-                        已使用 {{ storageInfo.usage }} 字节，可使用 {{ storageInfo.quota }} 字节，
+                        已使用 {{ usageUnit }}，预计可使用 {{ quotaUnit }}
                     </FieldDescription>
                 </Field>
 
@@ -65,9 +65,9 @@
                         <div class="space-x-4">
                             <span>浏览器：{{ browser.name || '未知' }}</span>
                             <span>版本：{{ browser.version || '未知' }}</span>
-                        </div>
-                        <div>
-                            操作系统：{{ os || '未知' }}
+                            <span>
+                                操作系统：{{ os || '未知' }}
+                            </span>
                         </div>
                     </FieldDescription>
                 </Field>
@@ -113,6 +113,8 @@ import configService from '@/services/config'
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 
+import { storgeUnit } from '@/services/mapping/config'
+
 const configStore = useConfigStore();
 const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStore
 const backgroundStore = useBackgroundStore()
@@ -131,6 +133,14 @@ const clearConfirm = ref(false)
 const clearBtn = useTemplateRef('clearBtn')
 const restoreConfirm = ref(false)
 const restoreInput = ref(null)
+
+const usageUnit = computed(() => {
+    return storageInfo.value?.usage >= storgeUnit.GB ? transformNum(storageInfo.value?.usage, 'GB') : storageInfo.value?.usage >= storgeUnit.MB ? transformNum(storageInfo.value?.usage, 'MB') : transformNum(storageInfo.value?.usage, 'KB')
+})
+
+const quotaUnit = computed(() => {
+    return storageInfo.value?.quota >= storgeUnit.GB ? transformNum(storageInfo.value?.quota, 'GB') : storageInfo.value?.quota >= storgeUnit.MB ? transformNum(storageInfo.value?.quota, 'MB') : transformNum(storageInfo.value?.quota, 'KB')
+})
 
 const getStroageData = async () => {
     try {
@@ -164,6 +174,19 @@ onLongPress(clearBtn, async () => {
     })
 }, { distanceThreshold: false, modifiers: { prevent: true } })
 
+const transformNum = (num, unit = 'B') => {
+    if (!num) return '未知'
+    let numTmp = 0
+    if (Object.keys(storgeUnit).includes(unit)) {
+        numTmp = highPrecisionDiv(num, storgeUnit[unit])
+    } else {
+        numTmp = num
+    }
+
+    // console.log(num,unit,numTmp);
+    return `${Math.round(numTmp * 100) / 100}${unit}`
+
+}
 
 const getBackupData = async () => {
     //获取配置和背景数据

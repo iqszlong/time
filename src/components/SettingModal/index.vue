@@ -238,7 +238,7 @@ const handleFilesystem = async (e) => {
 }
 
 const handleUrl = (e) => {
-    const value = e.target.value.split('?')[0]
+    let value = e.target.value.split('?')[0]
     if (!value) return
     // 如果url是编码过的，则解码
     if (value.includes('%')) {
