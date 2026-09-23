@@ -466,8 +466,14 @@ const selectedFileName = ref(null)
 
 const fileTypeOpt = {
     types: [
-        acceptFile.image,
-        acceptFile.video,
+        {
+            description: "File",
+            accept: {
+                ...acceptFile.image.accept,
+                ...acceptFile.video.accept,
+            },
+        },
+        
     ],
     excludeAcceptAllOption: true,
     multiple: false,
