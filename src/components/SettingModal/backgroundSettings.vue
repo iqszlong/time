@@ -105,19 +105,7 @@
 
                                                     </z-filesystem>
                                                 </div>
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger as-child>
-                                                            <Button variant="outline" @click="needPermission"
-                                                                class="flex-none">授权访问</Button>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            使用本地文件时，显示不正常请点击此按钮授权访问。<br />
-                                                            授权访问后，程序将能够访问您的文件系统，以获取背景图片。<br />
-                                                            请确保您信任该程序，以避免潜在的安全风险。
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
+                                                
                                             </div>
                                             <FieldDescription class="text-xs">
                                                 文件格式：{{ Object.values(acceptFile.image.accept).join('、') }}、
@@ -158,7 +146,23 @@
                                                 开启后，背景将使用新的文件系统，支持本地图片或视频文件。但需要相应的读取权限，<b>如果未授权，将无法读取本地文件</b>。
                                                 如果授权后任然无法读取文件，请关闭该功能。
                                             </FieldDescription>
+                                            
                                         </FieldContent>
+                                        <template v-if="tempConfig.currentBackground.useFileSystem">
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger as-child>
+                                                    <Button variant="outline" @click="needPermission">授权访问</Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent align="end" side="bottom">
+                                                    使用本地文件时，显示不正常请点击此按钮授权访问。<br />
+                                                    在选择文件后，点击本按钮<b>在浏览器弹出的窗口中选择“Allow visit every time”允许每次访问文件</b><br />
+                                                    成功授权访问后，页面会自动刷新。程序将能够访问您的文件系统，以获取背景文件。<br />
+                                                    文件将以只读方式访问，请确保您信任本程序，以避免潜在的安全风险。
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                        </template>
                                     </Field>
                                 </FieldGroup>
                                 </CardContent>
