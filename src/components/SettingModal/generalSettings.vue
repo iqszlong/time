@@ -63,10 +63,14 @@
                     <FieldLabel for="systemInfo">系统信息</FieldLabel>
                     <FieldDescription>
                         <div class="space-x-4">
-                            <span>浏览器：{{ browser.name || '未知' }}</span>
-                            <span>版本：{{ browser.version || '未知' }}</span>
+                            <span>浏览器：{{ browser.name || '未知' }} {{ browser.version || '' }}</span>
                             <span>
                                 操作系统：{{ os || '未知' }}
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                引擎：{{ engine.name || '未知' }} {{ engine.version || '' }}
                             </span>
                         </div>
                     </FieldDescription>
@@ -119,7 +123,7 @@ const configStore = useConfigStore();
 const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStore
 const backgroundStore = useBackgroundStore()
 const { refresh: refreshBackground, clearAll: clearBackground, initBackground } = backgroundStore
-const { browser, os, isLoading: browserLoading } = useBrowser()
+const { browser, os, engine, isLoading: browserLoading } = useBrowser()
 const { dayjs, highPrecisionMul, highPrecisionDiv } = utils
 
 const props = defineProps({

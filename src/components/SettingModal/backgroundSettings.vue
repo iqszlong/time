@@ -89,24 +89,15 @@
                                 <FieldGroup>
                                     <template v-if="tempConfig.currentBackground.useFileSystem">
                                         <Field>
-                                            <div class="flex gap-2">
-                                                <div class="flex-1">
-                                                    <z-filesystem id="file" @open="handleFilesystem"
-                                                        :openOpt="JSON.stringify(fileTypeOpt)"
-                                                        style="width: 100%; overflow: hidden;">
-
-                                                        <Button variant="outline" class="w-full">
-                                                            <span
-                                                                class="block w-[95%] text-ellipsis whitespace-nowrap overflow-hidden">
-                                                                {{ selectedFileName ??
-                                                                    '选择文件' }}
-                                                            </span>
-                                                        </Button>
-
-                                                    </z-filesystem>
-                                                </div>
-                                                
-                                            </div>
+                                            
+                                            <z-filesystem id="file" @open="handleFilesystem"
+                                                :openOpt="JSON.stringify(fileTypeOpt)"
+                                                style="width: 100%; overflow: hidden;">
+                                                <Button variant="outline" class="block truncate w-full">
+                                                        {{ selectedFileName ?? '选择文件' }}
+                                                </Button>
+                                            </z-filesystem>
+                                               
                                             <FieldDescription class="text-xs">
                                                 文件格式：{{ Object.values(acceptFile.image.accept).join('、') }}、
                                                 {{ Object.values(acceptFile.video.accept).join('、') }}

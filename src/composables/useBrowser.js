@@ -4,6 +4,7 @@ import { UAParser } from 'ua-parser-js';
 export function useBrowser() {
   const browser = ref({});
   const os = ref({});
+  const engine = ref({});
   const isLoading = ref(true);
 
   onMounted(() => {
@@ -11,12 +12,14 @@ export function useBrowser() {
     const result = uap.getResult();
     browser.value = result.browser;
     os.value = result.os;
+    engine.value = result.engine;
     isLoading.value = false;
   });
 
   return {
     browser,
     os,
+    engine,
     isLoading
   };
 }
