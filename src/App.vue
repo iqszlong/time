@@ -6,7 +6,7 @@
                  <component :is="Component"/>
             </Transition>
         </RouterView>
-        <Toaster theme="system" richColors/>
+        <Toaster theme="system" richColors :toastOptions="{style: { margin: '20px'},closeButtonPosition:'bottom-right'}"/>
     </NaiveDom>
 </template>
 <script setup>

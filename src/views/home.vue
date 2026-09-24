@@ -76,6 +76,8 @@ const testClick = () => {
     toast.success('测试成功', {
         description: '这是一个测试消息',
         position: 'top-center',
+        duration: 999000, 
+        closeButton:true,
     })
 }
 

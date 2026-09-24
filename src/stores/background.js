@@ -142,6 +142,7 @@ export const useBackgroundStore = defineStore('background', () => {
           description: '请检查背景文件是否存在或是否被授权访问',
           position: 'top-center',
           duration: 999999,
+          closeButton: true,
           action: {
             label: '授权',
             onClick: async () => {
