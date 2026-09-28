@@ -6,7 +6,7 @@
             '--content-fit': 'cover'
         }">
         <template v-if="isImg(source.filename)">
-            <z-img :src="pathReplace(source.sourcePath)" class="img"></z-img>
+            <z-img :src="pathReplace(source.sourcePath)" class="img" lazy></z-img>
         </template>
         <template v-if="isAssetTypeAnVideo(fileExt(source.filename))">
             <video ref="videoDom" :src="pathReplace(source.sourcePath)" loop class="video" @loadeddata="autoplay"

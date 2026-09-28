@@ -48,6 +48,7 @@ export default defineConfig(({ command, mode }) => {
       tailwindcss(),
     ],
     server: {
+      open: false,
       // port: 5678,
       proxy: {
         "/api": {
