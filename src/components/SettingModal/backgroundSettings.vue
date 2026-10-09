@@ -73,7 +73,6 @@
                 </Field>
 
                 <Field>
-                    <FieldLabel for="file" class="sr-only">文件</FieldLabel>
                     <Tabs v-model:modelValue="tempConfig.currentBackground.sourceType">
                         <TabsList class="w-full">
                             <TabsTrigger value="local">
@@ -325,7 +324,7 @@
 
 
                     <Field>
-                        <FieldLabel for="rotateX">
+                        <FieldLabel for="rotate">
                             旋转
                             <span class="text-xs text-muted-foreground">单位 deg、turn 或
                                 rad</span>

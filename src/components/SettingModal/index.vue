@@ -105,8 +105,6 @@
                                 <Button variant="outline">关闭</Button>
                             </DialogClose>
 
-
-
                         </DialogFooter>
                     </main>
 
@@ -174,7 +172,7 @@ const resetConfig = () => {
 }
 
 const initTempConfig = () => {
-console.trace(config.value);
+    console.trace(config.value);
     Object.assign(tempConfig.timerConfig, { ...config.value })
     Object.assign(tempConfig.backgroundConfigs, [...backgrounds.value])
     updateTempCurrentConfig(currentBackground.value)

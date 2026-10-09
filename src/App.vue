@@ -6,7 +6,9 @@
                  <component :is="Component"/>
             </Transition>
         </RouterView>
-        <Toaster theme="system" richColors :toastOptions="{style: { margin: '20px'},closeButtonPosition:'bottom-right'}"/>
+        <Teleport to="body">
+        <Toaster theme="system" richColors :toastOptions="{style: { margin: '20px'},closeButtonPosition:'bottom-right'}" class="pointer-events-auto"/>
+        </Teleport>
     </NaiveDom>
 </template>
 <script setup>
