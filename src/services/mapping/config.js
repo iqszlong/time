@@ -2,7 +2,7 @@ export const acceptFile = {
     image: {
         description: "Images",
         accept: {
-            "image/jpeg": [".jpg", ".jpeg"],
+            "image/jpeg": [".jpg", ".jpeg", ".jfif"],
             "image/png": [".png"],
             "image/gif": [".gif"],
             "image/bmp": [".bmp"],
