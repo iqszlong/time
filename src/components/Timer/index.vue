@@ -8,6 +8,8 @@
         </div>
         <BlurGlass v-else-if="clockEffectValue == 'blur-glass'" :time="time" :font-family="fontFamily" />
 
+        <div class="lunar-text">{{ lunarDate }}</div>
+
         <Separator class="line" />
         <div class="text-muted-foreground unix-text">{{ unix }}</div>
     </div>
@@ -47,6 +49,7 @@ const timeFormat = computed(() => {
 
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
+const lunarDate = ref(dayjs().format("LYLZ年 LMLD LH"))
 const time = ref(dayjs().format(timeFormat.value))
 let animationFrameId = null
 let timer = null
@@ -140,11 +143,12 @@ watch(() => props.display, () => {
     }
 
     .date-text,
-    .unix-text {
+    .unix-text,
+    .lunar-text {
         text-shadow: 0 1px 1px #000;
     }
 
-    .date-text {
+    .date-text,.lunar-text {
         font-size: 0.875rem;
         line-height: 1.25rem;
     }

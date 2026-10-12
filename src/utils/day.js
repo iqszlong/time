@@ -2,9 +2,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import duration from "dayjs/plugin/duration";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import lunar from 'dayjs-plugin-lunar'
 dayjs.locale("zh-cn");
 dayjs.extend(duration);
 dayjs.extend(LocalizedFormat);
+dayjs.extend(lunar)
 
 // 返回中文日期格式
 const zhDay = (daySting) => dayjs(daySting).format("YYYY年MM月DD日 ddd");
