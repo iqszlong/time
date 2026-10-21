@@ -146,6 +146,7 @@ watch(() => props.display, () => {
     .unix-text,
     .lunar-text {
         text-shadow: 0 1px 1px #000;
+        white-space: nowrap;
     }
 
     .date-text,.lunar-text {
