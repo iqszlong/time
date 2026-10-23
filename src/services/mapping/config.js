@@ -165,6 +165,51 @@ export const fontFamilys = {
         'zh-CN': 'Bytesized',
         value: "'Bytesized', sans-serif",
     },
+    'Fjalla One':{
+        label: 'Fjalla One',
+        'zh-CN': 'Fjalla One',
+        value: "'Fjalla One', sans-serif",
+    },
+    'Anton':{
+        label: 'Anton',
+        'zh-CN': 'Anton',
+        value: "'Anton', sans-serif",
+    },
+    'Akshar':{
+        label: 'Akshar',
+        'zh-CN': 'Akshar',
+        value: "'Akshar', sans-serif",
+    },
+    'Jockey One':{
+        label: 'Jockey One',
+        'zh-CN': 'Jockey One',
+        value: "'Jockey One', sans-serif",
+    },
+    'League Gothic':{
+        label: 'League Gothic',
+        'zh-CN': 'League Gothic',
+        value: "'League Gothic', sans-serif",
+    },
+    'Oswald':{
+        label: 'Oswald',
+        'zh-CN': 'Oswald',
+        value: "'Oswald', sans-serif",
+    },
+    'Reem Kufi':{
+        label: 'Reem Kufi',
+        'zh-CN': 'Reem Kufi',
+        value: "'Reem Kufi', sans-serif",
+    },
+    'Six Caps':{
+        label: 'Six Caps',
+        'zh-CN': 'Six Caps',
+        value: "'Six Caps', sans-serif",
+    },
+    'Wire One':{
+        label: 'Wire One',
+        'zh-CN': 'Wire One',
+        value: "'Wire One', sans-serif",
+    },
     'Lobster Two': {
         label: 'Lobster Two',
         'zh-CN': 'Lobster Two',
@@ -174,6 +219,11 @@ export const fontFamilys = {
         label: 'Train One',
         'zh-CN': 'Train One',
         value: "'Train One', display",
+    },
+    'Bebas Neue':{
+        label: 'Bebas Neue',
+        'zh-CN': 'Bebas Neue',
+        value: "'Bebas Neue', display",
     },
     'Noto Sans SC': {
         label: 'Noto Sans SC',
