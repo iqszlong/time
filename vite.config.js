@@ -126,6 +126,14 @@ export default defineConfig(({ command, mode }) => {
               return 'qiniu-js';
             } else if (id.includes('tailwind')) {
               return 'tailwind';
+            } else if (id.includes('dayjs')) {
+              return 'dayjs';
+            } else if (id.includes('reka-ui')) {
+              return 'reka-ui';
+            } else if (id.includes('shadcn-vue')) {
+              return 'shadcn-vue';
+            } else if (id.includes('vue-')) {
+              return 'vue-plugin';
             } else if (id.includes('node_modules')) {
               return 'vendor';
             } else {
