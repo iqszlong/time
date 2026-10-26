@@ -88,11 +88,9 @@ export default defineConfig(({ command, mode }) => {
             // 分包
             if (id.includes('xe-utils')) {
               return 'xe-utils';
-            } else if (id.includes('iqszlong/components')) {
+            } else if (id.includes('components/vue/z')) {
               return 'iqszlong-components';
-            } else if (id.includes('iqszlong/style')) {
-              return 'iqszlong-style';
-            } else if (id.includes('lazy/utils')) {
+            } else if (id.includes('utils/js')) {
               return 'lazy-utils';
             } else if (id.includes('augmented-ui')) {
               return 'augmented-ui';
