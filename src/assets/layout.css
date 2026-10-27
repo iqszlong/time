@@ -33,12 +33,14 @@ body{
     .wrapper {
         position: absolute;
         z-index: 999;
-        bottom: 16px;
-        left: 50%;
-        translate: -50%;
+        inset: 0;
         display: grid;
-        grid-auto-flow: row;
-        gap:24px;
+        grid-template:
+        "top-left top-center top-right" 1fr
+        "center-left center-center center-right" 1fr
+        "ctrl-bar ctrl-bar ctrl-bar" auto
+        "bottom-left bottom-center bottom-right" 1fr / 1fr 1fr 1fr;
+        gap: 16px;
     }
 
     .media {
@@ -53,6 +55,8 @@ body{
     }
 
     .ctrl-bar{
+        grid-area: ctrl-bar;
+        place-self: center;
         display: flex;
         align-items: center;
         justify-content: center;

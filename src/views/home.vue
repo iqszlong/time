@@ -48,10 +48,16 @@ const { VITE_SITE_LOGO, VITE_TITLE } = import.meta.env
 
 
 
-const timerAttrs = computed(() => ({
-    display: config.value.timeDisplay,
-    fontFamily: fontFamilys[config.value.timeFontFamily].value,
-}))
+const timerAttrs = computed(() => {
+    const { timeDisplay, timeFontSizeScale, timeFontFamily, timePosition } = config.value
+    console.log(timeFontSizeScale)
+    return {
+        display: timeDisplay,
+        fontFamily: fontFamilys[timeFontFamily ?? 'default'].value,
+        fontSizeScale: timeFontSizeScale,
+        position: timePosition ?? 'bottom-center',
+    }
+})
 
 
 // 超时隐藏
@@ -76,8 +82,8 @@ const testClick = () => {
     toast.success('测试成功', {
         description: '这是一个测试消息',
         position: 'top-center',
-        duration: 999000, 
-        closeButton:true,
+        duration: 999000,
+        closeButton: true,
     })
 }
 

@@ -53,7 +53,7 @@
                         </header>
                         <section class="scroll-fade h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
                             <template v-if="currentMenu == 'time'">
-                                <TimeSettings :tempConfig="tempConfig" />
+                                <TimeSettings :tempConfig="tempConfig" v-on="timerEventHandlers"/>
                             </template>
                             <template v-if="currentMenu == 'background'">
                                 <BackgroundSettings :tempConfig="tempConfig" v-on="backgroundEventHandlers" />
@@ -330,6 +330,10 @@ const backgroundEventHandlers = {
     toggleMute,
     handleReset: () => resetConfirm.value = true,
     handleDelete: () => deleteConfirm.value = true,
+}
+
+const timerEventHandlers = {
+    handleScaleValue:(values) => tempConfig.timerConfig.timeFontSizeScale = values[0],
 }
 
 

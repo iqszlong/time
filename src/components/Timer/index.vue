@@ -1,6 +1,5 @@
 <template>
-    <!-- <GlassSurface :displace="2" :height="'fit-content'"> -->
-    <div class="timer-wrapper">
+    <div class="timer-wrapper" :style="{gridArea:position,...positionStyleContent}">
         <div class="date-text">{{ date }}</div>
 
         <div v-if="clockEffectValue == ''" class="clock">
@@ -13,11 +12,10 @@
         <Separator class="line" />
         <div class="text-muted-foreground unix-text">{{ unix }}</div>
     </div>
-    <!-- </GlassSurface> -->
 </template>
 
 <script setup>
-import { fontEffects } from '@/services/mapping/config'
+import { fontEffects,positionStyle } from '@/services/mapping/config'
 const props = defineProps({
     display: {
         type: String,
@@ -27,11 +25,19 @@ const props = defineProps({
         type: String,
         default: 'inherit'
     },
+    fontSizeScale: {
+        type: Number,
+        default: 0,
+    },
+    position: {
+        type: String,
+        default: 'bottom-center'
+    },
     effect: {
         type: String,
         default: fontEffects.default.value, // 'none'
         validator: (val) => Object.values(fontEffects).some(e => e.value === val)
-    }
+    },
 })
 
 const { dayjs } = utils
@@ -47,10 +53,15 @@ const timeFormat = computed(() => {
     return props.display === '12' ? 'hh:mm' : 'HH:mm'
 })
 
+const positionStyleContent = computed(() => {
+    return positionStyle[props.position].style
+})
+
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
 const lunarDate = ref(dayjs().format("LYLZ年 LMLD LH"))
 const time = ref(dayjs().format(timeFormat.value))
+
 let animationFrameId = null
 let timer = null
 
@@ -134,7 +145,7 @@ watch(() => props.display, () => {
     }
 
     .clock {
-        font-size: 3.75rem;
+        font-size: calc(3.75rem + v-bind('props.fontSizeScale') * 1px);
         line-height: 1.1em;
         font-variant-numeric: tabular-nums;
         /* 让数字等宽对齐 */

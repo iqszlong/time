@@ -79,6 +79,98 @@ export const position = {
     },
 }
 
+export const positionStyle = {
+    'top-left': {
+        value: 'top-left',
+        'en-US': 'top-left',
+        'zh-CN': '左上',
+        style: {
+            alignSelf: 'start',
+            justifySelf: 'start',
+            marginTop: '4rem',
+            marginLeft: '2rem'
+        }
+    },
+    'top-center': {
+        value: 'top-center',
+        'en-US': 'top-center',
+        'zh-CN': '顶部居中',
+        style: {
+            alignSelf: 'start',
+            marginTop: '4rem',
+        }
+    },
+    'top-right': {
+        value: 'top-right',
+        'en-US': 'top-right',
+        'zh-CN': '右上',
+        style: {
+            alignSelf: 'start',
+            justifySelf: 'end',
+            marginTop: '4rem',
+            marginRight: '2rem'
+        }
+    },
+    'center-left': {
+        value: 'center-left',
+        'en-US': 'center-left',
+        'zh-CN': '左侧居中',
+        style: {
+            justifySelf: 'start',
+            marginLeft: '2rem'
+        }
+    },
+    'center-center': {
+        value: 'center-center',
+        'en-US': 'center',
+        'zh-CN': '居中',
+        style: {
+            
+        }
+    },
+    'center-right': {
+        value: 'center-right',
+        'en-US': 'center-right',
+        'zh-CN': '右侧居中',
+        style: {
+            justifySelf: 'end',
+            marginRight: '2rem',
+        }
+    },
+    
+    'bottom-left': {
+        value: 'bottom-left',
+        'en-US': 'bottom-left',
+        'zh-CN': '左下',
+        style: {
+            alignSelf: 'end',
+            justifySelf: 'start',
+            marginLeft: '2rem',
+            marginBottom: '4rem',
+        }
+    },
+    'bottom-center': {
+        value: 'bottom-center',
+        'en-US': 'bottom-center',
+        'zh-CN': '底部居中',
+        style: {
+            alignSelf: 'end',
+            marginBottom: '4rem',
+        }
+    },
+    'bottom-right':{
+        value: 'bottom-right',
+        'en-US': 'bottom-right',
+        'zh-CN': '右下',
+        style: {
+            alignSelf: 'end',
+            justifySelf: 'end',
+            marginRight: '2rem',
+            marginBottom: '4rem',
+        }
+    },
+}
+
 export const fontFamilys = {
     default: {
         label: 'default',

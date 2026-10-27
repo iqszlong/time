@@ -23,3 +23,7 @@ export const mediaQuery = (query) => {
 }
 
 export const isClient = () => typeof window !== 'undefined'
+
+export const formatterNumber = new Intl.NumberFormat('zh-CN', {
+  signDisplay: 'exceptZero'
+});
