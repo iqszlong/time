@@ -548,6 +548,7 @@ const handleDelete = () => {
 
 const changeTempConfig = (id) => {
     emits('changeTempConfig', id)
+    init()
 }
 
 
