@@ -99,7 +99,10 @@
                         </section>
                         <DialogFooter class="h-16 px-4 items-center flex-row">
 
-                            <Button type="submit" @click="onSubmit">保存</Button>
+                            <Button type="submit" @click="onSubmit" :disabled="posting">
+                                <LoaderCircle v-if="posting" class="animate-spin"/>
+                                保存
+                            </Button>
 
                             <DialogClose as-child>
                                 <Button variant="outline">关闭</Button>
@@ -115,7 +118,7 @@
 </template>
 
 <script setup>
-import { Settings2 } from 'lucide-vue-next';
+import { Settings2,LoaderCircle } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
@@ -137,6 +140,7 @@ let tempConfig = reactive({ timerConfig: {}, backgroundConfigs: [], currentBackg
 const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
+const posting = ref(false)
 
 onBeforeMount(async () => {
 
@@ -185,13 +189,14 @@ const updateTempCurrentConfig = (background) => {
 
 
 const onSubmit = async () => {
+    posting.value = true
     updateTempBackgrounds(true)
     // console.log(tempConfig);
     const backgroundsData = []
     for (const background of tempConfig.backgroundConfigs) {
         backgroundsData.push({ ...background })
     }
-    console.log(backgroundsData);
+    // console.log(backgroundsData);
     // return
     try {
         await updateAllBackgrounds(backgroundsData)
@@ -205,6 +210,8 @@ const onSubmit = async () => {
             description: error.message,
             position: 'top-center'
         })
+    } finally {
+        posting.value = false
     }
 }
 
