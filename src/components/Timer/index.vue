@@ -2,10 +2,7 @@
     <div class="timer-wrapper" :style="{gridArea:position,...positionStyleContent}">
         <div class="date-text">{{ date }}</div>
 
-        <div v-if="clockEffectValue == ''" class="clock">
-            {{ time }}
-        </div>
-        <BlurGlass v-else-if="clockEffectValue == 'blur-glass'" :time="time" :font-family="fontFamily" />
+        <component :is="currentEffectComponent" :time="time" :font-family="fontFamily" :fontSizeScale="fontSizeScale"/>
 
         <div class="lunar-text">{{ lunarDate }}</div>
 
@@ -35,16 +32,16 @@ const props = defineProps({
     },
     effect: {
         type: String,
-        default: fontEffects.default.value, // 'none'
+        default: fontEffects.default.value, // 'default'
         validator: (val) => Object.values(fontEffects).some(e => e.value === val)
     },
 })
 
 const { dayjs } = utils
-const currentEffect = computed(() =>
-    Object.values(fontEffects).find(e => e.value === props.effect) || fontEffects.default
+const currentEffectComponent = computed(() =>
+    fontEffects[props.effect].component
 )
-const clockEffectValue = computed(() => currentEffect.value.value || '')
+
 
 const dateFormat = computed(() => {
     return props.display === '12' ? 'll dddd A' : 'll dddd'
@@ -144,14 +141,7 @@ watch(() => props.display, () => {
         margin-bottom: 8px;
     }
 
-    .clock {
-        font-size: calc(3.75rem + v-bind('props.fontSizeScale') * 1px);
-        line-height: 1.1em;
-        font-variant-numeric: tabular-nums;
-        /* 让数字等宽对齐 */
-        font-family: v-bind('props.fontFamily');
-        text-shadow: 0 0 8px #000;
-    }
+    
 
     .date-text,
     .unix-text,

@@ -369,11 +369,37 @@ export const fontEffects = {
     default: {
         label: 'default',
         'zh-CN': '默认',
-        value: '',
+        value: 'default',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/default.vue')),
     },
     blurGlass: {
         label: 'Frosted glass',
         'zh-CN': '磨砂玻璃',
-        value: 'blur-glass',
+        value: 'blurGlass',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/blurGlass.vue')),
     },
+    fireEmber:{
+        label: 'Fire Ember',
+        'zh-CN': '火焰',
+        value: 'fireEmber',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/fireEmber.vue')),
+    },
+    neonLight:{
+        label: 'Neon Light',
+        'zh-CN': '霓虹灯',
+        value: 'neonLight',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/neonLight.vue')),
+    },
+    goldFoil:{
+        label: 'Gold Foil',
+        'zh-CN': '金色箔',
+        value: 'goldFoil',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/goldFoil.vue')),
+    },
+    ledLight:{
+        label: 'LED Light',
+        'zh-CN': 'LED灯',
+        value: 'ledLight',
+        component: defineAsyncComponent(() => import('@/components/Timer/tpl/ledLight.vue')),
+    }
 }

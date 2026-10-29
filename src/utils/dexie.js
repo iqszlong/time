@@ -10,7 +10,13 @@ const tabelStores = {
 };
 
 export const db = new Dexie(databaseName);
-db.version(databaseVersion).stores(tabelStores);
+db.version(databaseVersion).stores(tabelStores).upgrade (trans => {
+  return trans.config.toCollection().modify (configItem => {
+    configItem.timeFontFamily = 'default';
+    configItem.timefontSizeScale = 0;
+    configItem.timePosition = 'bottom-center';
+  });
+});;
 
 // 查询一条数据 
 export async function get(table, key) {
