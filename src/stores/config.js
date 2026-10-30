@@ -15,7 +15,7 @@ export const useConfigStore = defineStore("config", () => {
     timeFontFamily: 'default',
     timeFontSizeScale: 0,
     timePosition:'bottom-center',
-    timeEffect: 'default',
+    timeFontEffect: 'default',
     naiveTheme: "dark", // 主题
     country: "CN",
     language: "ZH_CN",

@@ -45,18 +45,15 @@ const isHidden = ref(false)
 
 const { VITE_SITE_LOGO, VITE_TITLE } = import.meta.env
 
-
-
-
 const timerAttrs = computed(() => {
-    const { timeDisplay, timeFontSizeScale, timeFontFamily, timePosition, timeEffect } = config.value
+    const { timeDisplay, timeFontSizeScale, timeFontFamily, timePosition, timeFontEffect } = config.value
     // console.log(timeFontSizeScale)
     return {
         display: timeDisplay,
         fontFamily: fontFamilys[timeFontFamily ?? 'default'].value,
         fontSizeScale: timeFontSizeScale ?? 0,
         position: timePosition ?? 'bottom-center',
-        effect: timeEffect ??'default',
+        effect: timeFontEffect ??'default',
     }
 })
 

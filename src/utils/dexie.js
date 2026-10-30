@@ -5,7 +5,7 @@ const databaseVersion = import.meta.env.VITE_DB_VERSION;
 
 // 数据库表结构
 const tabelStores = {
-    config: "++id,timeDisplay,timeFontFamily,timefontSizeScale,timePosition,naiveTheme,country,language,location,createTime,updateTime",
+    config: "++id,timeDisplay,timeFontFamily,timeFontSizeScale,timeFontEffect,timePosition,naiveTheme,country,language,location,createTime,updateTime",
     background: "++id,filename,source,sourcePath,sourceType,useFileSystem,order,fit,hposition,vposition,viewSize,visible,rotate,state,autoPause,volume,muted,maskEnabled,maskFrom,maskTo,createTime,updateTime",
 };
 
@@ -13,7 +13,8 @@ export const db = new Dexie(databaseName);
 db.version(databaseVersion).stores(tabelStores).upgrade (trans => {
   return trans.config.toCollection().modify (configItem => {
     configItem.timeFontFamily = 'default';
-    configItem.timefontSizeScale = 0;
+    configItem.timeFontSizeScale = 0;
+    configItem.timeFontEffect = 'default';
     configItem.timePosition = 'bottom-center';
   });
 });;
