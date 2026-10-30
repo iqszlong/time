@@ -1,14 +1,14 @@
 <template>
-    <div class="fx-foil">
-        {{ time }}
-    </div>
+  <div class="fx-foil">
+    {{ time }}
+  </div>
 </template>
 
 <script setup>
 const props = defineProps({
-    time: String,
-    fontFamily: String,
-    fontSizeScale: Number
+  time: String,
+  fontFamily: String,
+  fontSizeScale: Number
 })
 </script>
 
@@ -25,8 +25,7 @@ const props = defineProps({
       #f6d66d 51%,
       #8e560b 68%,
       #fff0a2 76%,
-      #c98218 100%
-    ) 0 0 / 230% 100%;
+      #c98218 100%) 0 0 / 230% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   text-shadow:
@@ -34,9 +33,21 @@ const props = defineProps({
     0 9px 20px rgba(0, 0, 0, .36);
   animation: fx-foil 12s ease-in-out infinite;
 }
+
 @keyframes fx-foil {
-  0% { background-position: 0% 0;  filter: saturate(1.05);}
-  50% { background-position: -265% 0;  filter: saturate(1.35) brightness(1.12);}
-  100%      { background-position: -530% 0;  filter: saturate(1.05);}
+  0% {
+    background-position: 0% 0;
+    filter: saturate(1.05);
+  }
+
+  50% {
+    background-position: -265% 0;
+    filter: saturate(1.35) brightness(1.12);
+  }
+
+  100% {
+    background-position: -530% 0;
+    filter: saturate(1.05);
+  }
 }
 </style>

@@ -345,7 +345,7 @@ const timerEventHandlers = {
 
 
 const generalSettingEventHandlers = {
-    reloadTempConfig: async () => { resetConfig(); startInitConfig() },
+    reloadTempConfig: async () => { resetConfig(); startInitConfig(); visibleModal.value = false },
 }
 </script>
 
