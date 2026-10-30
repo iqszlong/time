@@ -35,7 +35,8 @@ const props = defineProps({
   animation: fx-foil 12s ease-in-out infinite;
 }
 @keyframes fx-foil {
-  0%, 100% { background-position: 115% 0; filter: saturate(1.05); }
-  45%      { background-position: -35% 0; filter: saturate(1.35) brightness(1.12); }
+  0% { background-position: 0% 0;  filter: saturate(1.05);}
+  50% { background-position: -265% 0;  filter: saturate(1.35) brightness(1.12);}
+  100%      { background-position: -530% 0;  filter: saturate(1.05);}
 }
 </style>
