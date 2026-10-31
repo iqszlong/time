@@ -79,9 +79,16 @@ function setVolumeSmoothly(video, targetVolume, duration = 1000) {
 }
 
 watchEffect(() => {
-    console.log(props.source);
-    if (!videoDom.value) return;
-    const { volume, muted = true } = props.source;
+    // console.log(props.source);
+    const { volume, muted = true, source, sourceType, filename } = props.source;
+    if (!videoDom.value || !isAssetTypeAnVideo(fileExt(filename))) return;
+    if (sourceType == 'local' && typeof source !== 'object') {
+        toast.warning('无效的视频URI，请重新选择视频文件', {
+            description: `${filename}`,
+            closeButton: true,
+        });
+        return;
+    }
     const state = props.state
     // console.log(state);
     if (state == 'pause') {
@@ -90,24 +97,24 @@ watchEffect(() => {
     if (state == 'play') {
         if (videoState.value == 'idle' || videoState.value == 'pause') {
             // 只有在静音状态下才尝试自动播放，避免浏览器自动播放限制
-                // console.log(videoDom.value);
-                setTimeout(() => {
-                    videoDom.value.play().catch(err => {
-                        // console.warn('自动播放失败，需要用户交互:', err);
-                        toast.warning('自动播放视频失败，请手动播放', {
-                            description: `${props.source.filename}`,
-                            position: 'top-center',
-                            duration: 99999,
-                            closeButton:true,
-                            action: {
-                                label: '手动播放',
-                                onClick: () => {
-                                    videoDom.value.play();
-                                }
+            // console.log(videoDom.value);
+            setTimeout(() => {
+                videoDom.value.play().catch(err => {
+                    // console.warn('自动播放失败，需要用户交互:', err);
+                    toast.warning('自动播放视频失败，请手动播放', {
+                        description: `${filename}`,
+                        position: 'top-center',
+                        duration: 99999,
+                        closeButton: true,
+                        action: {
+                            label: '手动播放',
+                            onClick: () => {
+                                videoDom.value.play();
                             }
-                        })
-                    });
-                },10)
+                        }
+                    })
+                });
+            }, 10)
         }
     }
     videoDom.value.muted = muted;

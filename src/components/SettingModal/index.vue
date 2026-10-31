@@ -51,9 +51,9 @@
                                 </template>
                             </div>
                         </header>
-                        <section class=" h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
+                        <section class="scroll-fade h-[calc(86dvh-64px-48px)] overflow-y-auto p-4" :key="currentMenu">
                             <template v-if="currentMenu == 'time'">
-                                <TimeSettings :tempConfig="tempConfig" v-on="timerEventHandlers"/>
+                                <TimeSettings :tempConfig="tempConfig" v-on="timerEventHandlers" />
                             </template>
                             <template v-if="currentMenu == 'background'">
                                 <BackgroundSettings :tempConfig="tempConfig" v-on="backgroundEventHandlers" />
@@ -100,7 +100,7 @@
                         <DialogFooter class="h-16 px-4 items-center flex-row">
 
                             <Button type="submit" @click="onSubmit" :disabled="posting">
-                                <LoaderCircle v-if="posting" class="animate-spin"/>
+                                <LoaderCircle v-if="posting" class="animate-spin" />
                                 保存
                             </Button>
 
@@ -118,18 +118,18 @@
 </template>
 
 <script setup>
-import { Settings2,LoaderCircle } from 'lucide-vue-next';
+import { Settings2, LoaderCircle } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
 import { toast } from 'vue-sonner'
 
-const { dayjs } = utils
+const { dayjs, isEqual, groupBy, omit, diffByKey } = utils
 const configStore = useConfigStore();
-const { updateTimeDisplay, updateConfig } = configStore
+const { updateConfig } = configStore
 const { config, defaultData: defaultConfig, videoPlay } = storeToRefs(configStore)
 const backgroundStore = useBackgroundStore()
-const { updateAllBackgrounds, defaultData, getFileURL, addNewBackground, removeBackground } = backgroundStore
+const { updateAllBackgrounds, defaultData, getFileURL, addNewBackground, removeBackground, removeBackgrounds } = backgroundStore
 const { currentBackgroundId, currentBackground, backgrounds, total } = storeToRefs(backgroundStore)
 const menuStore = useMenuStore()
 const { setMenu } = menuStore
@@ -192,15 +192,33 @@ const onSubmit = async () => {
     posting.value = true
     updateTempBackgrounds(true)
     // console.log(tempConfig);
-    const backgroundsData = []
-    for (const background of tempConfig.backgroundConfigs) {
-        backgroundsData.push({ ...background })
-    }
-    // console.log(backgroundsData);
-    // return
+
     try {
-        await updateAllBackgrounds(backgroundsData)
-        await updateConfig({ ...tempConfig.timerConfig })
+        const rawBackgrounds = toRaw(backgrounds.value)
+        const rawTempBackgrounds = toRaw(tempConfig.backgroundConfigs)
+
+        const skipkeys = ['updateTime']
+
+        const { updated: changedBackgrounds } = diffByKey(
+            rawTempBackgrounds,
+            rawBackgrounds,
+            'id',
+            skipkeys,
+        )
+        // console.log('changedBackgrounds', changedBackgrounds);
+
+        if (changedBackgrounds.length > 0) await updateAllBackgrounds(changedBackgrounds)
+
+        const rawTimerConfig = toRaw(config.value)
+        const rawTempTimerConfig = toRaw(tempConfig.timerConfig)
+        const { updated: changedConfigs } = diffByKey(
+            [rawTempTimerConfig],
+            [rawTimerConfig],
+            'id',
+            skipkeys,
+        )
+        if (changedConfigs.length > 0) await updateConfig({ ...changedConfigs[0] })
+
         toast.success('更新成功', {
             position: 'top-center'
         })
@@ -340,7 +358,7 @@ const backgroundEventHandlers = {
 }
 
 const timerEventHandlers = {
-    handleScaleValue:(values) => tempConfig.timerConfig.timeFontSizeScale = values[0],
+    handleScaleValue: (values) => tempConfig.timerConfig.timeFontSizeScale = values[0],
 }
 
 

@@ -10,13 +10,13 @@ const tabelStores = {
 };
 
 export const db = new Dexie(databaseName);
-db.version(databaseVersion).stores(tabelStores).upgrade (trans => {
-  return trans.config.toCollection().modify (configItem => {
-    configItem.timeFontFamily = 'default';
-    configItem.timeFontSizeScale = 0;
-    configItem.timeFontEffect = 'default';
-    configItem.timePosition = 'bottom-center';
-  });
+db.version(databaseVersion).stores(tabelStores).upgrade(trans => {
+    return trans.config.toCollection().modify(configItem => {
+        configItem.timeFontFamily = 'default';
+        configItem.timeFontSizeScale = 0;
+        configItem.timeFontEffect = 'default';
+        configItem.timePosition = 'bottom-center';
+    });
 });;
 
 // 查询一条数据 
@@ -25,7 +25,7 @@ export async function get(table, key) {
 }
 
 // 查询所有数据
-export async function getALL(table,orderBy="createTime", i = 0, n = 10) {
+export async function getALL(table, orderBy = "createTime", i = 0, n = 10) {
     // 创建时间倒序 (由于没有倒序 自己加个reverse就是倒序)
     // 这里我为了配合分页，加了offset limit 结合起来就是MySql的limit(i,n) 不需要的话也可以直接去掉
     return await db[table].orderBy(orderBy).reverse().offset(i).limit(n).toArray();
@@ -45,6 +45,10 @@ export function del(table, key) {
     return db[table].delete(key);
 }
 
+export function dels(table, arrayKeys) {
+    return db[table].bulkDelete(arrayKeys);
+}
+
 // 查询数据个数
 export async function getCount(table) {
     return await db[table].count();
@@ -60,6 +64,7 @@ export default {
     put,
     puts,
     del,
+    dels,
     getCount,
     clear,
 }

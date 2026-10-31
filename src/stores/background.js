@@ -75,7 +75,7 @@ export const useBackgroundStore = defineStore('background', () => {
   async function loadBackgrounds() {
     loading.value = true
     try {
-      const data = await backgroundService.getAll({ page: currentPage.value, size: pageSize.value })
+      const data = await backgroundService.getAll({ orderBy: 'order', page: currentPage.value, size: pageSize.value })
       backgrounds.value = currentPage.value === 0 ? data : [...backgrounds.value, ...data]
       // console.log(data, backgrounds.value)
       total.value = await backgroundService.getTotal()
@@ -89,6 +89,8 @@ export const useBackgroundStore = defineStore('background', () => {
   const loadAllPath = async () => {
     for (const item of backgrounds.value) {
       // if (item.sourcePath) continue
+      // 如果不可见则跳过文件解析 提高性能 减少开支
+      if (item.visible === false) continue
       if (item.sourceType === 'url') {
         if (item.source.includes('%')) {
           item.sourcePath = decodeURI(item.source)
@@ -96,7 +98,7 @@ export const useBackgroundStore = defineStore('background', () => {
           item.sourcePath = item.source
         }
       }
-      else if(item.sourceType === 'local') {
+      else if (item.sourceType === 'local') {
         // 如果是使用的文件系统，则重新获取文件URL
         if (item.useFileSystem) {
           // 释放旧的blob URL
@@ -104,7 +106,7 @@ export const useBackgroundStore = defineStore('background', () => {
           // 获取新的blob URL
           item.sourcePath = await getFileURL(item.source)
           // 更新数据库
-          await updateSourcePath(item.id, item.sourcePath)
+          if (!item.sourcePath) await updateSourcePath(item.id, item.sourcePath)
         }
         else {
           // 什么都不做直接用base64编码
@@ -133,6 +135,10 @@ export const useBackgroundStore = defineStore('background', () => {
   }
 
   const getFileURL = async (source) => {
+    // console.log('source', source,typeof source)
+    if (typeof source !== 'object') {
+      return null
+    }
     try {
       const file = await source.getFile()
       return URL.createObjectURL(file)
@@ -162,7 +168,7 @@ export const useBackgroundStore = defineStore('background', () => {
       }
     }
 
-    return ''
+    return null
   }
 
   async function verifyPermission(fileHandle, withWrite = false) {
@@ -189,7 +195,7 @@ export const useBackgroundStore = defineStore('background', () => {
 
   const addNewBackground = async () => {
     try {
-      const updatedId = await addBackground({ ...defaultData,...emptyData, order: total.value + 1 })
+      const updatedId = await addBackground({ ...defaultData, ...emptyData, order: total.value + 1 })
       console.log(updatedId)
       const newData = await loadBackgroundById(updatedId)
       if (newData) {
@@ -253,7 +259,7 @@ export const useBackgroundStore = defineStore('background', () => {
   const updateAllBackgrounds = async (backgrounds) => {
     try {
       const updated = await backgroundService.saveAll(backgrounds)
-      console.log(updated)
+      // console.log(updated)
       if (updated) {
         refresh()
       }
@@ -261,6 +267,7 @@ export const useBackgroundStore = defineStore('background', () => {
       console.error('更新所有背景失败:', error)
     }
   }
+
 
   async function removeBackground(id) {
     try {
@@ -270,6 +277,18 @@ export const useBackgroundStore = defineStore('background', () => {
       return true
     } catch (error) {
       console.error('删除背景失败:', error)
+      return false
+    }
+  }
+
+  async function removeBackgrounds(ids) {
+    try {
+      await backgroundService.removeAll(ids)
+      backgrounds.value = backgrounds.value.filter(item => !ids.includes(item.id))
+      total.value = await backgroundService.getTotal()
+      return true
+    } catch (error) {
+      console.error('删除多个背景失败:', error)
       return false
     }
   }
@@ -367,6 +386,7 @@ export const useBackgroundStore = defineStore('background', () => {
     updateBackground,
     updateAllBackgrounds,
     removeBackground,
+    removeBackgrounds,
     refresh,
     clearAll,
     updateSource,

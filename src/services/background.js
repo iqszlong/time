@@ -1,4 +1,4 @@
-import { get, getALL, put, puts, del, getCount,clear } from '@/utils/dexie';
+import { get, getALL, put, puts, del,dels, getCount,clear } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const backgroundService = {
@@ -20,6 +20,10 @@ export const backgroundService = {
 
   async remove(id) {
     return await del('background', id);
+  },
+
+  async removeAll(ids) {
+    return await dels('background', ids);
   },
 
   async getTotal() {
