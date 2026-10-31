@@ -43,6 +43,14 @@ export default defineConfig(({ command, mode }) => {
         dts: "./auto-imports.d.ts",
       }),
       Components({
+        extensions: ['vue'],
+        dts: './components.d.ts',
+        globs: [
+          'src/components/*.vue',
+          'src/components/*/*.vue',
+          'src/components/ui/*.vue',
+          'src/components/ui/*/*.vue',
+        ],
         resolvers: [NaiveUiResolver()],
       }),
       tailwindcss(),
