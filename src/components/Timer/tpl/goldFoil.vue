@@ -1,6 +1,6 @@
 <template>
   <div class="fx-foil">
-    {{ time }}
+    <TimerCore :time="time"></TimerCore>
   </div>
 </template>
 

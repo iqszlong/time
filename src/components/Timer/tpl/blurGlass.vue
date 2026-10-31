@@ -1,5 +1,9 @@
 <template>
-    <div class="fx-glass" :data-text="time">{{ time }}</div>
+    <div class="fx-glass">
+        <TimerCore class="fx-glass-before" :time="time"></TimerCore>
+        <TimerCore :time="time"></TimerCore>
+        <TimerCore class="fx-glass-after" :time="time"></TimerCore>
+    </div>
 </template>
 
 <script setup>
@@ -24,8 +28,7 @@ const props = defineProps({
         0 12px 24px rgba(0, 0, 0, .3);
 }
 
-.fx-glass::before {
-    content: attr(data-text);
+.fx-glass-before {
     position: absolute;
     inset: 0;
     color: var(--ink-3);
@@ -35,8 +38,7 @@ const props = defineProps({
     pointer-events: none;
 }
 
-.fx-glass::after {
-    content: attr(data-text);
+.fx-glass-after {
     position: absolute;
     inset: 0;
     color: transparent;

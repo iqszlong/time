@@ -1,6 +1,6 @@
 <template>
     <div class="clock">
-        {{ time }}
+        <TimerCore :time="time"></TimerCore>
     </div>
 </template>
 
@@ -15,7 +15,7 @@ const props = defineProps({
 <style scoped>
 .clock {
     font-size: calc(3.75rem + v-bind('props.fontSizeScale') * 1px);
-    line-height: 1.1em;
+    line-height: 1.1;
     /* 让数字等宽对齐 */
     font-variant-numeric: tabular-nums;
     font-family: v-bind('props.fontFamily');

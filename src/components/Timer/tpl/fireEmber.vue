@@ -1,6 +1,6 @@
 <template>
     <div class="fx-ember">
-        {{ time }}
+        <TimerCore :time="time"></TimerCore>
     </div>
 </template>
 
