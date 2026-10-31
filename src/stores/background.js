@@ -146,8 +146,7 @@ export const useBackgroundStore = defineStore('background', () => {
       if (error.message.includes('FileSystemFileHandle')) {
         toast.warning('获取背景文件URL失败', {
           description: '请检查背景文件是否存在或是否被授权访问',
-          position: 'top-center',
-          duration: 999999,
+          duration: 1e7,
           closeButton: true,
           action: {
             label: '授权',
@@ -155,7 +154,7 @@ export const useBackgroundStore = defineStore('background', () => {
               const userPermission = await verifyPermission(currentBackground.value.source, false)
               if (userPermission) {
                 toast.success('已授权成功，稍后将自动刷新页面', {
-                  position: 'top-center', onAutoClose: () => {
+                  onAutoClose: () => {
                     location.reload()
                   }
                 })

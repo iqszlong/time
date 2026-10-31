@@ -56,8 +56,8 @@ const positionStyleContent = computed(() => {
 
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
-const lunarDate = ref(dayjs().format("LYLZ年 LMLD LH"))
 const time = ref(dayjs().format(timeFormat.value))
+const lunarDate = ref(dayjs().format("LYLZ年 LMLD LH"))
 
 let animationFrameId = null
 let timer = null
@@ -68,6 +68,7 @@ const updateTime = () => {
     date.value = now.format(dateFormat.value)
     time.value = now.format(timeFormat.value)
     unix.value = now.unix()
+    lunarDate.value = now.format("LYLZ年 LMLD LH")
 }
 
 
@@ -79,8 +80,7 @@ const getMsToNextMinute = () => {
 }
 
 const startTimer = () => {
-    updateTime()  // 先立即更新一次
-
+    
     const scheduleNext = () => {
         const delay = getMsToNextMinute()
 
@@ -89,7 +89,7 @@ const startTimer = () => {
             scheduleNext()  // 遞迴安排下一次
         }, delay)
     }
-
+    updateTime()  // 先立即更新一次
     scheduleNext()
 }
 
@@ -126,39 +126,5 @@ watch(() => props.display, () => {
 </script>
 
 <style scoped>
-.timer-wrapper {
-    display: grid;
-    grid-auto-flow: row;
-    gap: 8px;
-    place-items: center;
-    place-content: center;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
 
-    .line {
-        width: 80px;
-        --border: rgba(255, 255, 255, 0.2);
-        margin-top: 8px;
-        margin-bottom: 8px;
-    }
-
-    
-
-    .date-text,
-    .unix-text,
-    .lunar-text {
-        text-shadow: 0 1px 1px #000;
-        white-space: nowrap;
-    }
-
-    .date-text,.lunar-text {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
-
-    .unix-text {
-        font-size: 0.75rem;
-        line-height: 1rem;
-    }
-
-}
 </style>

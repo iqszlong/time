@@ -558,7 +558,7 @@ const needPermission = async () => {
     const userPermission = await verifyPermission(tempConfig.currentBackground.source, false);
     if (userPermission) {
         toast.success('已授权成功，稍后将自动刷新页面', {
-            position: 'top-center', onAutoClose: () => {
+            onAutoClose: () => {
                 location.reload();
             }
         })
@@ -567,9 +567,7 @@ const needPermission = async () => {
 
 const onUseFileSystemChange = (value) => {
     if (value && !isFilePicker.value) {
-        toast.warning('您的浏览器不支持新文件系统API', {
-            position: 'top-center'
-        })
+        toast.warning('您的浏览器不支持新文件系统API')
         setTimeout(() => {
             props.tempConfig.currentBackground.useFileSystem = false
         }, 500)

@@ -157,6 +157,7 @@ declare module 'vue' {
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
     Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
+    Spinner: typeof import('./src/components/ui/spinner/Spinner.vue')['default']
     Switch: typeof import('./src/components/ui/switch/Switch.vue')['default']
     Tabs: typeof import('./src/components/ui/tabs/Tabs.vue')['default']
     TabsContent: typeof import('./src/components/ui/tabs/TabsContent.vue')['default']

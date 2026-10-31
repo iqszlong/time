@@ -103,8 +103,7 @@ watchEffect(() => {
                     // console.warn('自动播放失败，需要用户交互:', err);
                     toast.warning('自动播放视频失败，请手动播放', {
                         description: `${filename}`,
-                        position: 'top-center',
-                        duration: 99999,
+                        duration: 1e7,
                         closeButton: true,
                         action: {
                             label: '手动播放',

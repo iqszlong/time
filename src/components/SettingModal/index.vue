@@ -100,7 +100,7 @@
                         <DialogFooter class="h-16 px-4 items-center flex-row">
 
                             <Button type="submit" @click="onSubmit" :disabled="posting">
-                                <LoaderCircle v-if="posting" class="animate-spin" />
+                                <Spinner v-if="posting" />
                                 保存
                             </Button>
 
@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { Settings2, LoaderCircle } from 'lucide-vue-next';
+import { Settings2 } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
@@ -219,14 +219,11 @@ const onSubmit = async () => {
         )
         if (changedConfigs.length > 0) await updateConfig({ ...changedConfigs[0] })
 
-        toast.success('更新成功', {
-            position: 'top-center'
-        })
+        toast.success('更新成功')
     } catch (error) {
         console.error('更新失败:', error)
         toast.error('更新失败', {
-            description: error.message,
-            position: 'top-center'
+            description: error.message
         })
     } finally {
         posting.value = false
@@ -294,9 +291,7 @@ const handleNew = async () => {
     const successId = await addNewBackground()
     if (successId) {
         currentBackgroundId.value = successId
-        toast.success('添加新背景成功', {
-            position: 'top-center'
-        })
+        toast.success('添加新背景成功')
         resetConfig()
         initTempConfig()
     }
@@ -308,9 +303,7 @@ const onDelete = async () => {
         console.log(success, backgrounds.value);
         currentBackgroundId.value = backgrounds.value[0]?.id
 
-        toast.success('删除当前背景成功', {
-            position: 'top-center'
-        })
+        toast.success('删除当前背景成功')
         resetConfig()
         initTempConfig()
     }

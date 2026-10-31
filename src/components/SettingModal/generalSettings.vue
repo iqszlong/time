@@ -166,7 +166,6 @@ const getStroageData = async () => {
         // console.error('获取存储信息失败:', error)
         toast.error('获取存储信息失败', {
             description: error.message,
-            position: 'top-center'
         })
     }
 }
@@ -185,9 +184,7 @@ onLongPress(clearBtn, async () => {
     await initConfig()
     await initBackground()
     emits('reloadTempConfig')
-    toast.success('清空成功', {
-        position: 'top-center'
-    })
+    toast.success('清空成功')
 }, { distanceThreshold: false, modifiers: { prevent: true } })
 
 const transformNum = (num, unit = 'B') => {
@@ -235,8 +232,7 @@ const onBackup = async () => {
         }, 100)
     } catch (error) {
         toast.error('备份失败', {
-            description: error.message,
-            position: 'top-center'
+            description: error.message
         })
     }
 }
@@ -249,8 +245,7 @@ const onRestore = async () => {
     }//判断文件名是否time-backup开头
     else if (!file.name.startsWith('time-backup')) {
         toast.error('文件名错误', {
-            description: '文件名必须以time-backup开头',
-            position: 'top-center'
+            description: '文件名必须以time-backup开头'
         })
         return
     }
@@ -267,14 +262,11 @@ const onRestore = async () => {
             await refreshConfig()
             await refreshBackground()
             emits('reloadTempConfig')
-            toast.success('恢复成功', {
-                position: 'top-center'
-            })
+            toast.success('恢复成功')
         }
     } catch (error) {
         toast.error('恢复失败', {
             description: error.message,
-            position: 'top-center'
         })
     }
 }
@@ -285,7 +277,6 @@ const transformData = (result) => {
     } catch (error) {
         toast.error('恢复失败，文件内容错误', {
             description: error.message,
-            position: 'top-center'
         })
     }
 }
