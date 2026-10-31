@@ -5,16 +5,25 @@
                 <div class="flex-[1_1_250px]">
                     <Field>
                         <FieldLabel for="display">时间格式</FieldLabel>
-                        <RadioGroup id="display" v-model="tempConfig.timerConfig.timeDisplay"
+                        <RadioGroup id="display" default-value="12" v-model="tempConfig.timerConfig.timeDisplay"
                             class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <RadioGroupItem id="display12" value="12" />
-                                <Label for="display12">12小时</Label>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <RadioGroupItem id="display24" value="24" />
-                                <Label for="display24">24小时</Label>
-                            </div>
+                            <FieldLabel for="display12">
+                                <Field orientation="horizontal">
+                                    <FieldContent>
+                                        <FieldTitle>12小时</FieldTitle>
+                                    </FieldContent>
+                                    <RadioGroupItem id="display12" value="12" />
+                                </Field>
+                            </FieldLabel>
+                            <FieldLabel for="display24">
+                                <Field orientation="horizontal">
+                                    <FieldContent>
+                                        <FieldTitle>24小时</FieldTitle>
+                                    </FieldContent>
+                                    <RadioGroupItem id="display24" value="24" />
+                                </Field>
+
+                            </FieldLabel>
                         </RadioGroup>
                     </Field>
                 </div>
@@ -80,17 +89,22 @@
                 <div class="flex-[1_1_250px]">
                     <Field>
                         <FieldLabel for="fontPostion">显示位置</FieldLabel>
-                        <Card class="py-1">
-                            <CardContent class="px-1">
-                                <ToggleGroup type="single" v-model="tempConfig.timerConfig.timePosition"
-                                    id="fontPostion" class="grid grid-cols-3 grid-rows-3 w-full gap-2">
-                                    <template v-for="position of positionStyle" :key="position.value">
-                                        <ToggleGroupItem :value="position.value" :aria-label="position['zh-CN']">
-                                            {{ position['zh-CN'] }}</ToggleGroupItem>
-                                    </template>
-                                </ToggleGroup>
-                            </CardContent>
-                        </Card>
+
+                        <RadioGroup default-value="bottom-center" v-model="tempConfig.timerConfig.timePosition"
+                            id="fontPostion" class="grid grid-cols-3 grid-rows-3 w-full gap-2">
+                            <template v-for="position of positionStyle" :key="position.value">
+                                <FieldLabel :for="position.value">
+                                    <Field orientation="horizontal">
+                                        <FieldContent>
+                                            <FieldTitle>{{ position['zh-CN'] }}</FieldTitle>
+                                        </FieldContent>
+                                        <RadioGroupItem :id="position.value" :value="position.value"
+                                            :aria-label="position['zh-CN']" />
+                                    </Field>
+                                </FieldLabel>
+                            </template>
+                        </RadioGroup>
+
                     </Field>
                 </div>
 
@@ -117,7 +131,7 @@ onMounted(() => {
 })
 
 const init = () => {
-    fontSizeScale.value[0] = props.tempConfig.timerConfig.timeFontSizeScale
+    fontSizeScale.value[0] = props.tempConfig.timerConfig.timeFontSizeScale ?? 0
 }
 
 const handleScaleValue = (values) => {

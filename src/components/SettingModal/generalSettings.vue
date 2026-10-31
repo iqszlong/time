@@ -5,8 +5,19 @@
             <Field>
                 <FieldLabel for="backup">数据备份/还原</FieldLabel>
                 <FieldDescription>
-                    备份当前数据，或从备份文件中恢复数据。<b>部分实验功能可能会恢复失败，请注意。</b>
+                    备份当前数据，或从备份文件中还原数据。
                 </FieldDescription>
+                <Alert variant="destructive">
+                    <AlertCircleIcon />
+                    <AlertTitle>请注意：部分实验功能可能会还原失败。失败可能带来以下影响</AlertTitle>
+                    <AlertDescription>
+                        <ul class="mt-2 list-inside list-disc space-y-1">
+                            <li>选择的视频或图片文件无法显示。</li>
+                            <li>数值或颜色不正确，出现NaN等。</li>
+                        </ul>
+                        <p>通用解决办法：文件重新选择一次替换即可，数值或颜色手动更新旧数据即可</p>
+                    </AlertDescription>
+                </Alert>
                 <div class="flex items-center gap-2">
                     <Button @click="onBackup" variant="outline">备份</Button>
                     <div class="flex-none">
@@ -109,6 +120,7 @@
 
 <script setup>
 import JSON5 from 'json5'
+import { AlertCircleIcon } from 'lucide-vue-next';
 import { toast } from 'vue-sonner'
 import { onLongPress } from '@vueuse/core'
 import { useBrowser } from '@/composables/useBrowser'
