@@ -88,8 +88,13 @@
                                 <FieldGroup>
                                     <template v-if="tempConfig.currentBackground.useFileSystem">
                                         <Field>
-                                            
-                                            <z-filesystem id="file" @open="handleFilesystem"
+
+                                            <Button v-if="hostAvailable" variant="outline"
+                                                class="block truncate w-full" @click="pickViaHost">
+                                                {{ selectedFileName ?? '选择文件' }}
+                                            </Button>
+
+                                            <z-filesystem v-else id="file" @open="handleFilesystem"
                                                 :openOpt="JSON.stringify(fileTypeOpt)"
                                                 style="width: 100%; overflow: hidden;">
                                                 <Button variant="outline" class="block truncate w-full">
@@ -442,9 +447,10 @@
 import { Plus, Trash, EllipsisVertical, Volume2, VolumeX, RefreshCw, ChevronDown, FlaskConical, Eye, EyeOff } from 'lucide-vue-next';
 import { acceptFile, fit, position } from '@/services/mapping/config'
 import { useBackgroundStore } from '@/stores/background'
+import hostFS from '@/utils/host-fs'
 import { toast } from 'vue-sonner'
 const backgroundStore = useBackgroundStore()
-const { verifyPermission } = backgroundStore
+const { verifyPermission, getFileURL } = backgroundStore
 const { currentBackgroundId, total, isFilePicker } = storeToRefs(backgroundStore)
 const { zhDayTime, highPrecisionMul } = utils
 const props = defineProps({
@@ -456,6 +462,28 @@ const urlValue = ref('')
 const maskValue = ref([0, 1])
 const volumeValue = ref([0])
 const selectedFileName = ref(null)
+
+// WebView2 里由宿主弹文件对话框（宿主才拿得到绝对路径），
+// 浏览器里继续用原来的 picker
+const hostAvailable = ref(hostFS.available)
+
+const pickViaHost = () => {
+    hostFS.pick(props.tempConfig.currentBackground.id)
+}
+
+let offHostPush = null
+onMounted(() => {
+    offHostPush = hostFS.onPush(async ({ id, handle }) => {
+        const background = props.tempConfig.currentBackground
+        if (String(background.id) !== String(id)) return
+
+        background.filename = handle.name
+        background.source = handle
+        background.sourcePath = await getFileURL(handle)
+        selectedFileName.value = handle.name
+    })
+})
+onUnmounted(() => offHostPush?.())
 
 
 const fileTypeOpt = {

@@ -1,3 +1,7 @@
+// 必须在最前面：WebView2 宿主在 NavigationCompleted 时会推背景文件句柄，
+// 监听晚于那次推送就会丢消息，页面又要重新要一次授权。
+import '@/utils/host-fs';
+
 import '@/assets/fonts.css';
 import "@/assets/main.css";
 import { createApp } from "vue";

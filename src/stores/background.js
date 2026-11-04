@@ -1,5 +1,6 @@
 import { toast } from 'vue-sonner'
 import backgroundService from '@/services/background'
+import hostFS from '@/utils/host-fs'
 
 export const useBackgroundStore = defineStore('background', () => {
   const { dayjs } = utils
@@ -62,12 +63,23 @@ export const useBackgroundStore = defineStore('background', () => {
       "showSaveFilePicker" in window
   })
 
+  // ---- WebView2 宿主文件句柄交换 ----
+  //
+  // File System Access 的授权是 handle 级的：页面刷新后权限回到 prompt，
+  // 而 requestPermission() 必须由用户手势触发。壁纸模式下没有人点，
+  // 所以每次加载都读不到本地文件。宿主按路径重新造一批已授权的句柄推回来，
+  // 具体传输在 utils/host-fs.js。
+
   async function initBackground() {
     await loadBackgrounds()
     if (total.value === 0) {
       await addBackground(defaultData)
       await loadBackgrounds()
     }
+
+    // 时序必须卡在 loadAllPath 之前，否则那里会先因为权限是 prompt 而失败
+    await hostFS.wait()
+
     await loadAllPath()
     currentBackgroundId.value = backgrounds.value[0].id
   }
@@ -101,6 +113,11 @@ export const useBackgroundStore = defineStore('background', () => {
       else if (item.sourceType === 'local') {
         // 如果是使用的文件系统，则重新获取文件URL
         if (item.useFileSystem) {
+          // 宿主推来的句柄权限在创建时就已授予，优先用它的；
+          // 没推到（非 WebView2、或宿主还没记过路径）就退回原来的句柄
+          const hostHandle = hostFS.get(item.id)
+          if (hostHandle) item.source = hostHandle
+
           // 释放旧的blob URL
           URL.revokeObjectURL(item.sourcePath)
           // 获取新的blob URL
