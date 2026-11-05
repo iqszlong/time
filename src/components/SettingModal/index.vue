@@ -176,7 +176,7 @@ const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
 const closeConfirm = ref(false)
-const posting = ref(true)
+const posting = ref(false)
 
 onBeforeMount(async () => {
 
