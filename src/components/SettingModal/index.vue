@@ -1,124 +1,159 @@
 <template>
     <Dialog v-model:open="visibleModal" @update:open="onOpenChange" class="setting-modal">
-        <DialogTrigger as-child>
-            <Button variant="outline" size="icon" class="rounded-full">
-                <Settings2 />
-            </Button>
-        </DialogTrigger>
-        <DialogContent class="p-0 sm:max-w-5xl max-h-[86dvh] overflow-hidden"
-            @interact-outside="event => event.preventDefault()">
-            <DialogHeader class="px-4 pt-4 sr-only">
-                <DialogTitle>设置</DialogTitle>
-                <DialogDescription>
-                    页面设置时间、背景图片。
-                </DialogDescription>
-            </DialogHeader>
+        <template #default="{ close }">
+            <DialogTrigger as-child>
+                <Button variant="outline" size="icon" class="rounded-full">
+                    <Settings2 />
+                </Button>
+            </DialogTrigger>
+            <DialogContent class="p-0 sm:max-w-5xl max-h-[86dvh] overflow-hidden" :showCloseButton="false"
+                @escape-key-down="event => handleClose(null, event)"
+                @pointer-down-outside="event => handleClose(null, event)"
+                @interact-outside="event => event.preventDefault()">
 
-            <SidebarProvider defaultOpen class="setting-side-bar items-start [--sidebar-width:10rem]!">
-                <Sidebar collapsible="offcanvas">
-                    <SidebarHeader class="flex flex-row gap-2 items-center">
-                        <Settings2 size="16" />
-                        <h1 class="font-bold">设置</h1>
-                    </SidebarHeader>
-                    <SidebarContent>
-                        <SidebarGroup>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem v-for="item in menuList" :key="item.name">
-                                        <SidebarMenuButton class="cursor-pointer" :is-active="item.name === currentMenu"
-                                            @click="handleClickMenu(item)">
-                                            <span class="flex items-center gap-2 ">
-                                                <component v-if="item.icon" :is="item.icon" class="size-4" />
-                                                <span>{{ item.title }}</span>
-                                            </span>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </SidebarContent>
-                </Sidebar>
-                <SidebarInset>
-                    <main class="flex flex-col flex-1">
-                        <header class="flex h-12 shrink-0 items-center gap-2">
-                            <div class="flex px-4 flex-row items-center gap-2">
-                                <SidebarTrigger class="-ml-1" />
-                                <h2 class="font-bold shrink-0">{{ currentItem.title }}</h2>
+               
+                <DialogHeader class="px-4 pt-4 sr-only">
+                    <DialogTitle>设置</DialogTitle>
+                    <DialogDescription>
+                        页面设置时间、背景图片。
+                    </DialogDescription>
+                </DialogHeader>
 
-                                <template v-if="currentMenu == 'background'">
-                                    <p class="text-sm text-muted-foreground invisible sm:visible">
-                                        使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。</p>
+                
+
+                <SidebarProvider defaultOpen class="setting-side-bar items-start [--sidebar-width:10rem]!">
+                    <Sidebar collapsible="offcanvas">
+                        <SidebarHeader class="flex flex-row gap-2 items-center">
+                            <Settings2 size="16" />
+                            <h1 class="font-bold">设置</h1>
+                        </SidebarHeader>
+                        <SidebarContent>
+                            <SidebarGroup>
+                                <SidebarGroupContent>
+                                    <SidebarMenu>
+                                        <SidebarMenuItem v-for="item in menuList" :key="item.name">
+                                            <SidebarMenuButton class="cursor-pointer"
+                                                :is-active="item.name === currentMenu" @click="handleClickMenu(item)">
+                                                <span class="flex items-center gap-2 ">
+                                                    <component v-if="item.icon" :is="item.icon" class="size-4" />
+                                                    <span>{{ item.title }}</span>
+                                                </span>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    </SidebarMenu>
+                                </SidebarGroupContent>
+                            </SidebarGroup>
+                        </SidebarContent>
+                    </Sidebar>
+                    <SidebarInset>
+                        <main class="flex flex-col flex-1">
+                            <header class="flex h-12 shrink-0 items-center gap-2">
+                                <div class="flex px-4 flex-row items-center gap-2">
+                                    <SidebarTrigger class="-ml-1" />
+                                    <h2 class="font-bold shrink-0">{{ currentItem.title }}</h2>
+
+                                    <template v-if="currentMenu == 'background'">
+                                        <p class="text-sm text-muted-foreground invisible sm:visible">
+                                            使用本地文件或远程文件链接，设置内容均保存在本地，不会上传到服务器。</p>
+                                    </template>
+                                </div>
+                            </header>
+                            <section class="scroll-fade h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
+                                <template v-if="currentMenu == 'time'">
+                                    <TimeSettings :tempConfig="tempConfig" v-on="timerEventHandlers" />
                                 </template>
-                            </div>
-                        </header>
-                        <section class="scroll-fade h-[calc(86dvh-64px-48px)] overflow-y-auto p-4">
-                            <template v-if="currentMenu == 'time'">
-                                <TimeSettings :tempConfig="tempConfig" v-on="timerEventHandlers" />
-                            </template>
-                            <template v-if="currentMenu == 'background'">
-                                <BackgroundSettings :tempConfig="tempConfig" v-on="backgroundEventHandlers" />
+                                <template v-if="currentMenu == 'background'">
+                                    <BackgroundSettings :tempConfig="tempConfig" v-on="backgroundEventHandlers" />
 
-                                <AlertDialog v-model:open="deleteConfirm">
+                                    <AlertDialog v-model:open="deleteConfirm">
 
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>确定删除吗?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                删除当前背景，将无法恢复。是否继续？
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>取消</AlertDialogCancel>
-                                            <AlertDialogAction @click="onDelete">确定删除
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定删除吗?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    删除当前背景，将无法恢复。是否继续？
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>取消</AlertDialogCancel>
+                                                <AlertDialogAction @click="onDelete">确定删除
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
 
-                                <AlertDialog v-model:open="resetConfirm">
+                                    <AlertDialog v-model:open="resetConfirm">
 
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                恢复默认配置，会覆盖当前的设置
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>取消</AlertDialogCancel>
-                                            <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定恢复默认吗?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    恢复默认配置，会覆盖当前的设置
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>取消</AlertDialogCancel>
+                                                <AlertDialogAction @click="onReset">确定恢复</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
 
-                            </template>
 
-                            <template v-if="currentMenu == 'setting'">
-                                <GeneralSettings :tempConfig="tempConfig" v-on="generalSettingEventHandlers" />
-                            </template>
-                        </section>
-                        <DialogFooter class="h-16 px-4 items-center flex-row">
+                                    <AlertDialog v-model:open="closeConfirm">
 
-                            <Button type="submit" @click="onSubmit" :disabled="posting">
-                                <Spinner v-if="posting" />
-                                保存
-                            </Button>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定关闭吗?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    当前有提交任务正在进行
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>取消</AlertDialogCancel>
+                                                <AlertDialogAction @click="onConfirmClose(close)">确定关闭
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
 
-                            <DialogClose as-child>
-                                <Button variant="outline">关闭</Button>
-                            </DialogClose>
+                                    </AlertDialog>
 
-                        </DialogFooter>
-                    </main>
+                                </template>
 
-                </SidebarInset>
-            </SidebarProvider>
-        </DialogContent>
+                                <template v-if="currentMenu == 'setting'">
+                                    <GeneralSettings :tempConfig="tempConfig" v-on="generalSettingEventHandlers" />
+                                </template>
+                            </section>
+                            <DialogFooter class="h-16 px-4 items-center flex-row">
+
+                                <Button type="submit" @click="onSubmit" :disabled="posting">
+                                    <Spinner v-if="posting" />
+                                    保存
+                                </Button>
+
+
+                                <Button variant="outline" @click="handleClose(close)">关闭</Button>
+
+
+                            </DialogFooter>
+
+
+                        </main>
+
+                    </SidebarInset>
+                </SidebarProvider>
+                <Button variant="ghost" @click="handleClose(close)"  size="icon-sm" class="absolute right-2 top-2 opacity-70 transition-opacity hover:opacity-100">
+                    <X />
+                    <span class="sr-only">Close</span>
+                </Button>
+            </DialogContent>
+        </template>
     </Dialog>
+
+
 </template>
 
 <script setup>
-import { Settings2 } from 'lucide-vue-next';
+import { Settings2,X } from 'lucide-vue-next';
 import { useMenuStore } from '@/stores/menu';
 import { useConfigStore } from '@/stores/config'
 import { useBackgroundStore } from '@/stores/background'
@@ -140,7 +175,8 @@ let tempConfig = reactive({ timerConfig: {}, backgroundConfigs: [], currentBackg
 const visibleModal = ref(false)
 const resetConfirm = ref(false)
 const deleteConfirm = ref(false)
-const posting = ref(false)
+const closeConfirm = ref(false)
+const posting = ref(true)
 
 onBeforeMount(async () => {
 
@@ -150,12 +186,15 @@ onMounted(async () => {
     // console.trace('onMounted');
 })
 
+
 const onOpenChange = async (open) => {
+    // console.log('onOpenChange', open)
     if (open) {
         startInitConfig()
 
     } else {
         endInitConfig()
+        if (posting.value) posting.value = false
     }
 }
 
@@ -228,6 +267,24 @@ const onSubmit = async () => {
     } finally {
         posting.value = false
     }
+}
+
+
+const handleClose = (close, e) => {
+    if (posting.value) {
+        closeConfirm.value = true
+        if (e) e.preventDefault()
+        return
+    }
+
+    close && close()
+
+}
+
+const onConfirmClose = (close) => {
+    closeConfirm.value = false
+    visibleModal.value = false
+    close && close()
 }
 
 const onReset = () => {
