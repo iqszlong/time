@@ -3,6 +3,7 @@ import * as request from "./request"; // 请求封装
 import XEUtils from "xe-utils"; // XEUtils https://x-extends.gitee.io/xe-utils
 import * as popover  from "./popover" //消息提示
 import * as day from "./day"; // 日期库
+import * as lunisolar from "./lunisolar"; // 农历
 import * as upload from "./upload" // 文件上传
 import * as mobileCode from "./mobileCode"; // 短信验证码
 import * as shareImg from "./shareImg"; // 分享图片
@@ -21,6 +22,7 @@ export default {
   ...mobileCode,
   ...shareImg,
   ...day,
+  ...lunisolar,
   ...system,
   ...file,
   ...naiveui,

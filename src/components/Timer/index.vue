@@ -13,7 +13,7 @@
 
 <script setup>
 import { fontEffects,positionStyle } from '@/services/mapping/config'
-import lunisolar from 'lunisolar'
+
 const props = defineProps({
     display: {
         type: String,
@@ -38,7 +38,7 @@ const props = defineProps({
     },
 })
 
-const { dayjs } = utils
+const { dayjs,lunisolar} = utils
 const currentEffectComponent = computed(() =>
     fontEffects[props.effect].component
 )
@@ -59,7 +59,7 @@ const term = computed(() =>lunisolar().solarTerm?.toString() || '')
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
 const time = ref(dayjs().format(timeFormat.value))
-const lunarDate = ref(dayjs().format("LYLZ年 LMLD LH"))
+const lunarDate = ref(lunisolar().format("cYcZ年 lMlD lH时"))
 
 let animationFrameId = null
 let timer = null
@@ -70,7 +70,7 @@ const updateTime = () => {
     date.value = now.format(dateFormat.value)
     time.value = now.format(timeFormat.value)
     unix.value = now.unix()
-    lunarDate.value = now.format("LYLZ年 LMLD LH")
+    lunarDate.value = lunisolar(now).format("cYcZ年 lMlD lH时")
 }
 
 
