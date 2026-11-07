@@ -1,8 +1,8 @@
 <template>
-    <div class="timer-wrapper" :style="{gridArea:position,...positionStyleContent}">
+    <div class="timer-wrapper" :style="{ gridArea: position, ...positionStyleContent }">
         <div class="date-text">{{ date }}</div>
 
-        <component :is="currentEffectComponent" :time="time" :font-family="fontFamily" :fontSizeScale="fontSizeScale"/>
+        <component :is="currentEffectComponent" :time="time" :font-family="fontFamily" :fontSizeScale="fontSizeScale" />
 
         <div class="lunar-text">{{ lunarDate }} {{ term }}</div>
 
@@ -12,8 +12,7 @@
 </template>
 
 <script setup>
-import { fontEffects,positionStyle } from '@/services/mapping/config'
-
+import { fontEffects, positionStyle } from '@/services/mapping/config'
 const props = defineProps({
     display: {
         type: String,
@@ -38,7 +37,7 @@ const props = defineProps({
     },
 })
 
-const { dayjs,lunisolar} = utils
+const { dayjs, lunisolar } = utils
 const currentEffectComponent = computed(() =>
     fontEffects[props.effect].component
 )
@@ -54,7 +53,7 @@ const positionStyleContent = computed(() => {
     return positionStyle[props.position].style
 })
 
-const term = computed(() =>lunisolar().solarTerm?.toString() || '')
+const term = computed(() => lunisolar().solarTerm?.toString() || '')
 
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
@@ -82,7 +81,6 @@ const getMsToNextMinute = () => {
 }
 
 const startTimer = () => {
-    
     const scheduleNext = () => {
         const delay = getMsToNextMinute()
 
@@ -127,6 +125,4 @@ watch(() => props.display, () => {
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
