@@ -4,7 +4,7 @@
 
         <component :is="currentEffectComponent" :time="time" :font-family="fontFamily" :fontSizeScale="fontSizeScale"/>
 
-        <div class="lunar-text">{{ lunarDate }}</div>
+        <div class="lunar-text">{{ lunarDate }} {{ term }}</div>
 
         <Separator class="line" />
         <div class="text-muted-foreground unix-text">{{ unix }}</div>
@@ -13,6 +13,7 @@
 
 <script setup>
 import { fontEffects,positionStyle } from '@/services/mapping/config'
+import lunisolar from 'lunisolar'
 const props = defineProps({
     display: {
         type: String,
@@ -42,7 +43,6 @@ const currentEffectComponent = computed(() =>
     fontEffects[props.effect].component
 )
 
-
 const dateFormat = computed(() => {
     return props.display === '12' ? 'll dddd A' : 'll dddd'
 })
@@ -53,6 +53,8 @@ const timeFormat = computed(() => {
 const positionStyleContent = computed(() => {
     return positionStyle[props.position].style
 })
+
+const term = computed(() =>lunisolar().solarTerm?.toString() || '')
 
 const unix = ref(dayjs().unix())
 const date = ref(dayjs().format(dateFormat.value))
