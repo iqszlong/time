@@ -463,8 +463,8 @@ const maskValue = ref([0, 1])
 const volumeValue = ref([0])
 const selectedFileName = ref(null)
 
-// WebView2 里由宿主弹文件对话框（宿主才拿得到绝对路径），
-// 浏览器里继续用原来的 picker
+// 自己的宿主里由宿主弹文件对话框（宿主才拿得到绝对路径），
+// 浏览器、Lively Wallpaper 这类第三方 WebView2 容器里继续用原来的 picker
 const hostAvailable = ref(hostFS.available)
 
 const pickViaHost = () => {
@@ -472,7 +472,13 @@ const pickViaHost = () => {
 }
 
 let offHostPush = null
+let offHostAvailable = null
 onMounted(() => {
+    // 宿主版本比页面旧、没注入标识时，收到句柄推送后再把 UI 切过来
+    offHostAvailable = hostFS.onAvailable(() => {
+        hostAvailable.value = true
+    })
+
     offHostPush = hostFS.onPush(async ({ id, handle }) => {
         const background = props.tempConfig.currentBackground
         if (String(background.id) !== String(id)) return
@@ -483,7 +489,10 @@ onMounted(() => {
         selectedFileName.value = handle.name
     })
 })
-onUnmounted(() => offHostPush?.())
+onUnmounted(() => {
+    offHostPush?.()
+    offHostAvailable?.()
+})
 
 
 const fileTypeOpt = {
