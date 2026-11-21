@@ -136,7 +136,7 @@ const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStor
 const backgroundStore = useBackgroundStore()
 const { refresh: refreshBackground, clearAll: clearBackground, initBackground } = backgroundStore
 const { browser, os, engine, isLoading: browserLoading } = useBrowser()
-const { dayjs, highPrecisionMul, highPrecisionDiv } = utils
+const { dayjs, highPrecisionMul, highPrecisionDiv,downloadFile } = utils
 
 const props = defineProps({
     tempConfig: { type: Object, required: true },
@@ -222,12 +222,8 @@ const onBackup = async () => {
         const blob = new Blob([JSON5.stringify(data)], { type: 'application/json;charset=utf-8' })
         const url = URL.createObjectURL(blob)
         const dayStr = `${dayjs().format('YYYY-MM-DD')}-${dayjs().unix()}`
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `time-backup ${dayStr}.json`
-        a.click()
+        downloadFile(url, `time-backup ${dayStr}.json`)
         setTimeout(() => {
-            document.body.removeChild(a)
             URL.revokeObjectURL(url)
         }, 100)
     } catch (error) {
