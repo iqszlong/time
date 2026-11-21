@@ -87,10 +87,11 @@ export const useBackgroundStore = defineStore('background', () => {
   async function loadBackgrounds() {
     loading.value = true
     try {
-      const data = await backgroundService.getAll({ orderBy: 'order', page: currentPage.value, size: pageSize.value })
+      const data = await backgroundService.getAll({ orderBy: 'order', page: currentPage.value, pageSize: pageSize.value })
       backgrounds.value = currentPage.value === 0 ? data : [...backgrounds.value, ...data]
       // console.log(data, backgrounds.value)
       total.value = await backgroundService.getTotal()
+      console.log(backgrounds.value.length, total.value)
     } catch (error) {
       console.error('加载背景列表失败:', error)
     } finally {
