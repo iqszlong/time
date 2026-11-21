@@ -64,9 +64,39 @@ const handles = new Map()
 /** 订阅宿主推送的回调 */
 const pushCallbacks = new Set()
 
+/** 保存请求的回执类型，必须与宿主 FileHandleBridge 里一致 */
+const SAVE_TYPE = 'fs-save'
+const SAVE_RESULT_TYPE = 'fs-save-result'
+
+/** requestId → 等回执的保存请求 */
+const saves = new Map()
+
+/** 保存请求的自增序号，只用来拼 requestId */
+let saveSeq = 0
+
 webview?.addEventListener('message', (event) => {
   const data = event.data
-  if (!data || data.type !== 'fs-handles' || !event.additionalObjects) return
+  if (!data) return
+
+  // 保存回执。能收到就说明对面是自己的宿主。
+  if (data.type === SAVE_RESULT_TYPE && data.requestId) {
+    confirmHost('save-result')
+
+    const pending = saves.get(data.requestId)
+    if (!pending) return
+
+    saves.delete(data.requestId)
+    clearTimeout(pending.timer)
+    pending.resolve({
+      ok: Boolean(data.ok),
+      canceled: Boolean(data.canceled),
+      path: data.path || '',
+      error: data.error || ''
+    })
+    return
+  }
+
+  if (data.type !== 'fs-handles' || !event.additionalObjects) return
 
   // 能收到这条消息，说明对面就是自己的宿主
   confirmHost('push')
@@ -127,6 +157,41 @@ export const hostFS = {
 
     webview.postMessage({ type: 'fs-pick', id: String(id) })
     return true
+  },
+
+  /**
+   * 请宿主把一段文本存成文件：宿主弹“另存为”，位置由用户当场挑。
+   *
+   * 页面自己下载这条路在 WebView2 里是死的：宿主对 DownloadStarting 一律 Cancel，
+   * 远端页面不能随手往硬盘里丢东西。所以文本导出只能走这条路。
+   *
+   * @param {string} name 建议文件名（用户可以在对话框里改）
+   * @param {string} content 要写进文件的文本
+   * @param {number} timeout 等回执的毫秒数，宿主太旧不会回，超时按失败算
+   * @returns {Promise<{ok:boolean, canceled?:boolean, path?:string, error?:string}|null>}
+   *          null 表示对面不是我们的宿主，调用方应退回浏览器下载
+   */
+  save(name, content, timeout = 10000) {
+    if (!confirmed || !webview) return null
+
+    const requestId = `${Date.now().toString(36)}-${(++saveSeq).toString(36)}`
+
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        saves.delete(requestId)
+        resolve({ ok: false, error: '宿主没有响应，可能版本过旧' })
+      }, timeout)
+
+      saves.set(requestId, { resolve, timer })
+
+      try {
+        webview.postMessage({ type: SAVE_TYPE, requestId, name: String(name), content: String(content) })
+      } catch (error) {
+        clearTimeout(timer)
+        saves.delete(requestId)
+        resolve({ ok: false, error: error.message })
+      }
+    })
   },
 
   /**

@@ -1,31 +1,69 @@
 import SparkMD5 from "spark-md5";
+import hostFS from "./host-fs";
+
 // 下载文件流
 export function saveBlobFile(blob, fileName) {
   if (window.navigator.msSaveOrOpenBlob) {
     navigator.msSaveBlob(blob, fileName);
   } else {
-    var a = document.createElement("a");
-    var downUrl = window.URL.createObjectURL(blob);
-    a.href = downUrl;
-    a.download = fileName;
-    a.click();
-    window.URL.revokeObjectURL(downUrl);
+    triggerDownload(blob, fileName);
   }
 }
 
-// * 前端导出, 传入文件内容和文件名称
-export function downloadFile(content, fileName) {
-  const aEle = document.createElement("a"); // 创建下载链接
-  aEle.download = fileName; // 设置下载的名称
-  aEle.style.display = "none"; // 隐藏的可下载链接
-  // 字符内容转变成 blob 地址
-  const blob = new Blob([content]);
-  aEle.href = URL.createObjectURL(blob);
-  // 绑定点击时间
+/**
+ * 用 a 标签触发一次下载。
+ *
+ * 两个坑：
+ * 1. remove() 而不是 removeChild()：节点在点击过程中被页面重排摘掉时，
+ *    removeChild 会抛 NotFoundError，remove() 是空操作。
+ * 2. revoke 延后：同一 tick 撤销 URL 有可能把还没开始的下载直接掐掉。
+ */
+function triggerDownload(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const aEle = document.createElement("a");
+  aEle.href = url;
+  aEle.download = fileName;
+  aEle.style.display = "none";
+
   document.body.appendChild(aEle);
-  aEle.click();
-  // 然后移除
-  document.body.removeChild(aEle);
+  try {
+    aEle.click();
+  } finally {
+    aEle.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+}
+
+// * 前端导出, 传入文件内容（文本或 Blob）和文件名称
+export function downloadFile(content, fileName) {
+  const blob =
+    content instanceof Blob
+      ? content
+      : new Blob([content], { type: "application/json;charset=utf-8" });
+
+  triggerDownload(blob, fileName);
+}
+
+/**
+ * 保存一段文本为文件。
+ *
+ * 壁纸宿主里页面下载会被一律拦掉（WebView2 的 DownloadStarting 策略），
+ * 所以跑在自己的宿主里时走宿主弹窗落盘；普通浏览器里退回 a 标签下载。
+ *
+ * @param {string} fileName 建议文件名
+ * @param {string} text 文件内容
+ * @returns {Promise<{ok:boolean, canceled?:boolean, path?:string, error?:string, mode:'host'|'browser'}>}
+ */
+export async function saveTextFile(fileName, text) {
+  const result = await hostFS.save(fileName, text);
+
+  // 对面不是我们的宿主（或宿主版本太旧没这条能力），退回浏览器下载
+  if (!result) {
+    downloadFile(text, fileName);
+    return { ok: true, mode: "browser" };
+  }
+
+  return { ...result, mode: "host" };
 }
 
 // base64转Blob

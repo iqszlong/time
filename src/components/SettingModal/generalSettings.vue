@@ -136,7 +136,7 @@ const { refresh: refreshConfig, clearAll: clearConfig, initConfig } = configStor
 const backgroundStore = useBackgroundStore()
 const { refresh: refreshBackground, clearAll: clearBackground, initBackground } = backgroundStore
 const { browser, os, engine, isLoading: browserLoading } = useBrowser()
-const { dayjs, highPrecisionMul, highPrecisionDiv,downloadFile } = utils
+const { dayjs, highPrecisionMul, highPrecisionDiv, saveTextFile } = utils
 
 const props = defineProps({
     tempConfig: { type: Object, required: true },
@@ -219,13 +219,24 @@ const getBackupData = async () => {
 const onBackup = async () => {
     try {
         const data = await getBackupData()
-        const blob = new Blob([JSON5.stringify(data)], { type: 'application/json;charset=utf-8' })
-        const url = URL.createObjectURL(blob)
         const dayStr = `${dayjs().format('YYYY-MM-DD')}-${dayjs().unix()}`
-        downloadFile(url, `time-backup ${dayStr}.json`)
-        setTimeout(() => {
-            URL.revokeObjectURL(url)
-        }, 100)
+        const fileName = `time-backup ${dayStr}.json`
+
+        // 壁纸宿主里走宿主弹窗落盘，浏览器里退回 a 标签下载
+        const result = await saveTextFile(fileName, JSON5.stringify(data))
+
+        if (result.canceled) return
+
+        if (!result.ok) {
+            toast.error('备份失败', {
+                description: result.error || '未知错误'
+            })
+            return
+        }
+
+        toast.success('备份已保存', {
+            description: result.mode === 'host' ? result.path : fileName
+        })
     } catch (error) {
         toast.error('备份失败', {
             description: error.message
