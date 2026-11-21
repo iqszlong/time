@@ -1,9 +1,12 @@
-import { get, getALL, put, puts, del,dels, getCount,clear } from '@/utils/dexie';
+import { get, getALL, put, puts, del, dels, getCount, clear, getByPage } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const backgroundService = {
-  async getAll({ orderBy = 'createTime', page = 0, pageSize = 10 }) {
-    return await getALL('background', orderBy, page * pageSize, pageSize);
+  async getAll({ orderBy = 'createTime' }) {
+    return await getALL('background', orderBy);
+  },
+  async getByPage({ orderBy = 'createTime', page = 0, pageSize = 10 }) {
+    return await getByPage('background', orderBy, page * pageSize, pageSize);
   },
 
   async getById(id) {
@@ -53,7 +56,7 @@ export const backgroundService = {
     return null;
   },
 
-  
+
 
   async updateState(id, state) {
     const background = await this.getById(id);

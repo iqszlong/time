@@ -1,9 +1,12 @@
-import { get, getALL, put, puts, del, getCount,clear } from '@/utils/dexie';
+import { get, getALL, put, puts, del, getCount, clear, getByPage } from '@/utils/dexie';
 import { dayjs } from '@/utils/day';
 
 export const configService = {
-  async getAll({orderBy = 'createTime', page = 0, pageSize = 10}) {
-    return await getALL('config', orderBy, page * pageSize, pageSize);
+  async getAll({ orderBy = 'createTime' }) {
+    return await getALL('config', orderBy);
+  },
+  async getByPage({ orderBy = 'createTime', page = 0, pageSize = 10 }) {
+    return await getByPage('config', orderBy, page * pageSize, pageSize);
   },
 
   async getById(id) {

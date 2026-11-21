@@ -17,7 +17,7 @@ db.version(databaseVersion).stores(tabelStores).upgrade(trans => {
         configItem.timeFontEffect = 'default';
         configItem.timePosition = 'bottom-center';
     });
-});;
+});
 
 // 查询一条数据 
 export async function get(table, key) {
@@ -25,9 +25,11 @@ export async function get(table, key) {
 }
 
 // 查询所有数据
-export async function getALL(table, orderBy = "createTime", i = 0, n = 10) {
-    // 创建时间倒序 (由于没有倒序 自己加个reverse就是倒序)
-    // 这里我为了配合分页，加了offset limit 结合起来就是MySql的limit(i,n) 不需要的话也可以直接去掉
+export async function getALL(table, orderBy = "createTime") {
+    return await db[table].orderBy(orderBy).reverse().toArray();
+}
+
+export async function getByPage(table, orderBy = "createTime", i = 0, n = 10){
     return await db[table].orderBy(orderBy).reverse().offset(i).limit(n).toArray();
 }
 
@@ -61,6 +63,7 @@ export async function clear(table) {
 export default {
     get,
     getALL,
+    getByPage,
     put,
     puts,
     del,
