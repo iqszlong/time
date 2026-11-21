@@ -9,7 +9,7 @@ export const useBackgroundStore = defineStore('background', () => {
   const total = ref(0)
   const loading = ref(false)
   const currentPage = ref(0)
-  const pageSize = ref(10)
+  const pageSize = ref(30)
 
   const defaultData = {
     filename: "bing wallpaper",
