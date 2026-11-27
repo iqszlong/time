@@ -1,0 +1,10 @@
+# Cloudflare Workers / Pages 静态资源响应头
+# 本文件不会作为资源对外提供，构建时由 Vite 从 public/ 原样复制到产物根目录
+
+# Service Worker 脚本每次都要回源校验，避免客户端卡在旧版本
+/sw.js
+  Cache-Control: no-cache
+
+# workbox 运行时脚本文件名带内容哈希，可以放心长缓存
+/workbox-*.js
+  Cache-Control: public, max-age=31536000, immutable

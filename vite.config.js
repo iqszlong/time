@@ -6,10 +6,13 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd()) || {};
+  // Service Worker 离线缓存开关，对应 .env 里的 VITE_ENABLE_PWA
+  const pwaEnabled = env.VITE_ENABLE_PWA === "true";
   // console.log("mode", mode);
   return {
     base: env.VITE_BASE_URL || "/",
@@ -54,6 +57,56 @@ export default defineConfig(({ command, mode }) => {
         resolvers: [NaiveUiResolver()],
       }),
       tailwindcss(),
+      // Service Worker 离线缓存，由 .env 的 VITE_ENABLE_PWA 控制，默认关闭。
+      // 关闭时只挂一个 disable 实例，virtual:pwa-register 退化为空实现，
+      // 不生成 sw.js，页面也不会注册任何 Service Worker。
+      VitePWA({
+        disable: !pwaEnabled,
+        registerType: "prompt",
+        injectRegister: false,
+        manifest: false,
+        workbox: {
+          globPatterns: ["**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg}"],
+          // 字体、产物里的 zip 不进 precache，改由运行时缓存按需存
+          globIgnores: ["fonts/**", "**/*.zip"],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+          navigateFallback: "/index.html",
+          navigateFallbackDenylist: [/^\/api\//, /^\/file\//, /^\/jsonserver\//],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: false,
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.pathname.startsWith("/fonts/"),
+              handler: "CacheFirst",
+              options: {
+                cacheName: `time-fonts-${mode}`,
+                expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 365 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.bunny\.net\//,
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: `time-webfonts-${mode}`,
+                expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+            {
+              urlPattern: ({ request }) => request.destination === "image",
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: `time-images-${mode}`,
+                expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 14 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+          ],
+        },
+        devOptions: { enabled: false },
+      }),
     ],
     server: {
       open: false,
