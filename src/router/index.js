@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { setupRouterGuard } from './guard'
 
 export const basicRoutes = [
@@ -18,7 +18,7 @@ export const basicRoutes = [
 ];
 
 export const router = createRouter({
-  history: import.meta.env.VITE_BUILD_NAME == 'WE' ? createWebHashHistory() : createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: basicRoutes,
 });
 

@@ -79,9 +79,9 @@ export default defineConfig(({ command, mode }) => {
     build: {
       minify: "terser",
       assetsInlineLimit: 0,
-      target: mode === "we" ? 'es2015' : 'modules',
+      target: "modules",
       terserOptions: { compress: { drop_console: true, drop_debugger: true } }, // 移除 console debugger
-      outDir: mode ? `dist/${mode}` : `dist`,
+      outDir: `dist/${mode}`,
       rollupOptions: {
         external: [],
         output: {
@@ -92,7 +92,6 @@ export default defineConfig(({ command, mode }) => {
           // 'xe-utils': 'XEUtils',
           // },
           manualChunks(id) {
-            if(mode === 'we') return
             // 分包
             if (id.includes('xe-utils')) {
               return 'xe-utils';
